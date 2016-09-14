@@ -4,6 +4,7 @@ namespace CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * DefaultController class file
@@ -20,13 +21,20 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
  * @category Controller
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-class DefaultController extends Controller
+class DefaultController extends AbstractMasterController
 {
     /**
      * @Route("/")
      */
     public function indexAction()
     {
-        return $this->render('CoreBundle:Default:index.html.twig');
+        try {
+            if (true) {
+                throw new \Exception("Alerte");
+            }
+            return $this->render('CoreBundle:Default:index.html.twig');
+        } catch (\Exception $exception) {
+            return $this->renderErrorPage($exception);
+        }
     }
 }
