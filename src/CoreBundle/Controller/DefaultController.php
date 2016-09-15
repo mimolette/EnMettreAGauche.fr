@@ -24,14 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends AbstractMasterController
 {
     /**
-     * @Route("/")
+     * @Route("/", name="main_route")
      */
     public function indexAction()
     {
         try {
-            if (true) {
-                throw new \Exception("Alerte");
-            }
             return $this->render('CoreBundle:Default:index.html.twig');
         } catch (\Exception $exception) {
             return $this->renderErrorPage($exception);

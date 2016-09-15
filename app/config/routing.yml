@@ -1,4 +1,15 @@
+emag_user:
+    resource: "@EmagUserBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 core:
     resource: "@CoreBundle/Controller/"
     type:     annotation
     prefix:   /
+
+login_check:
+    path:   /login_check
+
+logout:
+    path:   /logout
