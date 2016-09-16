@@ -1,15 +1,12 @@
-emag_user:
-    resource: "@EmagUserBundle/Controller/"
-    type:     annotation
-    prefix:   /
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
 core:
     resource: "@CoreBundle/Controller/"
     type:     annotation
     prefix:   /
 
-login_check:
-    path:   /login_check
-
-logout:
-    path:   /logout
+emag_user:
+    resource: "@EmagUserBundle/Controller/LoginController.php"
+    type:     annotation
+    prefix:   /test

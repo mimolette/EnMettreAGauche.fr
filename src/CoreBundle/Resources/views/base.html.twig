@@ -8,6 +8,9 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        <div class="ui visible inverted red left vertical sidebar fixed menu">
+            <div>test</div>
+        </div>
         {% block body %}{% endblock %}
         {% block javascripts %}
             <script type="text/javascript" src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>

@@ -24,23 +24,12 @@ use Symfony\Component\HttpFoundation\Request;
 class LoginController extends Controller
 {
     /**
-     * @Route("/login", name="login")
+     * @Route("/login", name="login_perso")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function loginAction(Request $request)
+    public function loginAction()
     {
-        // récupère les services d'authentifications
-        $authService = $this->get('security.authorization_checker');
-        $authenticationUtils = $this->get('security.authentication_utils');
-
-        // Si le visiteur est déjà identifié, on le redirige vers l'accueil
-        if ($authService->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirectToRoute('main_route');
-        }
-
-        // renvoi la vue de formulaire de connexion
-        return $this->render('EmagUserBundle:Default:login.html.twig', array(
-            'last_username' => $authenticationUtils->getLastUsername(),
-            'error'         => $authenticationUtils->getLastAuthenticationError(),
-        ));
+        return $this->render('EmagUserBundle::login.html.twig');
     }
 }
