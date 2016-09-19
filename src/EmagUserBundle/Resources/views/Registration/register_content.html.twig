@@ -1,0 +1,39 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'ui one column stackable centered page grid fos_user_registration_register'}}) }}
+    {{ form_row(form._token) }}
+    <div class="column twelve wide">
+        <div class="ui segment">
+            <div class="ui form">
+                <div class="field">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email) }}
+                    {{ form_errors(form.email) }}
+                    {#<label for="username">{{ 'security.login.username'|trans }}</label>#}
+                    {#<div class="ui left icon input">#}
+                        {#<input type="text" id="username" name="_username" value="{{ last_username }}" required="required" />#}
+                        {#<i class="user icon"></i>#}
+                    {#</div>#}
+                </div>
+                <div class="field">
+                    {{ form_label(form.username) }}
+                    {{ form_widget(form.username) }}
+                    {{ form_errors(form.username) }}
+                </div>
+                <div class="field">
+                    {{ form_label(form.plainPassword.first) }}
+                    {{ form_widget(form.plainPassword.first) }}
+                    {{ form_errors(form.plainPassword.first) }}
+                </div>
+                <div class="field">
+                    {{ form_label(form.plainPassword.second) }}
+                    {{ form_widget(form.plainPassword.second) }}
+                    {{ form_errors(form.plainPassword.second) }}
+                </div>
+                <div class="field center aligned">
+                    <input type="submit" class="ui blue submit fluid button" value="{{ 'registration.submit'|trans }}" />
+                </div>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}
