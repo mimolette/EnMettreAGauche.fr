@@ -1,0 +1,4 @@
+.ui.sidebar.visible ~ .pusher {
+    width: calc(100% - 220px);
+    margin-top: 50px;
+}

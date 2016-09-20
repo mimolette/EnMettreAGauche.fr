@@ -4,13 +4,60 @@
     <meta charset="UTF-8" />
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/semantic/dist/semantic.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/core/css/menu.css') }}" />
     {% block stylesheets %}{% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 </head>
 <body>
-<div class="ui container">
-    {% block body %}{% endblock %}
+<div class="ui visible inverted blue left vertical sidebar fixed menu">
+    <div class="logo home item">
+        <a href="#">
+            <img class="ui centered small image" src="{{ asset('bundles/core/images/logo.png') }}" alt="En mettre à gauche - logo" />
+        </a>
+    </div>
+
+    <a class="icon active item" href="#">
+        <i class="home icon"></i>
+        Accueil
+    </a>
+    <div class="item">
+        <div class="header">Gestion des comptes</div>
+        <div class="menu">
+            <a class="icon item" href="#">
+                <i class="plus icon"></i>
+                Nouveau
+            </a>
+            <a class="icon item" href="#">
+                <i class="find icon"></i>
+                Détail
+            </a>
+            <a class="icon item" href="#">
+                <i class="law icon"></i>
+                Ajuster solde
+            </a>
+            <a class="icon item" href="#">
+                <i class="settings icon"></i>
+                Configuration
+            </a>
+        </div>
+    </div>
 </div>
+
+<div class="ui pusher">
+    <div class="ui container">
+        {% for type, messages in app.session.flashBag.all %}
+            {% for message in messages %}
+                <div class="ui {{ type }} message">
+                    <i class="close icon"></i>
+                    {{ message|e }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% block body %}{% endblock %}
+    </div>
+</div>
+
 {% block javascripts %}
     <script type="text/javascript" src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendor/semantic/dist/semantic.min.js') }}"></script>

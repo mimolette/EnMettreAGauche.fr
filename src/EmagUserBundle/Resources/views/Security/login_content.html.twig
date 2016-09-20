@@ -3,30 +3,34 @@
 
 <form action="{{ path("fos_user_security_check") }}" method="post" class="ui one column stackable centered page grid">
     {% if error %}
-        <div class="column nine wide">
-            <div class="ui secondary inverted red segment fluid">
-                <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
-            </div>
-        </div>
+        {% set htmlClass = 'field error' %}
+        {% set errorMessage = error.messageKey|trans(error.messageData, 'security') %}
+    {% else %}
+        {% set htmlClass = 'field' %}
     {% endif %}
     <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
     <div class="column nine wide">
         <div class="ui segment">
             <div class="ui form">
-                <div class="field">
+                <div class="{{ htmlClass }}">
                     <label for="username">{{ 'security.login.username'|trans }}</label>
                     <div class="ui left icon input">
                         <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" />
                         <i class="user icon"></i>
                     </div>
                 </div>
-                <div class="field">
+                <div class="{{ htmlClass }}">
                     <label for="password">{{ 'security.login.password'|trans }}</label>
                     <div class="ui left icon input">
                         <input type="password" id="password" name="_password" required="required" />
                         <i class="lock icon"></i>
                     </div>
                 </div>
+                {% if errorMessage is defined %}
+                    <div class="ui error visible message">
+                        <p>{{ errorMessage }}</p>
+                    </div>
+                {% endif %}
                 <div class="inline field">
                     <div class="ui checkbox">
                         <input type="checkbox" tabindex="0" class="hidden" id="remember_me" name="_remember_me" value="on" />
