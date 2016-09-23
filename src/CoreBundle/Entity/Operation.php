@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,22 +32,49 @@ class Operation
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var float
      *
      * @ORM\Column(name="montant", type="float")
      */
-    private $montant;
+    protected $montant;
 
     /**
      * @var string
      *
      * @ORM\Column(name="libelle", type="text", nullable=true)
      */
-    private $libelle;
+    protected $libelle;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="operations")
+     * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
+     */
+    protected $compte;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\ModePaiement")
+     * @ORM\JoinColumn(name="mode_paiement_id", referencedColumnName="id_mode_paiement")
+     */
+    protected $modePaiement;
+
+    /**
+     * @var ArrayCollection
+     * 
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie", inversedBy="operations")
+     * @ORM\JoinTable(name="emag_operation_categorie")
+     */
+    protected $catogories;
+
+    /**
+     * Operation constructor.
+     */
+    public function __construct()
+    {
+        $this->catogories = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -104,5 +132,89 @@ class Operation
     public function getLibelle()
     {
         return $this->libelle;
+    }
+
+    /**
+     * Set compte
+     *
+     * @param Compte $compte
+     *
+     * @return Operation
+     */
+    public function setCompte(Compte $compte = null)
+    {
+        $this->compte = $compte;
+
+        return $this;
+    }
+
+    /**
+     * Get compte
+     *
+     * @return Compte
+     */
+    public function getCompte()
+    {
+        return $this->compte;
+    }
+
+    /**
+     * Set modePaiement
+     *
+     * @param ModePaiement $modePaiement
+     *
+     * @return Operation
+     */
+    public function setModePaiement(ModePaiement $modePaiement = null)
+    {
+        $this->modePaiement = $modePaiement;
+
+        return $this;
+    }
+
+    /**
+     * Get modePaiement
+     *
+     * @return ModePaiement
+     */
+    public function getModePaiement()
+    {
+        return $this->modePaiement;
+    }
+
+    /**
+     * Add catogory
+     *
+     * @param Categorie $catogory
+     *
+     * @return Operation
+     */
+    public function addCatogory(Categorie $catogory)
+    {
+        // mise a jour inverse de la categorie
+        $catogory->addOperation($this);
+        $this->catogories[] = $catogory;
+
+        return $this;
+    }
+
+    /**
+     * Remove catogory
+     *
+     * @param Categorie $catogory
+     */
+    public function removeCatogory(Categorie $catogory)
+    {
+        $this->catogories->removeElement($catogory);
+    }
+
+    /**
+     * Get catogories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCatogories()
+    {
+        return $this->catogories;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -47,6 +48,39 @@ class Categorie
      */
     private $active;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Operation", mappedBy="categories")
+     */
+    private $operations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Couleur")
+     * @ORM\JoinColumn(name="couleur_id", referencedColumnName="id_couleur")
+     */
+    private $couleur;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie")
+     * @ORM\JoinTable(
+     *     name="emag_categorie_enfant",
+     *     joinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_enfant_id", referencedColumnName="id_categorie")}
+     * )
+     */
+    private $enfants;
+
+    /**
+     * Categorie constructor.
+     */
+    public function __construct()
+    {
+        $this->operations = new ArrayCollection();
+        $this->enfants    = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -104,5 +138,97 @@ class Categorie
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * Add operation
+     *
+     * @param Operation $operation
+     *
+     * @return Categorie
+     */
+    public function addOperation(Operation $operation)
+    {
+        $this->operations[] = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Remove operation
+     *
+     * @param Operation $operation
+     */
+    public function removeOperation(Operation $operation)
+    {
+        $this->operations->removeElement($operation);
+    }
+
+    /**
+     * Get operations
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOperations()
+    {
+        return $this->operations;
+    }
+
+    /**
+     * Set couleur
+     *
+     * @param Couleur $couleur
+     *
+     * @return Categorie
+     */
+    public function setCouleur(Couleur $couleur = null)
+    {
+        $this->couleur = $couleur;
+
+        return $this;
+    }
+
+    /**
+     * Get couleur
+     *
+     * @return Couleur
+     */
+    public function getCouleur()
+    {
+        return $this->couleur;
+    }
+
+    /**
+     * Add enfant
+     *
+     * @param Categorie $enfant
+     *
+     * @return Categorie
+     */
+    public function addEnfant(Categorie $enfant)
+    {
+        $this->enfants[] = $enfant;
+
+        return $this;
+    }
+
+    /**
+     * Remove enfant
+     *
+     * @param Categorie $enfant
+     */
+    public function removeEnfant(Categorie $enfant)
+    {
+        $this->enfants->removeElement($enfant);
+    }
+
+    /**
+     * Get enfants
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getEnfants()
+    {
+        return $this->enfants;
     }
 }

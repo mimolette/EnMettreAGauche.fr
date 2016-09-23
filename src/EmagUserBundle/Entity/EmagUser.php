@@ -2,6 +2,7 @@
 
 namespace EmagUserBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 
@@ -33,4 +34,106 @@ class EmagUser extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Compte")
+     * @ORM\JoinTable(
+     *     name="user_compte",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_user")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte", unique=true)}
+     * )
+     */
+    private $comptes;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie")
+     * @ORM\JoinTable(
+     *     name="user_categorie",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_user")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie", unique=true)}
+     * )
+     */
+    private $categories;
+
+    /**
+     * EmagUser constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->comptes    = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+    }
+
+    /**
+     * Add compte
+     *
+     * @param \CoreBundle\Entity\Compte $compte
+     *
+     * @return EmagUser
+     */
+    public function addCompte(\CoreBundle\Entity\Compte $compte)
+    {
+        $this->comptes[] = $compte;
+
+        return $this;
+    }
+
+    /**
+     * Remove compte
+     *
+     * @param \CoreBundle\Entity\Compte $compte
+     */
+    public function removeCompte(\CoreBundle\Entity\Compte $compte)
+    {
+        $this->comptes->removeElement($compte);
+    }
+
+    /**
+     * Get comptes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComptes()
+    {
+        return $this->comptes;
+    }
+
+    /**
+     * Add category
+     *
+     * @param \CoreBundle\Entity\Categorie $category
+     *
+     * @return EmagUser
+     */
+    public function addCategory(\CoreBundle\Entity\Categorie $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \CoreBundle\Entity\Categorie $category
+     */
+    public function removeCategory(\CoreBundle\Entity\Categorie $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
 }

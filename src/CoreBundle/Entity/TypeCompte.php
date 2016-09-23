@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -61,6 +62,25 @@ class TypeCompte
      */
     private $virementAutorise;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\ModePaiement")
+     * @ORM\JoinTable(
+     *     name="emag_type_compte_mode_paiement",
+     *     joinColumns={@ORM\JoinColumn(name="type_compte_id", referencedColumnName="id_type_compte")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="mode_paiement_id", referencedColumnName="id_mode_paiement")}
+     * )
+     */
+    private $modePaiements;
+
+    /**
+     * TypeCompte constructor.
+     */
+    public function __construct()
+    {
+        $this->modePaiements = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -166,5 +186,39 @@ class TypeCompte
     public function getVirementAutorise()
     {
         return $this->virementAutorise;
+    }
+
+    /**
+     * Add modePaiement
+     *
+     * @param ModePaiement $modePaiement
+     *
+     * @return TypeCompte
+     */
+    public function addModePaiement(ModePaiement $modePaiement)
+    {
+        $this->modePaiements[] = $modePaiement;
+
+        return $this;
+    }
+
+    /**
+     * Remove modePaiement
+     *
+     * @param ModePaiement $modePaiement
+     */
+    public function removeModePaiement(ModePaiement $modePaiement)
+    {
+        $this->modePaiements->removeElement($modePaiement);
+    }
+
+    /**
+     * Get modePaiements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getModePaiements()
+    {
+        return $this->modePaiements;
     }
 }

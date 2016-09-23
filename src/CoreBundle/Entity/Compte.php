@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -54,6 +55,40 @@ class Compte
      */
     private $numero;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\TypeCompte")
+     * @ORM\JoinColumn(name="type_compte_id", referencedColumnName="id_type_compte")
+     */
+    private $type;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Couleur")
+     * @ORM\JoinColumn(name="couleur_id", referencedColumnName="id_couleur")
+     */
+    private $couleur;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Operation", mappedBy="compte")
+     */
+    private $operations;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\VirementInterne", mappedBy="compteCrediteur")
+     */
+    private $virementCrediteurs;
+
+    /**
+     * Compte constructor.
+     */
+    public function __construct()
+    {
+        $this->operations         = new ArrayCollection();
+        $this->virementCrediteurs = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -135,5 +170,121 @@ class Compte
     public function getNumero()
     {
         return $this->numero;
+    }
+
+    /**
+     * Set type
+     *
+     * @param TypeCompte $type
+     *
+     * @return Compte
+     */
+    public function setType(TypeCompte $type = null)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return TypeCompte
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set couleur
+     *
+     * @param Couleur $couleur
+     *
+     * @return Compte
+     */
+    public function setCouleur(Couleur $couleur = null)
+    {
+        $this->couleur = $couleur;
+
+        return $this;
+    }
+
+    /**
+     * Get couleur
+     *
+     * @return Couleur
+     */
+    public function getCouleur()
+    {
+        return $this->couleur;
+    }
+
+    /**
+     * Add operation
+     *
+     * @param Operation $operation
+     *
+     * @return Compte
+     */
+    public function addOperation(Operation $operation)
+    {
+        $this->operations[] = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Remove operation
+     *
+     * @param Operation $operation
+     */
+    public function removeOperation(Operation $operation)
+    {
+        $this->operations->removeElement($operation);
+    }
+
+    /**
+     * Get operations
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOperations()
+    {
+        return $this->operations;
+    }
+
+    /**
+     * Add virementCrediteur
+     *
+     * @param VirementInterne $virementCrediteur
+     *
+     * @return Compte
+     */
+    public function addVirementCrediteur(VirementInterne $virementCrediteur)
+    {
+        $this->virementCrediteurs[] = $virementCrediteur;
+
+        return $this;
+    }
+
+    /**
+     * Remove virementCrediteur
+     *
+     * @param VirementInterne $virementCrediteur
+     */
+    public function removeVirementCrediteur(VirementInterne $virementCrediteur)
+    {
+        $this->virementCrediteurs->removeElement($virementCrediteur);
+    }
+
+    /**
+     * Get virementCrediteurs
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVirementCrediteurs()
+    {
+        return $this->virementCrediteurs;
     }
 }
