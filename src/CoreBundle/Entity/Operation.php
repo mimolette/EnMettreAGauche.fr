@@ -64,7 +64,10 @@ class Operation
      * @var ArrayCollection
      * 
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie", inversedBy="operations")
-     * @ORM\JoinTable(name="emag_operation_categorie")
+     * @ORM\JoinTable(name="emag_operation_categorie",
+     *     joinColumns={@ORM\JoinColumn(name="operation_id", referencedColumnName="id_operation")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie", unique=true)}
+     *  )
      */
     protected $catogories;
 

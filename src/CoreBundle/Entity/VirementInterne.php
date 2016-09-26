@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="emag_virement_interne")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\VirementInterneRepository")
  */
-class VirementInterne extends Operation
+class VirementInterne
 {
     /**
      * @var int
@@ -31,7 +31,7 @@ class VirementInterne extends Operation
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="virementCrediteurs")

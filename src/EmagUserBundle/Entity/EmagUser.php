@@ -40,7 +40,7 @@ class EmagUser extends BaseUser
      *
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Compte")
      * @ORM\JoinTable(
-     *     name="user_compte",
+     *     name="emag_user_compte",
      *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_user")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte", unique=true)}
      * )
@@ -52,7 +52,7 @@ class EmagUser extends BaseUser
      *
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie")
      * @ORM\JoinTable(
-     *     name="user_categorie",
+     *     name="emag_user_categorie",
      *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_user")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie", unique=true)}
      * )
