@@ -19,35 +19,15 @@ use Doctrine\ORM\Mapping as ORM;
  * @category Entity
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  *
- * @ORM\Table(name="emag_virement_interne")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\VirementInterneRepository")
  */
-class VirementInterne
+class VirementInterne extends Operation
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id_virement_interne", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="virementCrediteurs")
-     * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
+     * @ORM\JoinColumn(name="compte_crediteur_id", referencedColumnName="id_compte")
      */
     private $compteCrediteur;
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set compteCrediteur

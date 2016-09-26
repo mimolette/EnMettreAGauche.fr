@@ -22,6 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="emag_operation")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationRepository")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type_opration", type="string")
+ * @ORM\DiscriminatorMap({"classique" = "CoreBundle\Entity\Operation", "virement" = "CoreBundle\Entity\VirementInterne"})
  */
 class Operation
 {
