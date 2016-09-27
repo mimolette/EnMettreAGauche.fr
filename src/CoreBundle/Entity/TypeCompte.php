@@ -56,13 +56,6 @@ class TypeCompte
     private $etreNegatif;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="virementAutorise", type="boolean")
-     */
-    private $virementAutorise;
-
-    /**
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\ModePaiement")
@@ -162,30 +155,6 @@ class TypeCompte
     public function getEtreNegatif()
     {
         return $this->etreNegatif;
-    }
-
-    /**
-     * Set virementAutorise
-     *
-     * @param boolean $virementAutorise
-     *
-     * @return TypeCompte
-     */
-    public function setVirementAutorise($virementAutorise)
-    {
-        $this->virementAutorise = $virementAutorise;
-
-        return $this;
-    }
-
-    /**
-     * Get virementAutorise
-     *
-     * @return bool
-     */
-    public function getVirementAutorise()
-    {
-        return $this->virementAutorise;
     }
 
     /**

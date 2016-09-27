@@ -6,6 +6,9 @@ use CoreBundle\Entity\Couleur;
 
 class CouleurTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return Couleur
+     */
     public function testEmptyCouleur()
     {
         $couleur = new Couleur();
@@ -19,7 +22,7 @@ class CouleurTest extends \PHPUnit_Framework_TestCase
      * @depends testEmptyCouleur
      * @param Couleur $couleur
      */
-    public function testSetCodeHexa($couleur)
+    public function testSetCodeHexa(Couleur $couleur)
     {
         $couleur->setCodeHexa("#454545");
 
