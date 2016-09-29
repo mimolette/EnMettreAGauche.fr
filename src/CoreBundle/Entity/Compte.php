@@ -22,8 +22,16 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="emag_compte")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\CompteRepository")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="type_compte", type="string")
+ * @ORM\DiscriminatorMap(
+ *     {
+ *          "solde" = "CoreBundle\Entity\CompteSolde",
+ *          "ticket" = "CoreBundle\Entity\CompteTicket"
+ *      }
+ * )
  */
-class Compte
+abstract class Compte
 {
     /**
      * @var int
@@ -33,13 +41,6 @@ class Compte
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="solde", type="float")
-     */
-    private $solde;
 
     /**
      * @var string
@@ -54,6 +55,13 @@ class Compte
      * @ORM\Column(name="numero", type="string", length=255, nullable=true)
      */
     private $numero;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="active", type="boolean")
+     */
+    private $active;
 
     /**
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\TypeCompte")
@@ -98,30 +106,6 @@ class Compte
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set solde
-     *
-     * @param float $solde
-     *
-     * @return Compte
-     */
-    public function setSolde($solde)
-    {
-        $this->solde = $solde;
-
-        return $this;
-    }
-
-    /**
-     * Get solde
-     *
-     * @return float
-     */
-    public function getSolde()
-    {
-        return $this->solde;
     }
 
     /**
@@ -286,5 +270,21 @@ class Compte
     public function getVirementCrediteurs()
     {
         return $this->virementCrediteurs;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param boolean $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
     }
 }
