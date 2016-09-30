@@ -56,6 +56,8 @@ class Categorie
     private $operations;
 
     /**
+     * @var Couleur
+     *
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Couleur")
      * @ORM\JoinColumn(name="couleur_id", referencedColumnName="id_couleur")
      */

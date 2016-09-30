@@ -29,7 +29,7 @@ class EmagUser extends BaseUser
     /**
      * @var int
      *
-     * @ORM\Column(name="id_user", type="integer")
+     * @ORM\Column(name="id_emag_user", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -41,7 +41,7 @@ class EmagUser extends BaseUser
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Compte")
      * @ORM\JoinTable(
      *     name="emag_user_compte",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_user")},
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_emag_user")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte", unique=true)}
      * )
      */
@@ -53,7 +53,7 @@ class EmagUser extends BaseUser
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie")
      * @ORM\JoinTable(
      *     name="emag_user_categorie",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_user")},
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id_emag_user")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie", unique=true)}
      * )
      */
