@@ -34,9 +34,9 @@ class TypeCompteData extends AbstractMasterFixtures
     /** liste des types de compte */
     const DATA = [
         [
-            "nom"          => "Compte courant",
+            "nom"          => "Compte chèque",
             "etreNegatif"  => true,
-            "numUnique"    => TypeCompteEnum::COURANT,
+            "numUnique"    => TypeCompteEnum::COMPTE_CHEQUE,
             "modePaiement" => [
                 ModePaiementEnum::CARTE_BANCAIRE,
                 ModePaiementEnum::VIREMENT_INTERNE,
@@ -51,6 +51,7 @@ class TypeCompteData extends AbstractMasterFixtures
             "modePaiement" => [
                 ModePaiementEnum::VIREMENT_INTERNE,
                 ModePaiementEnum::VIREMENT_EXTERNE,
+                ModePaiementEnum::RETRAIT_ESPECE,
             ],
         ],
         [

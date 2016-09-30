@@ -26,4 +26,5 @@ final class ExceptionCodeEnum
     const NO_RESULT_FOUND = 2001;
 
     /** erreurs métiers */
+    const PAS_VALEUR_ATTENDUE = 3001;
 }
