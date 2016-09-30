@@ -64,4 +64,3 @@ abstract class CompteSolde extends Compte
         return $this->solde;
     }
 }
-

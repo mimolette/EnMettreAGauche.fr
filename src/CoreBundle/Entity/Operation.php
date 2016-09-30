@@ -52,16 +52,19 @@ class Operation
     protected $libelle;
 
     /**
+     * @var Compte
+     * 
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="operations")
      * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
      */
     protected $compte;
 
     /**
-     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\ModePaiement")
-     * @ORM\JoinColumn(name="mode_paiement_id", referencedColumnName="id_mode_paiement")
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\PaiementOperation", mappedBy="operation")
      */
-    protected $modePaiement;
+    protected $paiements;
 
     /**
      * @var ArrayCollection
@@ -80,6 +83,7 @@ class Operation
     public function __construct()
     {
         $this->catogories = new ArrayCollection();
+        $this->paiements  = new ArrayCollection();
     }
 
     /**
@@ -165,30 +169,6 @@ class Operation
     }
 
     /**
-     * Set modePaiement
-     *
-     * @param ModePaiement $modePaiement
-     *
-     * @return Operation
-     */
-    public function setModePaiement(ModePaiement $modePaiement = null)
-    {
-        $this->modePaiement = $modePaiement;
-
-        return $this;
-    }
-
-    /**
-     * Get modePaiement
-     *
-     * @return ModePaiement
-     */
-    public function getModePaiement()
-    {
-        return $this->modePaiement;
-    }
-
-    /**
      * Add catogory
      *
      * @param Categorie $catogory
@@ -222,5 +202,39 @@ class Operation
     public function getCatogories()
     {
         return $this->catogories;
+    }
+
+    /**
+     * Add paiement
+     *
+     * @param PaiementOperation $paiement
+     *
+     * @return Operation
+     */
+    public function addPaiement(PaiementOperation $paiement)
+    {
+        $this->paiements[] = $paiement;
+
+        return $this;
+    }
+
+    /**
+     * Remove paiement
+     *
+     * @param PaiementOperation $paiement
+     */
+    public function removePaiement(PaiementOperation $paiement)
+    {
+        $this->paiements->removeElement($paiement);
+    }
+
+    /**
+     * Get paiements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPaiements()
+    {
+        return $this->paiements;
     }
 }

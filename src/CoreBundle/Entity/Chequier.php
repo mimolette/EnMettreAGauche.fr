@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -61,6 +62,17 @@ class Chequier
      */
     private $active;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\PaiementOperation")
+     * @ORM\JoinTable(
+     *     name="emag_chequier_operation",
+     *     joinColumns={@ORM\JoinColumn(name="chequier_id", referencedColumnName="id_chequier")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="paiement_operation_id", referencedColumnName="id_paiement_operation")}
+     * )
+     */
+    private $paiements;
 
     /**
      * Get id
@@ -167,5 +179,45 @@ class Chequier
     {
         return $this->active;
     }
-}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->paiements = new ArrayCollection();
+    }
 
+    /**
+     * Add paiement
+     *
+     * @param PaiementOperation $paiement
+     *
+     * @return Chequier
+     */
+    public function addPaiement(PaiementOperation $paiement)
+    {
+        $this->paiements[] = $paiement;
+
+        return $this;
+    }
+
+    /**
+     * Remove paiement
+     *
+     * @param PaiementOperation $paiement
+     */
+    public function removePaiement(PaiementOperation $paiement)
+    {
+        $this->paiements->removeElement($paiement);
+    }
+
+    /**
+     * Get paiements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPaiements()
+    {
+        return $this->paiements;
+    }
+}

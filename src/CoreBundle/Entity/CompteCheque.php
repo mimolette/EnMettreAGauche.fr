@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,6 +25,49 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CompteCheque extends CompteSolde
 {
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Chequier")
+     * @ORM\JoinTable(
+     *     name="emag_compte_chequier",
+     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="chequier_id", referencedColumnName="id_chequier")}
+     * )
+     */
+    private $chequiers;
 
+    /**
+     * Add chequier
+     *
+     * @param Chequier $chequier
+     *
+     * @return CompteCheque
+     */
+    public function addChequier(Chequier $chequier)
+    {
+        $this->chequiers[] = $chequier;
+
+        return $this;
+    }
+
+    /**
+     * Remove chequier
+     *
+     * @param Chequier $chequier
+     */
+    public function removeChequier(Chequier $chequier)
+    {
+        $this->chequiers->removeElement($chequier);
+    }
+
+    /**
+     * Get chequiers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChequiers()
+    {
+        return $this->chequiers;
+    }
 }
-

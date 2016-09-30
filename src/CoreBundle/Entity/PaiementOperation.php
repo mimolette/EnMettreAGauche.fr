@@ -40,6 +40,21 @@ class PaiementOperation
      */
     private $nbTickets;
 
+    /**
+     * @var Operation
+     *
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Operation", inversedBy="paiements")
+     * @ORM\JoinColumn(name="operation_id", referencedColumnName="id_operation")
+     */
+    private $operation;
+
+    /**
+     * @var ModePaiement
+     *
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\ModePaiement")
+     * @ORM\JoinColumn(name="mode_paiement_id", referencedColumnName="id_mode_paiement")
+     */
+    private $modePaiement;
 
     /**
      * Get id
@@ -74,5 +89,52 @@ class PaiementOperation
     {
         return $this->nbTickets;
     }
-}
 
+    /**
+     * Set operation
+     *
+     * @param Operation $operation
+     *
+     * @return PaiementOperation
+     */
+    public function setOperation(Operation $operation = null)
+    {
+        $this->operation = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Get operation
+     *
+     * @return Operation
+     */
+    public function getOperation()
+    {
+        return $this->operation;
+    }
+
+    /**
+     * Set modePaiement
+     *
+     * @param ModePaiement $modePaiement
+     *
+     * @return PaiementOperation
+     */
+    public function setModePaiement(ModePaiement $modePaiement = null)
+    {
+        $this->modePaiement = $modePaiement;
+
+        return $this;
+    }
+
+    /**
+     * Get modePaiement
+     *
+     * @return ModePaiement
+     */
+    public function getModePaiement()
+    {
+        return $this->modePaiement;
+    }
+}

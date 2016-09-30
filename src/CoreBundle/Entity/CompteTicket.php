@@ -86,4 +86,3 @@ class CompteTicket extends Compte
         return $this->montantTicket;
     }
 }
-

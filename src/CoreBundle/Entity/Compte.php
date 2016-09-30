@@ -26,7 +26,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\DiscriminatorColumn(name="type_compte", type="string")
  * @ORM\DiscriminatorMap(
  *     {
- *          "solde" = "CoreBundle\Entity\CompteSolde",
  *          "ticket" = "CoreBundle\Entity\CompteTicket"
  *      }
  * )
@@ -64,12 +63,16 @@ abstract class Compte
     private $active;
 
     /**
+     * @var TypeCompte
+     *
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\TypeCompte")
      * @ORM\JoinColumn(name="type_compte_id", referencedColumnName="id_type_compte")
      */
     private $type;
 
     /**
+     * @var Couleur
+     *
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Couleur")
      * @ORM\JoinColumn(name="couleur_id", referencedColumnName="id_couleur")
      */
@@ -286,5 +289,15 @@ abstract class Compte
     public function setActive($active)
     {
         $this->active = $active;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 }

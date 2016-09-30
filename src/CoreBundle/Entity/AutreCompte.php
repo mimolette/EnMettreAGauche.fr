@@ -26,4 +26,3 @@ class AutreCompte extends CompteSolde
 {
 
 }
-
