@@ -1,3 +1,12 @@
+# CoreBundle\Enum\ModePaiementEnum
+# 1 : carte bancaire
+# 2 : espèces
+# 3 : cheque
+# 4 : ticket restaurant
+# 5 : virement externe
+# 6 : virement interne
+# 7 : retrait espece
+
 Carte bancaire:
     id: 1
     etreNegatif: true

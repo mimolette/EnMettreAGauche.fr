@@ -1,3 +1,18 @@
+# CoreBundle\Enum\ModePaiementEnum
+# 1 : carte bancaire
+# 2 : espèces
+# 3 : cheque
+# 4 : ticket restaurant
+# 5 : virement externe
+# 6 : virement interne
+# 7 : retrait espece
+
+# CoreBundle\Enum\TypeCompteEnum
+# 1 : livret compte epargne
+# 2 : porte monnaie
+# 3 : compte cheque
+# 4 : ticket cheque
+
 Livret/Compte épargne:
     id: 1
     etreNegatif: false

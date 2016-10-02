@@ -4,8 +4,6 @@ namespace CoreBundle\DataFixtures\ORM;
 
 use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Entity\TypeCompte;
-use CoreBundle\Enum\ModePaiementEnum;
-use CoreBundle\Enum\TypeCompteEnum;
 use Doctrine\Common\Persistence\ObjectManager;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
 
