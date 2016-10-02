@@ -22,11 +22,20 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="emag_operation")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationRepository")
- * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type_opration", type="string")
- * @ORM\DiscriminatorMap({"classique" = "CoreBundle\Entity\Operation", "virement" = "CoreBundle\Entity\VirementInterne"})
+ * @ORM\DiscriminatorMap(
+ *     {
+ *          "virement_interne" = "CoreBundle\Entity\VirementInterne",
+ *          "courante" = "CoreBundle\Entity\OperationCourante",
+ *          "virement_externe" = "CoreBundle\Entity\VirementExterne",
+ *          "cheque" = "CoreBundle\Entity\OperationCheque",
+ *          "especes" = "CoreBundle\Entity\OperationEspeces",
+ *          "ticket" = "CoreBundle\Entity\OperationTicket"
+ *      }
+ * )
  */
-class Operation
+abstract class Operation
 {
     /**
      * @var int
@@ -52,19 +61,19 @@ class Operation
     protected $libelle;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_operation", type="date")
+     */
+    protected $date;
+
+    /**
      * @var Compte
      * 
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="operations")
      * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
      */
     protected $compte;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\PaiementOperation", mappedBy="operation")
-     */
-    protected $paiements;
 
     /**
      * @var ArrayCollection
@@ -76,6 +85,14 @@ class Operation
      *  )
      */
     protected $catogories;
+
+    /**
+     * @var ModePaiement
+     *
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\ModePaiement")
+     * @ORM\JoinColumn(name="mode_paiement_id", referencedColumnName="id_mode_paiement")
+     */
+    protected $modePaiement;
 
     /**
      * Operation constructor.
@@ -205,30 +222,6 @@ class Operation
     }
 
     /**
-     * Add paiement
-     *
-     * @param PaiementOperation $paiement
-     *
-     * @return Operation
-     */
-    public function addPaiement(PaiementOperation $paiement)
-    {
-        $this->paiements[] = $paiement;
-
-        return $this;
-    }
-
-    /**
-     * Remove paiement
-     *
-     * @param PaiementOperation $paiement
-     */
-    public function removePaiement(PaiementOperation $paiement)
-    {
-        $this->paiements->removeElement($paiement);
-    }
-
-    /**
      * Get paiements
      *
      * @return \Doctrine\Common\Collections\Collection
@@ -236,5 +229,53 @@ class Operation
     public function getPaiements()
     {
         return $this->paiements;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     *
+     * @return Operation
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set modePaiement
+     *
+     * @param ModePaiement $modePaiement
+     *
+     * @return Operation
+     */
+    public function setModePaiement(ModePaiement $modePaiement = null)
+    {
+        $this->modePaiement = $modePaiement;
+
+        return $this;
+    }
+
+    /**
+     * Get modePaiement
+     *
+     * @return ModePaiement
+     */
+    public function getModePaiement()
+    {
+        return $this->modePaiement;
     }
 }

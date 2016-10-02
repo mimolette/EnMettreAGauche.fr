@@ -5,7 +5,7 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * VirementInterne class file
+ * OperationCheque class file
  *
  * PHP Version 5.6
  *
@@ -14,46 +14,46 @@ use Doctrine\ORM\Mapping as ORM;
  */
 
 /**
- * VirementInterne class
+ * OperationCheque class
  *
  * @category Entity
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  *
- * @ORM\Table(name="emag_virement_interne")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\VirementInterneRepository")
+ * @ORM\Table(name="emag_operation_cheque")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationChequeRepository")
  */
-class VirementInterne extends Operation
+class OperationCheque extends Operation
 {
     /**
-     * @var Compte
+     * @var Chequier
      *
-     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="virementCrediteurs")
-     * @ORM\JoinColumn(name="compte_crediteur_id", referencedColumnName="id_compte")
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Chequier", inversedBy="operations")
+     * @ORM\JoinColumn(name="chequier_id", referencedColumnName="id_chequier")
      */
-    private $compteCrediteur;
+    private $chequier;
 
     /**
-     * Set compteCrediteur
+     * Set chequier
      *
-     * @param Compte $compteCrediteur
+     * @param Chequier $chequier
      *
-     * @return VirementInterne
+     * @return OperationCheque
      */
-    public function setCompteCrediteur(Compte $compteCrediteur = null)
+    public function setChequier(Chequier $chequier = null)
     {
-        $this->compteCrediteur = $compteCrediteur;
+        $this->chequier = $chequier;
 
         return $this;
     }
 
     /**
-     * Get compteCrediteur
+     * Get chequier
      *
-     * @return Compte
+     * @return Chequier
      */
-    public function getCompteCrediteur()
+    public function getChequier()
     {
-        return $this->compteCrediteur;
+        return $this->chequier;
     }
 
     /**
@@ -61,7 +61,7 @@ class VirementInterne extends Operation
      *
      * @param \CoreBundle\Entity\ModePaiement $modePaiement
      *
-     * @return VirementInterne
+     * @return OperationCheque
      */
     public function setModePaiement(\CoreBundle\Entity\ModePaiement $modePaiement = null)
     {

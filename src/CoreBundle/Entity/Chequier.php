@@ -65,14 +65,9 @@ class Chequier
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\PaiementOperation")
-     * @ORM\JoinTable(
-     *     name="emag_chequier_operation",
-     *     joinColumns={@ORM\JoinColumn(name="chequier_id", referencedColumnName="id_chequier")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="paiement_operation_id", referencedColumnName="id_paiement_operation")}
-     * )
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\OperationCheque", mappedBy="chequier")
      */
-    private $paiements;
+    private $operations;
 
     /**
      * Get id
@@ -184,40 +179,40 @@ class Chequier
      */
     public function __construct()
     {
-        $this->paiements = new ArrayCollection();
+        $this->operations = new ArrayCollection();
     }
 
     /**
-     * Add paiement
+     * Add operation
      *
-     * @param PaiementOperation $paiement
+     * @param OperationCheque $operation
      *
      * @return Chequier
      */
-    public function addPaiement(PaiementOperation $paiement)
+    public function addOperation(OperationCheque $operation)
     {
-        $this->paiements[] = $paiement;
+        $this->operations[] = $operation;
 
         return $this;
     }
 
     /**
-     * Remove paiement
+     * Remove operation
      *
-     * @param PaiementOperation $paiement
+     * @param OperationCheque $operation
      */
-    public function removePaiement(PaiementOperation $paiement)
+    public function removeOperation(OperationCheque $operation)
     {
-        $this->paiements->removeElement($paiement);
+        $this->operations->removeElement($operation);
     }
 
     /**
-     * Get paiements
+     * Get operations
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPaiements()
+    public function getOperations()
     {
-        return $this->paiements;
+        return $this->operations;
     }
 }
