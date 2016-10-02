@@ -1,0 +1,5 @@
+Bobby:
+    password: test1234
+    email:    bobby@test.fr
+    active:   true
+    roles:    [ROLE_USER]

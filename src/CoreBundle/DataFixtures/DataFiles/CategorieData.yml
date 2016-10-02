@@ -1,0 +1,19 @@
+Bobby:
+    Revenus:
+        couleur: bleu
+        enfants:
+            Salaire Guillaume:
+            Salaire Aurélie:
+            APL:
+                active: false
+            Pôle emploi:
+    Imprévus:
+        couleur: rouge
+        enfants:
+            Cadeaux:
+                enfants:
+                    Copains:
+                    Famille:
+            Coiffeur:
+            Réparations voiture:
+            Amendes:

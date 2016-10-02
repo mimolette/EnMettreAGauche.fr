@@ -8,7 +8,6 @@ use CoreBundle\Enum\ModePaiementEnum;
 use CoreBundle\Enum\TypeCompteEnum;
 use Doctrine\Common\Persistence\ObjectManager;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * TypeCompteData class file
@@ -31,48 +30,6 @@ class TypeCompteData extends AbstractMasterFixtures
     /** @var ModePaiementData */
     private $modePaiementData;
 
-    /** liste des types de compte */
-    const DATA = [
-        [
-            "nom"          => "Compte chèque",
-            "etreNegatif"  => true,
-            "numUnique"    => TypeCompteEnum::COMPTE_CHEQUE,
-            "modePaiement" => [
-                ModePaiementEnum::CARTE_BANCAIRE,
-                ModePaiementEnum::VIREMENT_INTERNE,
-                ModePaiementEnum::VIREMENT_EXTERNE,
-                ModePaiementEnum::CHEQUE,
-            ],
-        ],
-        [
-            "nom"          => "Livret/Compte épargne",
-            "etreNegatif"  => false,
-            "numUnique"    => TypeCompteEnum::LIVRET_COMPTE_EPARGNE,
-            "modePaiement" => [
-                ModePaiementEnum::VIREMENT_INTERNE,
-                ModePaiementEnum::VIREMENT_EXTERNE,
-                ModePaiementEnum::RETRAIT_ESPECE,
-            ],
-        ],
-        [
-            "nom"          => "Ticket/Chèque",
-            "etreNegatif"  => false,
-            "numUnique"    => TypeCompteEnum::TICKET_CHEQUE,
-            "modePaiement" => [
-                ModePaiementEnum::TICKET_RESTAURANT,
-            ],
-        ],
-        [
-            "nom"          => "Porte monnaie",
-            "etreNegatif"  => false,
-            "numUnique"    => TypeCompteEnum::PORTE_MONNAIE,
-            "modePaiement" => [
-                ModePaiementEnum::ESPECES,
-                ModePaiementEnum::RETRAIT_ESPECE,
-            ],
-        ],
-    ];
-
     public function __construct()
     {
         $this->modePaiementData = new ModePaiementData();
@@ -91,17 +48,18 @@ class TypeCompteData extends AbstractMasterFixtures
     /**
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
+     * @param array $typeComptes
      */
-    public function load(ObjectManager $manager)
+    public function loadWithData(ObjectManager $manager, $typeComptes)
     {
         // parcourt les différents mode de paiement
-        foreach (self::DATA as $typeData) {
+        foreach ($typeComptes as $nomType => $typeData) {
             $typeObj = new TypeCompte();
-            $typeObj->setNom($typeData["nom"]);
+            $typeObj->setNom($nomType);
             $typeObj->setEtreNegatif($typeData["etreNegatif"]);
-            $typeObj->setNumeroUnique($typeData["numUnique"]);
+            $typeObj->setNumeroUnique($typeData["id"]);
             // ajout des modes de paiements autorisés
-            foreach ($typeData["modePaiement"] as $mode) {
+            foreach ($typeData["modePaiements"] as $mode) {
                 // recherche de la réference
                 /** @var ModePaiement $modeObj */
                 $modeObj = $this->getReferenceWithId($this->modePaiementData, $mode);
@@ -109,7 +67,7 @@ class TypeCompteData extends AbstractMasterFixtures
             }
 
             // référence par le numéro unique
-            $this->makeReferenceWithId($typeData["numUnique"], $typeObj);
+            $this->makeReferenceWithId($typeData["id"], $typeObj);
             // persistance du type de paiement
             $manager->persist($typeObj);
             $manager->flush();

@@ -2,6 +2,14 @@
 
 namespace CoreBundle\Enum;
 
+use CoreBundle\Entity\AutreCompte;
+use CoreBundle\Entity\Compte;
+use CoreBundle\Entity\CompteCheque;
+use CoreBundle\Entity\CompteTicket;
+use CoreBundle\Entity\PorteMonnaie;
+use MasterBundle\Enum\ExceptionCodeEnum;
+use MasterBundle\Exception\EmagException;
+
 /**
  * TypeCompteEnum class file
  *
@@ -10,12 +18,6 @@ namespace CoreBundle\Enum;
  * @category Enumeration
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-use CoreBundle\Entity\AutreCompte;
-use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteCheque;
-use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\PorteMonnaie;
-use CoreBundle\Exception\EmagException;
 
 /**
  * TypeCompteEnum class

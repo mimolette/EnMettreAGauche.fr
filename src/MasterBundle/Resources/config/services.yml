@@ -1,4 +1,6 @@
 services:
-#    master.example:
-#        class: MasterBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+    emag.master.files:
+        class:  MasterBundle\Service\Files\FilesService
+        lazy:   true
+        shared: true
+        arguments: ['%kernel.root_dir%']

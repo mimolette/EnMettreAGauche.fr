@@ -8,7 +8,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use EmagUserBundle\DataFixtures\ORM\EmagUserData;
 use EmagUserBundle\Entity\EmagUser;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * CategorieData class file
@@ -34,57 +33,6 @@ class CategorieData extends AbstractMasterFixtures
     /** @var EmagUserData */
     private $userData;
 
-    /** liste des categories */
-    const DATA = [
-        "Bobby" => [
-            [
-                "nom" => "Revenus",
-                "couleur" => "bleu",
-                "enfants" => [
-                    [
-                        "nom" => "Salaire Guillaume",
-                    ],
-                    [
-                        "nom" => "Salaire Aurélie",
-                    ],
-                    [
-                        "active" => false,
-                        "nom" => "APL",
-                    ],
-                    [
-                        "nom" => "Pôle emploi",
-                    ],
-                ]
-            ],
-            [
-                "nom" => "Imprévus",
-                "couleur" => "rouge",
-                "enfants" => [
-                    [
-                        "nom" => "Cadeaux",
-                        "enfants" => [
-                            [
-                                "nom" => "Copains",
-                            ],
-                            [
-                                "nom" => "Famille",
-                            ],
-                        ],
-                    ],
-                    [
-                        "nom" => "Coiffeur",
-                    ],
-                    [
-                        "nom" => "Réparations voiture",
-                    ],
-                    [
-                        "nom" => "Amendes",
-                    ],
-                ]
-            ],
-        ]
-    ];
-
     /**
      * CategorieData constructor.
      */
@@ -105,11 +53,12 @@ class CategorieData extends AbstractMasterFixtures
     /**
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
+     * @param array $users
      */
-    public function load(ObjectManager $manager)
+    public function loadWithData(ObjectManager $manager, $users)
     {
         // parcourt les différents utilisateurs
-        foreach (self::DATA as $userId => $categories) {
+        foreach ($users as $userId => $categories) {
             // recherche de la référence de l'utilisateur
             /** @var EmagUser $userObj */
             $userObj = $this->getReferenceWithId(
@@ -118,20 +67,20 @@ class CategorieData extends AbstractMasterFixtures
             );
 
             // parcourt des différentes niveaux de catégories de l'utilisateur
-            foreach ($categories as $categorieParent) {
+            foreach ($categories as $catName => $catData) {
                 $categorieParentObj =  new Categorie();
-                if (isset($categorieParent["active"])) {
+                if (isset($catData["active"])) {
                     $categorieParentObj->setActive(false);
                 } else {
                     $categorieParentObj->setActive(true);
                 }
-                $categorieParentObj->setNom($categorieParent["nom"]);
+                $categorieParentObj->setNom($catName);
 
                 // recherche de la référence de la couleur
                 /** @var Couleur $couleurObj */
                 $couleurObj = $this->getReferenceWithId(
                     $this->couleurData,
-                    $categorieParent["couleur"]
+                    $catData["couleur"]
                 );
                 $categorieParentObj->setCouleur($couleurObj);
 
@@ -139,13 +88,13 @@ class CategorieData extends AbstractMasterFixtures
                 $userObj->addCategory($categorieParentObj);
 
                 // création d'un identidiant unique
-                $unique = $userId.'-'.$categorieParent["nom"];
+                $unique = $userId.'-'.$catName;
 
                 // parcourt des niveau d'enfant
-                if (isset($categorieParent["enfants"])) {
+                if (isset($catData["enfants"])) {
                     $this->handleChildCategories(
                         $manager,
-                        $categorieParent["enfants"],
+                        $catData["enfants"],
                         $couleurObj,
                         $unique,
                         $categorieParentObj
@@ -186,27 +135,27 @@ class CategorieData extends AbstractMasterFixtures
         $userId,
         Categorie $categorieMaster
     ) {
-        foreach ($categories as $catParent) {
+        foreach ($categories as $catParentName => $catData) {
             $categorieObj =  new Categorie();
-            if (isset($catParent["active"])) {
+            if (isset($catData["active"])) {
                 $categorieObj->setActive(false);
             } else {
                 $categorieObj->setActive(true);
             }
-            $categorieObj->setNom($catParent["nom"]);
+            $categorieObj->setNom($catParentName);
             $categorieObj->setCouleur($couleur);
 
             // ajout de l'enfant à son parent
             $categorieMaster->addEnfant($categorieObj);
 
             // création d'un identidiant unique
-            $unique = $userId.'-'.$catParent["nom"];
+            $unique = $userId.'-'.$catParentName;
 
-            // parcourt des niveau d'enfant
-            if (isset($categorieParent["enfants"])) {
+            // parcourt des niveaux d'enfant
+            if (isset($catData["enfants"])) {
                 $this->handleChildCategories(
                     $manager,
-                    $categorieParent["enfants"],
+                    $catData["enfants"],
                     $couleur,
                     $unique,
                     $categorieObj

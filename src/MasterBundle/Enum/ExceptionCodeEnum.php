@@ -1,6 +1,6 @@
 <?php
 
-namespace CoreBundle\Enum;
+namespace MasterBundle\Enum;
 
 /**
  * ExceptionCodeEnum class file
@@ -27,4 +27,10 @@ final class ExceptionCodeEnum
 
     /** erreurs métiers */
     const PAS_VALEUR_ATTENDUE = 3001;
+
+    /** erreurs serveur */
+    const FICHIER_INTROUVABLE = 4001;
+    const DOSSIER_INTROUVABLE = 4002;
+    const ACCES_SERVICE_ERREUR = 4011;
+    const ACCES_FICHIER_ERREUR = 4021;
 }

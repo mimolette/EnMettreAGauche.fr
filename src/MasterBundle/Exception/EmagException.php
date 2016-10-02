@@ -1,6 +1,6 @@
 <?php
 
-namespace CoreBundle\Exception;
+namespace MasterBundle\Exception;
 
 /**
  * EmagException class file

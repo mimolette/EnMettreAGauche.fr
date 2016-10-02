@@ -3,6 +3,7 @@
 namespace EmagUserBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use FOS\UserBundle\Model\UserManager;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,32 +23,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @category Fixtures
  * @author   Guillaume ORAIN <g.orain@sdvi.fr>
  */
-class EmagUserData extends AbstractMasterFixtures implements ContainerAwareInterface
+class EmagUserData extends AbstractMasterFixtures
 {
-    /** liste des utilisateurs */
-    const DATA = [
-        [
-            "username" => "Bobby",
-            "password" => "test1234",
-            "email"    => "bobby@test.fr",
-            "active"   => true,
-            "roles"    => [
-                "ROLE_USER",
-            ]
-        ],
-    ];
-
-    /** @var  ContainerInterface */
-    private $container;
-
-    /**
-     * @param ContainerInterface|null $container
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
     /**
      * @return null|array of AbstractMasterFixtures
      */
@@ -59,16 +36,18 @@ class EmagUserData extends AbstractMasterFixtures implements ContainerAwareInter
     /**
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
+     * @param array         $users
      */
-    public function load(ObjectManager $manager)
+    public function loadWithData(ObjectManager $manager , $users)
     {
         // get FOSUserBundle Service
-        $userService = $this->container->get('fos_user.user_manager');
+        /** @var UserManager $userService */
+        $userService = $this->get('fos_user.user_manager');
 
         // parcourt des données utilisateurs
-        foreach (self::DATA as $userData) {
+        foreach ($users as $username => $userData) {
             $userObj = $userService->createUser();
-            $userObj->setUsername($userData["username"]);
+            $userObj->setUsername($username);
             $userObj->setPlainPassword($userData["password"]);
             $userObj->setEmail($userData["email"]);
             $userObj->setEnabled($userData["active"]);
@@ -78,16 +57,14 @@ class EmagUserData extends AbstractMasterFixtures implements ContainerAwareInter
             }
 
             // référence de l'entité par le pseudo de l'utilisateur
-            $this->makeReferenceWithId($userData["username"], $userObj);
+            $this->makeReferenceWithId($username, $userObj);
             // persistance de l'entité
             $manager->persist($userObj);
             $manager->flush();
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getUniqueId()
     {
         return "emag-emaguser";

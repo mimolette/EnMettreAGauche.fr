@@ -3,10 +3,8 @@
 namespace CoreBundle\DataFixtures\ORM;
 
 use CoreBundle\Entity\ModePaiement;
-use CoreBundle\Enum\ModePaiementEnum;
 use Doctrine\Common\Persistence\ObjectManager;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * ModePaiementData class file
@@ -25,45 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
  */
 class ModePaiementData extends AbstractMasterFixtures
 {
-    /** liste des modes de paiement */
-    const DATA = [
-        [
-            "nom"         => "Carte bancaire",
-            "etreNegatif" => true,
-            "numUnique"   => ModePaiementEnum::CARTE_BANCAIRE,
-        ],
-        [
-            "nom"         => "Espèces",
-            "etreNegatif" => false,
-            "numUnique"   => ModePaiementEnum::ESPECES,
-        ],
-        [
-            "nom"         => "Chèque",
-            "etreNegatif" => false,
-            "numUnique"   => ModePaiementEnum::CHEQUE,
-        ],
-        [
-            "nom"         => "Ticket restaurant",
-            "etreNegatif" => false,
-            "numUnique"   => ModePaiementEnum::TICKET_RESTAURANT,
-        ],
-        [
-            "nom"         => "Virement externe",
-            "etreNegatif" => true,
-            "numUnique"   => ModePaiementEnum::VIREMENT_EXTERNE,
-        ],
-        [
-            "nom"         => "Virement interne",
-            "etreNegatif" => true,
-            "numUnique"   => ModePaiementEnum::VIREMENT_INTERNE,
-        ],
-        [
-            "nom"         => "Retrait espèces",
-            "etreNegatif" => false,
-            "numUnique"   => ModePaiementEnum::RETRAIT_ESPECE,
-        ],
-    ];
-
     /**
      * @return null|array of AbstractMasterFixtures
      */
@@ -75,18 +34,19 @@ class ModePaiementData extends AbstractMasterFixtures
     /**
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
+     * @param array $modePaiements
      */
-    public function load(ObjectManager $manager)
+    public function loadWithData(ObjectManager $manager, $modePaiements)
     {
         // parcourt les différents mode de paiement
-        foreach (self::DATA as $modeData) {
+        foreach ($modePaiements as $nomType => $data) {
             $modeObj = new ModePaiement();
-            $modeObj->setNom($modeData["nom"]);
-            $modeObj->setEtreNegatif($modeData["etreNegatif"]);
-            $modeObj->setNumeroUnique($modeData["numUnique"]);
+            $modeObj->setNom($nomType);
+            $modeObj->setEtreNegatif($data["etreNegatif"]);
+            $modeObj->setNumeroUnique($data["id"]);
 
             // référence par le numéro unique
-            $this->makeReferenceWithId($modeData["numUnique"], $modeObj);
+            $this->makeReferenceWithId($data["id"], $modeObj);
             // persistance du mode de paiement
             $manager->persist($modeObj);
             $manager->flush();

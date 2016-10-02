@@ -119,7 +119,7 @@ class CompteData extends AbstractMasterFixtures
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function loadWithData(ObjectManager $manager, $data)
     {
         // parcourt les différents types de compte
         foreach (self::DATA as $typeCompteNum => $comptes) {

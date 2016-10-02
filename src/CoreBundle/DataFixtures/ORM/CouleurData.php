@@ -5,7 +5,6 @@ namespace CoreBundle\DataFixtures\ORM;
 use CoreBundle\Entity\Couleur;
 use Doctrine\Common\Persistence\ObjectManager;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * CouleurData class file
@@ -24,49 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
  */
 class CouleurData extends AbstractMasterFixtures
 {
-    /** liste des couleurs */
-    const DATA = [
-        [
-            "nom"      => "rose",
-            "codeHexa" => "#f9aaee",
-        ],
-        [
-            "nom"      => "jaune",
-            "codeHexa" => "#edf992",
-        ],
-        [
-            "nom"      => "vert",
-            "codeHexa" => "#b4fdb7",
-        ],
-        [
-            "nom"      => "bleu",
-            "codeHexa" => "#b4f9fd",
-        ],
-        [
-            "nom"      => "bleu foncé",
-            "codeHexa" => "#b4b6fd",
-        ],
-        [
-            "nom"      => "rouge",
-            "codeHexa" => "#fba0a0",
-        ],
-        [
-            "nom"      => "violet",
-            "codeHexa" => "#dda0fb",
-        ],
-        [
-            "nom"      => "orange",
-            "codeHexa" => "#ffc78b",
-        ],
-        [
-            "nom"      => "maron",
-            "codeHexa" => "#c57a4d",
-        ],
-        [
-            "nom"      => "gris",
-            "codeHexa" => "#dcdcdc",
-        ],
-    ];
 
     /**
      * @return null|array of AbstractMasterFixtures
@@ -79,16 +35,17 @@ class CouleurData extends AbstractMasterFixtures
     /**
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
+     * @param array $couleurs
      */
-    public function load(ObjectManager $manager)
+    public function loadWithData(ObjectManager $manager, $couleurs)
     {
         // parcourt les différents mode de paiement
-        foreach (self::DATA as $couleurData) {
+        foreach ($couleurs["couleurs"] as $couleurData) {
             $couleurObj = new Couleur();
-            $couleurObj->setCodeHexa($couleurData["codeHexa"]);
+            $couleurObj->setCodeHexa($couleurData[1]);
 
             // référence par le nom unique
-            $this->makeReferenceWithId($couleurData["nom"], $couleurObj);
+            $this->makeReferenceWithId($couleurData[0], $couleurObj);
             // persistance de la couleur
             $manager->persist($couleurObj);
             $manager->flush();

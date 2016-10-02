@@ -1,0 +1,21 @@
+Carte bancaire:
+    id: 1
+    etreNegatif: true
+Espèces:
+    id: 2
+    etreNegatif: false
+Chèque:
+    id: 3
+    etreNegatif: false
+Ticket restaurant:
+    id: 4
+    etreNegatif: false
+Virement externe:
+    id: 5
+    etreNegatif: true
+Virement interne:
+    id: 6
+    etreNegatif: false
+Retrait espèces:
+    id: 7
+    etreNegatif: false
