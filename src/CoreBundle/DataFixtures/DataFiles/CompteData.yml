@@ -1,0 +1,36 @@
+# CoreBundle\Enum\TypeCompteEnum
+# 1 : livret compte epargne
+# 2 : porte monnaie
+# 3 : compte cheque
+# 4 : ticket cheque
+
+Bobby:
+    Compte Commun:
+        id: compte-commun-bobby
+        solde: 205.45
+        numero: 2786114455000
+        couleur: rouge
+        active: true
+        type: 3
+    CEL:
+        id: cel-bobby
+        solde: 105.20
+        numero: 8889888562300
+        couleur: bleu
+        active: true
+        type: 1
+    Ticket restaurant Guillaume:
+        id: t-resto-guillaume-bobby
+        montantTicket: 8.50
+        nbTickets: 19
+        numero: null
+        couleur: gris
+        active: true
+        type: 4
+    Porte monnaie:
+        id: porte-monnaie-bobby
+        solde: 13.50
+        numero: null
+        couleur: orange
+        active: true
+        type: 2

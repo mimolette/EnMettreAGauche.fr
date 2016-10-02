@@ -6,6 +6,7 @@
 # 5 : virement externe
 # 6 : virement interne
 # 7 : retrait espece
+# 8 : prélèvement
 
 # CoreBundle\Enum\TypeCompteEnum
 # 1 : livret compte epargne
@@ -24,7 +25,7 @@ Porte monnaie:
 Compte chèque:
     id: 3
     etreNegatif: true
-    modePaiements: [1, 3, 5, 6]
+    modePaiements: [1, 3, 5, 6, 8]
 Ticket/Chèque:
     id: 4
     etreNegatif: false

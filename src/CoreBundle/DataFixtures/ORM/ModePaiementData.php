@@ -43,6 +43,7 @@ class ModePaiementData extends AbstractMasterFixtures
             $modeObj = new ModePaiement();
             $modeObj->setNom($nomType);
             $modeObj->setEtreNegatif($data["etreNegatif"]);
+            $modeObj->setEtrePositif($data["etrePositif"]);
             $modeObj->setNumeroUnique($data["id"]);
 
             // référence par le numéro unique

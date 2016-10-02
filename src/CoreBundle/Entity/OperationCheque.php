@@ -55,28 +55,4 @@ class OperationCheque extends Operation
     {
         return $this->chequier;
     }
-
-    /**
-     * Set modePaiement
-     *
-     * @param \CoreBundle\Entity\ModePaiement $modePaiement
-     *
-     * @return OperationCheque
-     */
-    public function setModePaiement(\CoreBundle\Entity\ModePaiement $modePaiement = null)
-    {
-        $this->modePaiement = $modePaiement;
-
-        return $this;
-    }
-
-    /**
-     * Get modePaiement
-     *
-     * @return \CoreBundle\Entity\ModePaiement
-     */
-    public function getModePaiement()
-    {
-        return $this->modePaiement;
-    }
 }

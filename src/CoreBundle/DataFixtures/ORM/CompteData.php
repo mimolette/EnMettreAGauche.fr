@@ -11,7 +11,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use EmagUserBundle\DataFixtures\ORM\EmagUserData;
 use EmagUserBundle\Entity\EmagUser;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * CompteData class file
@@ -40,59 +39,6 @@ class CompteData extends AbstractMasterFixtures
     /** @var EmagUserData */
     private $userData;
 
-    /** liste des comptes */
-    const DATA = [
-        // Les comptes courants
-        TypeCompteEnum::COMPTE_CHEQUE => [
-            [
-                "id"      => "compte-commun-bobby",
-                "nom"     => "Compte Commun",
-                "solde"   => 205.45,
-                "numero"  => "2786114455000",
-                "couleur" => "rouge",
-                "user"    => "Bobby",
-                "active"  => true,
-            ],
-        ],
-        // Les PEL, CEL, livret A, ...
-        TypeCompteEnum::LIVRET_COMPTE_EPARGNE => [
-            [
-                "id"      => "cel-bobby",
-                "nom"     => "CEL",
-                "solde"   => 105.20,
-                "numero"  => "889955624155",
-                "couleur" => "bleu",
-                "user"    => "Bobby",
-                "active"  => true,
-            ],
-        ],
-        // les tickets restaurant ou chèques vacances, ...
-        TypeCompteEnum::TICKET_CHEQUE => [
-            [
-                "id"            => "t-resto-guillaume-bobby",
-                "nom"           => "Ticket restaurant Guillaume",
-                "nbTickets"     => 19,
-                "montantTicket" => 8.50,
-                "numero"        => null,
-                "couleur"       => "gris",
-                "user"          => "Bobby",
-                "active"        => true,
-            ],
-        ],
-        // les portes monnaies
-        TypeCompteEnum::PORTE_MONNAIE => [
-            [
-                "id"      => "porte-monnaie-bobby",
-                "nom"     => "Porte-monnaie",
-                "solde"   => 13.50,
-                "numero"  => null,
-                "couleur" => "orange",
-                "user"    => "Bobby",
-                "active"  => true,
-            ],
-        ],
-    ];
-
     /**
      * CompteData constructor.
      */
@@ -118,24 +64,30 @@ class CompteData extends AbstractMasterFixtures
     /**
      * Charge les fixtures avec l'Entity Manager
      * @param ObjectManager $manager
+     * @param array $users
+     * @throws \MasterBundle\Exception\EmagException
      */
-    public function loadWithData(ObjectManager $manager, $data)
+    public function loadWithData(ObjectManager $manager, $users)
     {
-        // parcourt les différents types de compte
-        foreach (self::DATA as $typeCompteNum => $comptes) {
-            // recherche de la référence du type de compte
-            /** @var TypeCompte $typeCompteObj */
-            $typeCompteObj = $this->getReferenceWithId(
-                $this->typeCompteData,
-                $typeCompteNum
-            );
+        // parcourt les différents utilisateurs
+        foreach ($users as $userId => $comptes) {
+            // recherche de la référence de l'utilisateur
+            /** @var EmagUser $userObj */
+            $userObj = $this->getReferenceWithId($this->userData, $userId);
 
             // parcourt des différents comptes
-            foreach ($comptes as $compteData) {
-                // création d'un Compte en fonction du type
-                $compteObj = TypeCompteEnum::createNewCompte($typeCompteNum);
+            foreach ($comptes as $compteNom => $compteData) {
+                // recherche de la référence du type de compte
+                /** @var TypeCompte $typeCompteObj */
+                $typeCompteObj = $this->getReferenceWithId(
+                    $this->typeCompteData,
+                    $compteData["type"]
+                );
 
-                $compteObj->setNom($compteData["nom"]);
+                // création d'un Compte en fonction du type
+                $compteObj = TypeCompteEnum::createNewCompte($compteData["type"]);
+
+                $compteObj->setNom($compteNom);
                 $compteObj->setNumero($compteData["numero"]);
                 $compteObj->setActive($compteData["active"]);
                 $compteObj->setType($typeCompteObj);
@@ -148,14 +100,6 @@ class CompteData extends AbstractMasterFixtures
                 );
                 $compteObj->setCouleur($couleurObj);
 
-                // recherche de la référence de l'utilisateur
-                /** @var EmagUser $userObj */
-                $userObj = $this->getReferenceWithId(
-                    $this->userData,
-                    $compteData["user"]
-                );
-                $userObj->addCompte($compteObj);
-
                 // si le compte possèdent un solde
                 if ($compteObj instanceof CompteSolde) {
                     $compteObj->setSolde($compteData["solde"]);
@@ -167,16 +111,20 @@ class CompteData extends AbstractMasterFixtures
                     $compteObj->setMontantTicket($compteData["montantTicket"]);
                 }
 
+                // ajout du compte à l'utilisateur
+                $userObj->addCompte($compteObj);
+
                 // référence par le numéro unique
                 $this->makeReferenceWithId($compteData["id"], $compteObj);
-                // persistance du compte de paiement
+
+                // persistance du compte
                 $manager->persist($compteObj);
                 $manager->flush();
-
-                // persistance de l'utilisateur
-                $manager->persist($userObj);
-                $manager->flush();
             }
+
+            // persistance de l'utilisateur
+            $manager->persist($userObj);
+            $manager->flush();
         }
     }
 

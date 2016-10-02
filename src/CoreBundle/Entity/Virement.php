@@ -5,7 +5,7 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * OperationEspeces class file
+ * Virement class file
  *
  * PHP Version 5.6
  *
@@ -14,15 +14,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 
 /**
- * OperationEspeces class
+ * Virement class
  *
  * @category Entity
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  *
- * @ORM\Table(name="emag_operation_especes")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationEspecesRepository")
+ * @ORM\Table(name="emag_virement_externe")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\VirementRepository")
  */
-class OperationEspeces extends Operation
+class Virement extends Operation
 {
     
 }

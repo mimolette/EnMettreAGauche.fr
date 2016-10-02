@@ -48,6 +48,13 @@ class ModePaiement
     private $etreNegatif;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="etre_positif", type="boolean")
+     */
+    private $etrePositif;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="numero_unique", type="integer", unique=true)
@@ -135,5 +142,21 @@ class ModePaiement
     public function getNumeroUnique()
     {
         return $this->numeroUnique;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEtrePositif()
+    {
+        return $this->etrePositif;
+    }
+
+    /**
+     * @param boolean $etrePositif
+     */
+    public function setEtrePositif($etrePositif)
+    {
+        $this->etrePositif = $etrePositif;
     }
 }

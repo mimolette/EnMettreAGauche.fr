@@ -39,28 +39,28 @@ abstract class Compte
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=255, nullable=true)
      */
-    private $nom;
+    protected $nom;
 
     /**
      * @var string
      *
      * @ORM\Column(name="numero", type="string", length=255, nullable=true)
      */
-    private $numero;
+    protected $numero;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="active", type="boolean")
      */
-    private $active;
+    protected $active;
 
     /**
      * @var TypeCompte
@@ -68,7 +68,7 @@ abstract class Compte
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\TypeCompte")
      * @ORM\JoinColumn(name="type_compte_id", referencedColumnName="id_type_compte")
      */
-    private $type;
+    protected $type;
 
     /**
      * @var Couleur
@@ -76,21 +76,21 @@ abstract class Compte
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Couleur")
      * @ORM\JoinColumn(name="couleur_id", referencedColumnName="id_couleur")
      */
-    private $couleur;
+    protected $couleur;
 
     /**
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Operation", mappedBy="compte")
      */
-    private $operations;
+    protected $operations;
 
     /**
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\VirementInterne", mappedBy="compteCrediteur")
      */
-    private $virementCrediteurs;
+    protected $virementCrediteurs;
 
     /**
      * Compte constructor.

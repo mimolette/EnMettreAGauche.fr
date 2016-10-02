@@ -5,7 +5,7 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * OperationEspeces class file
+ * Prelevement class file
  *
  * PHP Version 5.6
  *
@@ -14,15 +14,16 @@ use Doctrine\ORM\Mapping as ORM;
  */
 
 /**
- * OperationEspeces class
+ * Prelevement class
  *
  * @category Entity
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  *
- * @ORM\Table(name="emag_operation_especes")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationEspecesRepository")
+ * @ORM\Table(name="emag_prelevement")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\PrelevementRepository")
  */
-class OperationEspeces extends Operation
+class Prelevement extends Operation
 {
-    
+
 }
+

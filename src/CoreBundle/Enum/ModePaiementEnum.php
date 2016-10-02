@@ -23,7 +23,8 @@ final class ModePaiementEnum
     const ESPECES = 2;
     const CHEQUE = 3;
     const TICKET_RESTAURANT = 4;
-    const VIREMENT_EXTERNE = 5;
+    const VIREMENT = 5;
     const VIREMENT_INTERNE = 6;
     const RETRAIT_ESPECE = 7;
+    const PRELEVEMENT = 8;
 }

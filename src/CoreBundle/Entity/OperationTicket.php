@@ -78,28 +78,4 @@ class OperationTicket extends Operation
     {
         return $this->date;
     }
-
-    /**
-     * Set modePaiement
-     *
-     * @param \CoreBundle\Entity\ModePaiement $modePaiement
-     *
-     * @return OperationTicket
-     */
-    public function setModePaiement(\CoreBundle\Entity\ModePaiement $modePaiement = null)
-    {
-        $this->modePaiement = $modePaiement;
-
-        return $this;
-    }
-
-    /**
-     * Get modePaiement
-     *
-     * @return \CoreBundle\Entity\ModePaiement
-     */
-    public function getModePaiement()
-    {
-        return $this->modePaiement;
-    }
 }

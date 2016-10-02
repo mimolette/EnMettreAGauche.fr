@@ -28,9 +28,10 @@ use Doctrine\ORM\Mapping as ORM;
  *     {
  *          "virement_interne" = "CoreBundle\Entity\VirementInterne",
  *          "courante" = "CoreBundle\Entity\OperationCourante",
- *          "virement_externe" = "CoreBundle\Entity\VirementExterne",
+ *          "virement" = "CoreBundle\Entity\Virement",
  *          "cheque" = "CoreBundle\Entity\OperationCheque",
  *          "especes" = "CoreBundle\Entity\OperationEspeces",
+ *          "prelevement" = "CoreBundle\Entity\Prelevement",
  *          "ticket" = "CoreBundle\Entity\OperationTicket"
  *      }
  * )

@@ -3,28 +3,40 @@
 # 2 : espèces
 # 3 : cheque
 # 4 : ticket restaurant
-# 5 : virement externe
+# 5 : virement
 # 6 : virement interne
 # 7 : retrait espece
+# 8 : prélèvement
 
 Carte bancaire:
     id: 1
     etreNegatif: true
+    etrePositif: true
 Espèces:
     id: 2
     etreNegatif: false
+    etrePositif: true
 Chèque:
     id: 3
-    etreNegatif: false
+    etreNegatif: true
+    etrePositif: true
 Ticket restaurant:
     id: 4
     etreNegatif: false
-Virement externe:
+    etrePositif: true
+Virement:
     id: 5
     etreNegatif: true
+    etrePositif: true
 Virement interne:
     id: 6
     etreNegatif: false
+    etrePositif: true
 Retrait espèces:
     id: 7
     etreNegatif: false
+    etrePositif: true
+Prélèvement:
+    id: 8
+    etreNegatif: true
+    etrePositif: false
