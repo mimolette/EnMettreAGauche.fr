@@ -33,6 +33,6 @@ class CouleurTest extends \PHPUnit_Framework_TestCase
         $couleur->setCodeHexa(454545);
 
         // assert
-        $this->assertEquals("#454545", $couleur->getCodeHexa());
+        $this->assertNotEquals("#454545", $couleur->getCodeHexa());
     }
 }
