@@ -2,11 +2,13 @@
 
 namespace CoreBundle\DataFixtures\ORM;
 
+use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\CompteSolde;
 use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\Couleur;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
+use CoreBundle\Service\Compte\SoldeUpdater;
 use Doctrine\Common\Persistence\ObjectManager;
 use EmagUserBundle\DataFixtures\ORM\EmagUserData;
 use EmagUserBundle\Entity\EmagUser;
@@ -69,6 +71,10 @@ class CompteData extends AbstractMasterFixtures
      */
     public function loadWithData(ObjectManager $manager, $users)
     {
+        // acces au service de mise a jour des solde de compte
+        /** @var SoldeUpdater $serviceSolde */
+        $serviceSolde = $this->get('emag.core.compte.solde_updater');
+
         // parcourt les différents utilisateurs
         foreach ($users as $userId => $comptes) {
             // recherche de la référence de l'utilisateur
@@ -102,7 +108,15 @@ class CompteData extends AbstractMasterFixtures
 
                 // si le compte possèdent un solde
                 if ($compteObj instanceof CompteSolde) {
-                    $compteObj->setSolde($compteData["solde"]);
+                    // Création de l'ajustement du solde initial
+                    $ajustement = new AjustementSolde();
+                    $ajustement->setSoldeApres($compteData["solde"]);
+
+                    // ajout de l'ajustement au compte
+                    $compteObj->addAjustement($ajustement);
+
+                    // mise à jour du solde grâce au service
+                    $serviceSolde->updateSoldeWithAjustement($compteObj, $ajustement);
                 }
 
                 // si le compte possèdent des tickets
