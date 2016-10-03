@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +42,18 @@ abstract class CompteSolde extends Compte
     protected $solde;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\AjustementSolde", cascade={"persist"})
+     * @ORM\JoinTable(
+     *     name="emag_compte_ajustements",
+     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="ajustement_solde_id", referencedColumnName="id_ajustement_solde")}
+     * )
+     */
+    protected $ajustements;
+
+    /**
      * Set solde
      *
      * @param float $solde
@@ -61,6 +74,45 @@ abstract class CompteSolde extends Compte
      */
     public function getSolde()
     {
-        return $this->solde;
+        // renvoi 0.0 si le solde est null
+        if (null === $this->solde) {
+            return 0.0;
+        } else {
+            return $this->solde;
+        }
+    }
+
+    /**
+     * Add ajustement
+     *
+     * @param AjustementSolde $ajustement
+     *
+     * @return CompteSolde
+     */
+    public function addAjustement(AjustementSolde $ajustement)
+    {
+        $this->ajustements[] = $ajustement;
+
+        return $this;
+    }
+
+    /**
+     * Remove ajustement
+     *
+     * @param AjustementSolde $ajustement
+     */
+    public function removeAjustement(AjustementSolde $ajustement)
+    {
+        $this->ajustements->removeElement($ajustement);
+    }
+
+    /**
+     * Get ajustements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAjustements()
+    {
+        return $this->ajustements;
     }
 }

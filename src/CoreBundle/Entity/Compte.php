@@ -102,6 +102,26 @@ abstract class Compte
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $compteNom = '';
+
+        // renvoi du nom ou du numéro ou les deux
+        if ($this->getNom()) {
+            $compteNom .= $this->getNom();
+            if ($this->getNumero()) {
+                $compteNom .= ' ('.$this->getNumero().')';
+            }
+        } else {
+            $compteNom .= $this->getNumero();
+        }
+
+        return $compteNom;
+    }
+
+    /**
      * Get id
      *
      * @return int

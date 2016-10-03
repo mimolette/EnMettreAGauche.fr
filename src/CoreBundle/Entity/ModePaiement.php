@@ -159,4 +159,14 @@ class ModePaiement
     {
         $this->etrePositif = $etrePositif;
     }
+
+    /**
+     * Get etrePositif
+     *
+     * @return boolean
+     */
+    public function getEtrePositif()
+    {
+        return $this->etrePositif;
+    }
 }

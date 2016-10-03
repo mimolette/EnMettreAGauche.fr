@@ -70,4 +70,38 @@ class CompteCheque extends CompteSolde
     {
         return $this->chequiers;
     }
+
+    /**
+     * Add ajustement
+     *
+     * @param \CoreBundle\Entity\AjustementSolde $ajustement
+     *
+     * @return CompteCheque
+     */
+    public function addAjustement(\CoreBundle\Entity\AjustementSolde $ajustement)
+    {
+        $this->ajustements[] = $ajustement;
+
+        return $this;
+    }
+
+    /**
+     * Remove ajustement
+     *
+     * @param \CoreBundle\Entity\AjustementSolde $ajustement
+     */
+    public function removeAjustement(\CoreBundle\Entity\AjustementSolde $ajustement)
+    {
+        $this->ajustements->removeElement($ajustement);
+    }
+
+    /**
+     * Get ajustements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAjustements()
+    {
+        return $this->ajustements;
+    }
 }

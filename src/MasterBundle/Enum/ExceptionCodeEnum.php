@@ -27,6 +27,7 @@ final class ExceptionCodeEnum
 
     /** erreurs métiers */
     const PAS_VALEUR_ATTENDUE = 3001;
+    const VALEURS_INCOHERENTES = 3002;
 
     /** erreurs serveur */
     const FICHIER_INTROUVABLE = 4001;
