@@ -3,6 +3,8 @@
 namespace CoreBundle\DataFixtures\ORM;
 
 use CoreBundle\Entity\AjustementSolde;
+use CoreBundle\Entity\Chequier;
+use CoreBundle\Entity\CompteCheque;
 use CoreBundle\Entity\CompteSolde;
 use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\Couleur;
@@ -41,6 +43,9 @@ class CompteData extends AbstractMasterFixtures
     /** @var EmagUserData */
     private $userData;
 
+    /** @var ChequierData */
+    private $chequierData;
+
     /**
      * CompteData constructor.
      */
@@ -49,6 +54,7 @@ class CompteData extends AbstractMasterFixtures
         $this->couleurData = new CouleurData();
         $this->typeCompteData = new TypeCompteData();
         $this->userData = new EmagUserData();
+        $this->chequierData = new ChequierData();
     }
 
     /**
@@ -60,6 +66,7 @@ class CompteData extends AbstractMasterFixtures
             $this->couleurData,
             $this->typeCompteData,
             $this->userData,
+            $this->chequierData,
         ];
     }
 
@@ -117,6 +124,25 @@ class CompteData extends AbstractMasterFixtures
 
                     // mise à jour du solde grâce au service
                     $serviceSolde->updateSoldeWithAjustement($compteObj, $ajustement);
+                }
+
+                // si le compte est de type CompteCheque
+                if ($compteObj instanceof  CompteCheque) {
+                    // si le compte possèdent des chèques
+                    /** @var array $chequierIds */
+                    if (isset($compteData["chequiers"])) {
+                        // parcourt des différents chequiers
+                        foreach ($compteData["chequiers"] as $chequierId) {
+                            /** @var Chequier $chequier */
+                            $chequier = $this->getReferenceWithId(
+                                $this->chequierData,
+                                $chequierId
+                            );
+
+                            // ajout du chequier au compte
+                            $compteObj->addChequier($chequier);
+                        }
+                    }
                 }
 
                 // si le compte possèdent des tickets

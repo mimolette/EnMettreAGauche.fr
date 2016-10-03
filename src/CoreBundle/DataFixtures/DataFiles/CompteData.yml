@@ -12,6 +12,7 @@ Bobby:
         couleur: rouge
         active: true
         type: 3
+        chequiers: [compte-commun-bobby-1, compte-commun-bobby-2]
     CEL:
         id: cel-bobby
         solde: 105.20

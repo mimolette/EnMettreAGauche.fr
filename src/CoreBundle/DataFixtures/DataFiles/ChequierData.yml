@@ -1,0 +1,10 @@
+compte-commun-bobby-1:
+    nom: null
+    numero: 5566323654
+    nbCheques: 26
+    active: true
+compte-commun-bobby-2:
+    nom: null
+    numero: 5566323633
+    nbCheques: 4
+    active: false
