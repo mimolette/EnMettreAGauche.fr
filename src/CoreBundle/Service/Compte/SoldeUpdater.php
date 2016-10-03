@@ -27,6 +27,7 @@ class SoldeUpdater
     /**
      * @param CompteSolde     $compte
      * @param AjustementSolde $ajustement
+     * @throws EmagException
      */
     public function updateSoldeWithAjustement(
         CompteSolde $compte,
@@ -55,18 +56,8 @@ class SoldeUpdater
             );
         }
 
-        // si le nouveau solde est négatif
-        if ($nouveauSolde < 0) {
-            // test si le type de compte autorise cette valeur de solde
-            $etreNegatif = $compte->getType()->getEtreNegatif();
-            if (!$etreNegatif) {
-                throw new EmagException(
-                    "Impossible d'effectuer l'ajustement du compte ::$compte, le nouveau solde ne peut pas être négatif.",
-                    ExceptionCodeEnum::VALEURS_INCOHERENTES,
-                    __METHOD__
-                );
-            }
-        }
+        // test si le nouveau solde est négatif et si le type de compte l'autorise
+        $this->isNouveauSoldeNegatif($nouveauSolde, $compte);
 
         // ajustement du nouveau solde
         $compte->setSolde($nouveauSolde);
@@ -80,6 +71,53 @@ class SoldeUpdater
         CompteSolde $compte,
         Operation $operation
     ) {
+        // récupération du solde actuel du compte
+        $soldeAvant = $compte->getSolde();
+        // récupération du montant de l'opération
+        $montant = $operation->getMontant();
 
+        // calcul du nouveau solde théorique pour effectuer des vérifications
+        $soldeTheorique = $this->ajoutDuMontant($soldeAvant, $montant);
+
+        // test si le nouveau solde est négatif et si le type de compte l'autorise
+        $this->isNouveauSoldeNegatif($soldeTheorique, $compte);
+
+        // ajustement du nouveau solde
+        $compte->setSolde($soldeTheorique);
+    }
+
+    /**
+     * @param float $ancien
+     * @param float $montantAjout
+     * @return float
+     */
+    private function ajoutDuMontant($ancien, $montantAjout)
+    {
+        // vérifiaction du type de variables
+        $ancien = (float) $ancien;
+        $montantAjout = (float) $montantAjout;
+
+        // ajout du montant à l'ancien solde
+        return $ancien + $montantAjout;
+    }
+
+    /**
+     * @param float       $nouveauSolde
+     * @param CompteSolde $compte
+     */
+    private function isNouveauSoldeNegatif($nouveauSolde, $compte)
+    {
+        // si le nouveau solde est négatif
+        if ($nouveauSolde < 0) {
+            // test si le type de compte autorise cette valeur de solde
+            $etreNegatif = $compte->getType()->getEtreNegatif();
+            if (!$etreNegatif) {
+                throw new EmagException(
+                    "Impossible d'effectuer l'ajustement du compte ::$compte, le nouveau solde ne peut pas être négatif.",
+                    ExceptionCodeEnum::VALEURS_INCOHERENTES,
+                    __METHOD__
+                );
+            }
+        }
     }
 }

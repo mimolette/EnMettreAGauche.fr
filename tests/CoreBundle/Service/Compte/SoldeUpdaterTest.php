@@ -4,6 +4,7 @@ namespace CoreBundle\Tests\Service\Compte;
 
 use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\CompteCheque;
+use CoreBundle\Entity\OperationCourante;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\Compte\SoldeUpdater;
 use MasterBundle\Enum\ExceptionCodeEnum;
@@ -118,5 +119,88 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         $service->updateSoldeWithAjustement($compte, $ajustement);
 
         $this->assertEquals(15.95, $compte->getSolde());
+    }
+
+    /**
+     * @depends testVideService
+     * @param SoldeUpdater $service
+     */
+    public function testFailUpdateSoldeWithOperationTypeCompte(SoldeUpdater $service)
+    {
+        // On s'attends à la levé d'un expection avec le code d'erreur correspondant
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
+
+        // création d'un compte
+        $compte = new CompteCheque();
+        // affectation d'un type de compte sans possibilité d'être négatif
+        $typeCompte =  new TypeCompte();
+        $typeCompte->setEtreNegatif(false);
+
+        $compte->setType($typeCompte);
+        $compte->setSolde(256.23);
+
+        // création d'une nouvelle opération
+        $operation = new OperationCourante();
+        $operation->setMontant(-325.50);
+        $service->updateSoldeWithOperation($compte, $operation);
+    }
+
+    /**
+     * @depends testVideService
+     * @dataProvider  operationsProvider
+     * @param float        $soldeInitial
+     * @param array        $montants
+     * @param float        $valeurAttendue
+     * @param SoldeUpdater $service
+     */
+    public function testUpdateSoldeWithOperation(
+        $soldeInitial,
+        $montants,
+        $valeurAttendue,
+        SoldeUpdater $service
+    ) {
+        // création d'un compte
+        $compte = new CompteCheque();
+        // affectation d'un type de compte sans possibilité d'être négatif
+        $typeCompte =  new TypeCompte();
+        $typeCompte->setEtreNegatif(true);
+
+        $compte->setType($typeCompte);
+        $compte->setSolde($soldeInitial);
+
+        //parcourt des différents montants d'opération
+        foreach ($montants as $montant) {
+            // création d'une nouvelle opération
+            $operation = new OperationCourante();
+            $operation->setMontant($montant);
+            $service->updateSoldeWithOperation($compte, $operation);
+        }
+
+        $this->assertEquals($valeurAttendue, $compte->getSolde());
+    }
+
+    /**
+     * @return array
+     */
+    public function operationsProvider()
+    {
+        return [
+            [
+                15.36,
+                [26.0, -25.5, 45.36, 152.18],
+                213.4,
+            ],
+            [
+                -95.2,
+                [25.36, 1.5, -58.12, -99.99],
+                -226.45,
+            ],
+            [
+                1526.5,
+                [14.28, -256.99, -1230.45, 98.56, 105.23, 100.0, -56.21],
+                300.92,
+            ],
+        ];
     }
 }
