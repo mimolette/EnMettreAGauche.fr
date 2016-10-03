@@ -1,0 +1,32 @@
+# CoreBundle\Enum\ModePaiementEnum
+# 1 : carte bancaire
+# 2 : espèces
+# 3 : cheque
+# 4 : ticket restaurant
+# 5 : virement
+# 6 : virement interne
+# 7 : retrait espece
+# 8 : prélèvement
+
+1:
+    compte-commun-bobby:
+        1:
+            montant: -52.62
+            date: 2016-07-19
+            libelle: Couches Charlotte
+            categories: [Bobby-Imprévus-Enfants]
+2:
+    porte-monnaie-bobby:
+3:
+    compte-commun-bobby:
+4:
+    t-resto-guillaume-bobby:
+5:
+    compte-commun-bobby:
+6:
+    cel-bobby:
+    compte-commun-bobby:
+7:
+    porte-monnaie-bobby:
+8:
+    compte-commun-bobby:
