@@ -172,6 +172,8 @@ abstract class Operation
     public function setCompte(Compte $compte = null)
     {
         $this->compte = $compte;
+        // réciprocité
+        $compte->addOperation($this);
 
         return $this;
     }

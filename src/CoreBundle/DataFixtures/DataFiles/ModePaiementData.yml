@@ -22,8 +22,8 @@ Chèque:
     etrePositif: true
 Ticket restaurant:
     id: 4
-    etreNegatif: false
-    etrePositif: true
+    etreNegatif: true
+    etrePositif: false
 Virement:
     id: 5
     etreNegatif: true

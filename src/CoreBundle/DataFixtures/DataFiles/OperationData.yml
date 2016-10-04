@@ -12,21 +12,73 @@
     compte-commun-bobby:
         1:
             montant: -52.62
-            date: 2016-07-19
+            date: "2016-07-19"
             libelle: Couches Charlotte
-            categories: [Bobby-Imprévus-Enfants]
+            categories: [Bobby-Imprévus-Amendes]
+        2:
+            montant: -15.20
+            date: "2016-07-21"
+            libelle: Mc Do avec les copains
+            categories: [Bobby-Imprévus-Cadeaux, Bobby-Imprévus-Cadeaux-Copains]
+        3:
+            montant: -145.90
+            date: "2016-07-13"
+            libelle: Achat vélo Charlotte
+            categories: [Bobby-Imprévus-Cadeaux-Famille]
 2:
     porte-monnaie-bobby:
+        1:
+            montant: -2.50
+            date: "2016-07-05"
+            libelle: Achat baguette
+            categories: [Bobby-Imprévus-Réparations voiture]
 3:
     compte-commun-bobby:
+        1:
+            montant: 50.0
+            date: "2016-07-08"
+            libelle: Sous pour Charlotte
+            categories: [Bobby-Imprévus-Cadeaux-Famille]
 4:
     t-resto-guillaume-bobby:
+        1:
+            nbTickets: 3
+            date: "2016-07-09"
+            libelle: Pizza
+            categories: [Bobby-Imprévus-Coiffeur]
 5:
     compte-commun-bobby:
+        1:
+            montant: 1185.63
+            date: "2016-07-02"
+            libelle:
+            categories: [Bobby-Revenus-Salaire Guillaume]
 6:
     cel-bobby:
+        1:
+            compteCrediteur: compte-commun-bobby
+            montant: 200.0
+            date: "2016-07-04"
+            libelle: Mise de coté
+            categories: [Bobby-Revenus-Economies]
     compte-commun-bobby:
+        1:
+            compteCrediteur: compte-commun-bobby
+            montant: 150.0
+            date: "2016-07-11"
+            libelle: Achat vélo Charlotte
+            categories: [Bobby-Imprévus-Cadeaux-Famille]
 7:
     porte-monnaie-bobby:
+        1:
+            montant: 20.0
+            date: "2016-07-03"
+            libelle:
+            categories: [Bobby-Imprévus-Retrait]
 8:
     compte-commun-bobby:
+        1:
+            montant: -145.23
+            date: "2016-07-05"
+            libelle: Remboursement voiture
+            categories: [Bobby-Imprévus-Réparations voiture]

@@ -2,6 +2,12 @@
 
 namespace CoreBundle\Service\Compte;
 
+use CoreBundle\Entity\AjustementSolde;
+use CoreBundle\Entity\CompteSolde;
+use CoreBundle\Entity\Operation;
+use MasterBundle\Enum\ExceptionCodeEnum;
+use MasterBundle\Exception\EmagException;
+
 /**
  * SoldeUpdater class file
  *
@@ -10,12 +16,6 @@ namespace CoreBundle\Service\Compte;
  * @category Service
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-use CoreBundle\Entity\AjustementSolde;
-use CoreBundle\Entity\CompteSolde;
-use CoreBundle\Entity\Operation;
-use MasterBundle\Enum\ExceptionCodeEnum;
-use MasterBundle\Exception\EmagException;
-
 /**
  * SoldeUpdater class
  *
@@ -84,6 +84,9 @@ class SoldeUpdater
 
         // ajustement du nouveau solde
         $compte->setSolde($soldeTheorique);
+
+        // affectation de l'opération au compte
+        $operation->setCompte($compte);
     }
 
     /**

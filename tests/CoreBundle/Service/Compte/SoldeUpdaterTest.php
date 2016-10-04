@@ -162,7 +162,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
     ) {
         // création d'un compte
         $compte = new CompteCheque();
-        // affectation d'un type de compte sans possibilité d'être négatif
+        // affectation d'un type de compte
         $typeCompte =  new TypeCompte();
         $typeCompte->setEtreNegatif(true);
 
@@ -202,5 +202,34 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
                 300.92,
             ],
         ];
+    }
+
+    /**
+     * @depends testVideService
+     * @param SoldeUpdater $service
+     */
+    public function testUpdateSoldeWithOperationRelationFinale(
+        SoldeUpdater $service
+    ) {
+        // création d'un compte
+        $compte = new CompteCheque();
+        // affectation d'un type de compte
+        $typeCompte =  new TypeCompte();
+        $typeCompte->setEtreNegatif(true);
+
+        $compte->setType($typeCompte);
+        $compte->setSolde(45.20);
+
+        // création d'un opération
+        $operation = new OperationCourante();
+        $operation->setMontant(-10.63);
+        $service->updateSoldeWithOperation($compte, $operation);
+
+        // test si le compte de l'opération est bien $compte
+        $this->assertEquals($compte, $operation->getCompte());
+
+        // test si le compte possèdent bien $operation parmi ses opérations
+        $possedeOperation = $compte->getOperations()->contains($operation);
+        $this->assertTrue($possedeOperation);
     }
 }

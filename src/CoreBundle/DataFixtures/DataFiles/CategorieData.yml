@@ -2,6 +2,7 @@ Bobby:
     Revenus:
         couleur: bleu
         enfants:
+            Economies:
             Salaire Guillaume:
             Salaire Aurélie:
             APL:
@@ -17,3 +18,4 @@ Bobby:
             Coiffeur:
             Réparations voiture:
             Amendes:
+            Retrait:

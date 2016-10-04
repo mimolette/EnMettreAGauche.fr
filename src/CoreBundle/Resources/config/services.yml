@@ -3,3 +3,7 @@ services:
         class:  CoreBundle\Service\Compte\SoldeUpdater
         lazy:   true
         sharde: true
+    emag.core.compte.ticket_updater:
+        class:  CoreBundle\Service\Compte\TicketUpdater
+        lazy:   true
+        sharde: true
