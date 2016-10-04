@@ -39,17 +39,17 @@ final class ModePaiementEnum
     const PRELEVEMENT = 8;
 
     /**
-     * @param int $typeOperation
+     * @param int $modePaiement
      * @return Operation
      * @throws EmagException
      */
-    static function createNewOperation($typeOperation)
+    static function createNewOperation($modePaiement)
     {
-        // vérification $typeOperation est un entier
-        $typeOperation = (int) $typeOperation;
+        // vérification $modePaiement est un entier
+        $modePaiement = (int) $modePaiement;
 
         // revoie d'une instance d'Operation en fonction du numéro type
-        switch ($typeOperation) {
+        switch ($modePaiement) {
             case self::VIREMENT_INTERNE:
                 return new VirementInterne();
                 break;
