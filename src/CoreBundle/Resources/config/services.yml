@@ -7,3 +7,8 @@ services:
         class:  CoreBundle\Service\Compte\TicketUpdater
         lazy:   true
         sharde: true
+    emag.core.compte.ticket_renouvellement:
+        class:  CoreBundle\Service\Compte\TicketRenouvellement
+        lazy:   true
+        shared: true
+        arguments: ["@emag.core.compte.ticket_updater"]

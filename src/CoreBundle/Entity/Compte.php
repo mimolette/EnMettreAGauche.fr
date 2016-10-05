@@ -26,11 +26,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\DiscriminatorColumn(name="type_compte", type="string")
  * @ORM\DiscriminatorMap(
  *     {
+ *          "compte" = "CoreBundle\Entity\Compte",
  *          "ticket" = "CoreBundle\Entity\CompteTicket"
  *      }
  * )
  */
-abstract class Compte
+class Compte
 {
     /**
      * @var int
@@ -63,6 +64,13 @@ abstract class Compte
     protected $active;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="solde", type="integer")
+     */
+    private $solde;
+
+    /**
      * @var TypeCompte
      *
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\TypeCompte")
@@ -93,12 +101,38 @@ abstract class Compte
     protected $virementCrediteurs;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\AjustementSolde")
+     * @ORM\JoinTable(
+     *     name="emag_compte_ajustements",
+     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="ajustement_solde_id", referencedColumnName="id_ajustement_solde")}
+     * )
+     */
+    protected $ajustements;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Chequier")
+     * @ORM\JoinTable(
+     *     name="emag_compte_chequier",
+     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="chequier_id", referencedColumnName="id_chequier")}
+     * )
+     */
+    protected $chequiers;
+
+    /**
      * Compte constructor.
      */
     public function __construct()
     {
         $this->operations         = new ArrayCollection();
         $this->virementCrediteurs = new ArrayCollection();
+        $this->ajustements        = new ArrayCollection();
+        $this->chequiers          = new ArrayCollection();
     }
 
     /**
@@ -319,5 +353,97 @@ abstract class Compte
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * Set solde
+     *
+     * @param integer $solde
+     *
+     * @return Compte
+     */
+    public function setSolde($solde)
+    {
+        $this->solde = $solde;
+
+        return $this;
+    }
+
+    /**
+     * Get solde
+     *
+     * @return integer
+     */
+    public function getSolde()
+    {
+        return $this->solde;
+    }
+
+    /**
+     * Add ajustement
+     *
+     * @param AjustementSolde $ajustement
+     *
+     * @return Compte
+     */
+    public function addAjustement(AjustementSolde $ajustement)
+    {
+        $this->ajustements[] = $ajustement;
+
+        return $this;
+    }
+
+    /**
+     * Remove ajustement
+     *
+     * @param AjustementSolde $ajustement
+     */
+    public function removeAjustement(AjustementSolde $ajustement)
+    {
+        $this->ajustements->removeElement($ajustement);
+    }
+
+    /**
+     * Get ajustements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAjustements()
+    {
+        return $this->ajustements;
+    }
+
+    /**
+     * Add chequier
+     *
+     * @param Chequier $chequier
+     *
+     * @return Compte
+     */
+    public function addChequier(Chequier $chequier)
+    {
+        $this->chequiers[] = $chequier;
+
+        return $this;
+    }
+
+    /**
+     * Remove chequier
+     *
+     * @param Chequier $chequier
+     */
+    public function removeChequier(Chequier $chequier)
+    {
+        $this->chequiers->removeElement($chequier);
+    }
+
+    /**
+     * Get chequiers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChequiers()
+    {
+        return $this->chequiers;
     }
 }

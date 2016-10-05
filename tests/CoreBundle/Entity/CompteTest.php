@@ -3,7 +3,6 @@
 namespace CoreBundle\Tests\Entity;
 
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteCheque;
 
 class CompteTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +11,7 @@ class CompteTest extends \PHPUnit_Framework_TestCase
      */
     public function testVideCompte()
     {
-        $compte = new CompteCheque();
+        $compte = new Compte();
         $this->assertNull($compte->getId());
 
         return $compte;
@@ -38,5 +37,19 @@ class CompteTest extends \PHPUnit_Framework_TestCase
         // affectation uniquement d'un numéro, mais pas de nom
         $compte->setNom(null);
         $this->assertEquals('8896652035', $compte);
+    }
+
+    /**
+     * @depends testVideCompte
+     * @param Compte $compte
+     */
+    public function testGetSolde(Compte $compte)
+    {
+        // si aucune valeur assigné au solde
+        $this->assertEquals(0.0, $compte->getSolde());
+
+        // affectation d'un valeur de solde
+        $compte->setSolde(45.56);
+        $this->assertEquals(45.56, $compte->getSolde());
     }
 }

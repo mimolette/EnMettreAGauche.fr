@@ -2,11 +2,8 @@
 
 namespace CoreBundle\Enum;
 
-use CoreBundle\Entity\AutreCompte;
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteCheque;
 use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\PorteMonnaie;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -45,13 +42,13 @@ final class TypeCompteEnum
         // revoie d'une instance de Compte en fonction du numéro type
         switch ($typeCompte) {
             case self::COMPTE_CHEQUE:
-                return new CompteCheque();
+                return new Compte();
                 break;
             case self::LIVRET_COMPTE_EPARGNE:
-                return new AutreCompte();
+                return new Compte();
                 break;
             case self::PORTE_MONNAIE:
-                return new PorteMonnaie();
+                return new Compte();
                 break;
             case self::TICKET_CHEQUE:
                 return new CompteTicket();

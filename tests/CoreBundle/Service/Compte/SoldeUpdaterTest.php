@@ -3,23 +3,23 @@
 namespace CoreBundle\Tests\Service\Compte;
 
 use CoreBundle\Entity\AjustementSolde;
-use CoreBundle\Entity\CompteCheque;
+use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\OperationCourante;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\Compte\SoldeUpdater;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
-class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
+class SoldeUpdaterTest extends AbstractMasterService
 {
     /**
      * @return SoldeUpdater
      */
     public function testVideService()
     {
-        $service = new SoldeUpdater();
+        $this->setUp();
 
-        return $service;
+        return $this->get('emag.core.compte.solde_updater');
     }
 
     /**
@@ -33,7 +33,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
 
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte avec possibilité d'être négatif
         $typeCompteNegatif =  new TypeCompte();
         $typeCompteNegatif->setEtreNegatif(true);
@@ -57,7 +57,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionCode(ExceptionCodeEnum::PAS_VALEUR_ATTENDUE);
 
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte avec possibilité d'être négatif
         $typeCompteNegatif =  new TypeCompte();
         $typeCompteNegatif->setEtreNegatif(true);
@@ -82,7 +82,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
 
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte sans possibilité d'être négatif
         $typeCompte =  new TypeCompte();
         $typeCompte->setEtreNegatif(false);
@@ -104,7 +104,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
     public function testUpdateSoldeWithAjustement(SoldeUpdater $service)
     {
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte avec possibilité d'être négatif
         $typeCompte =  new TypeCompte();
         $typeCompte->setEtreNegatif(true);
@@ -132,7 +132,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
 
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte sans possibilité d'être négatif
         $typeCompte =  new TypeCompte();
         $typeCompte->setEtreNegatif(false);
@@ -161,7 +161,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         SoldeUpdater $service
     ) {
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte
         $typeCompte =  new TypeCompte();
         $typeCompte->setEtreNegatif(true);
@@ -212,7 +212,7 @@ class SoldeUpdaterTest extends \PHPUnit_Framework_TestCase
         SoldeUpdater $service
     ) {
         // création d'un compte
-        $compte = new CompteCheque();
+        $compte = new Compte();
         // affectation d'un type de compte
         $typeCompte =  new TypeCompte();
         $typeCompte->setEtreNegatif(true);

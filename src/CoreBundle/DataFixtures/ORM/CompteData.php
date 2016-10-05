@@ -114,7 +114,7 @@ class CompteData extends AbstractMasterFixtures
                 $compteObj->setCouleur($couleurObj);
 
                 // si le compte possèdent un solde
-                if ($compteObj instanceof CompteSolde) {
+                if (isset($compteData["solde"])) {
                     // Création de l'ajustement du solde initial
                     $ajustement = new AjustementSolde();
                     $ajustement->setSoldeApres($compteData["solde"]);
@@ -127,7 +127,7 @@ class CompteData extends AbstractMasterFixtures
                 }
 
                 // si le compte est de type CompteCheque
-                if ($compteObj instanceof  CompteCheque) {
+                if (isset($compteData["chequiers"])) {
                     // si le compte possèdent des chèques
                     /** @var array $chequierIds */
                     if (isset($compteData["chequiers"])) {

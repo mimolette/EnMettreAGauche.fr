@@ -3,7 +3,7 @@
 namespace CoreBundle\Service\Compte;
 
 use CoreBundle\Entity\AjustementSolde;
-use CoreBundle\Entity\CompteSolde;
+use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\Operation;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
@@ -25,12 +25,12 @@ use MasterBundle\Exception\EmagException;
 class SoldeUpdater
 {
     /**
-     * @param CompteSolde     $compte
+     * @param Compte          $compte
      * @param AjustementSolde $ajustement
      * @throws EmagException
      */
     public function updateSoldeWithAjustement(
-        CompteSolde $compte,
+        Compte $compte,
         AjustementSolde $ajustement
     ) {
         // récupération de solde actuel du compte
@@ -64,11 +64,11 @@ class SoldeUpdater
     }
 
     /**
-     * @param CompteSolde $compte
-     * @param Operation   $operation
+     * @param Compte    $compte
+     * @param Operation $operation
      */
     public function updateSoldeWithOperation(
-        CompteSolde $compte,
+        Compte $compte,
         Operation $operation
     ) {
         // récupération du solde actuel du compte
@@ -105,8 +105,8 @@ class SoldeUpdater
     }
 
     /**
-     * @param float       $nouveauSolde
-     * @param CompteSolde $compte
+     * @param float  $nouveauSolde
+     * @param Compte $compte
      */
     private function isNouveauSoldeNegatif($nouveauSolde, $compte)
     {

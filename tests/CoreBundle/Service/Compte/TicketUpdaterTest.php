@@ -8,16 +8,16 @@ use CoreBundle\Service\Compte\TicketUpdater;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
-class TicketUpdaterTest extends \PHPUnit_Framework_TestCase
+class TicketUpdaterTest extends AbstractMasterService
 {
     /**
      * @return TicketUpdater
      */
     public function testVideService()
     {
-        $service = new TicketUpdater();
+        $this->setUp();
 
-        return $service;
+        return $this->get('emag.core.compte.ticket_updater');
     }
 
     /**

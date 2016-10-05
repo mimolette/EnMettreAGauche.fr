@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +38,27 @@ class CompteTicket extends Compte
      * @ORM\Column(name="montant_ticket", type="float")
      */
     private $montantTicket;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Renouvellement")
+     * @ORM\JoinTable(
+     *     name="emag_ticket_renouvellement",
+     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="renouvellement_id", referencedColumnName="id_renouvellement")}
+     * )
+     */
+    private $renouvellements;
+
+    /**
+     * CompteTicket constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->renouvellements = new ArrayCollection();
+    }
 
     /**
      * Set nbTickets
@@ -84,5 +106,39 @@ class CompteTicket extends Compte
     public function getMontantTicket()
     {
         return $this->montantTicket;
+    }
+
+    /**
+     * Add renouvellement
+     *
+     * @param Renouvellement $renouvellement
+     *
+     * @return CompteTicket
+     */
+    public function addRenouvellement(Renouvellement $renouvellement)
+    {
+        $this->renouvellements[] = $renouvellement;
+
+        return $this;
+    }
+
+    /**
+     * Remove renouvellement
+     *
+     * @param Renouvellement $renouvellement
+     */
+    public function removeRenouvellement(Renouvellement $renouvellement)
+    {
+        $this->renouvellements->removeElement($renouvellement);
+    }
+
+    /**
+     * Get renouvellements
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRenouvellements()
+    {
+        return $this->renouvellements;
     }
 }
