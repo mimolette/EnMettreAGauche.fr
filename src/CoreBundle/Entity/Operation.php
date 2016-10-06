@@ -71,7 +71,7 @@ abstract class Operation
     /**
      * @var Compte
      * 
-     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="operations")
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="operations", cascade={"persist"})
      * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
      */
     protected $compte;
@@ -82,7 +82,8 @@ abstract class Operation
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Categorie", inversedBy="operations")
      * @ORM\JoinTable(name="emag_operation_categorie",
      *     joinColumns={@ORM\JoinColumn(name="operation_id", referencedColumnName="id_operation")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie", unique=true)}
+     *     inverseJoinColumns={@ORM\JoinColumn(name="categorie_id", referencedColumnName="id_categorie")},
+     *
      *  )
      */
     protected $catogories;

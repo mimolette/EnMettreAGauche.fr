@@ -26,6 +26,46 @@ class SoldeUpdaterTest extends AbstractMasterService
      * @depends testVideService
      * @param SoldeUpdater $service
      */
+    public function testFailUpdateSoldeWithAjustementCompteInactif(SoldeUpdater $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // création du compte
+        $compte = new Compte();
+        $compte->setActive(false);
+
+        // création d'un ajustement
+        $ajustement = new AjustementSolde();
+
+        // test de la méthode d'ajustement du solde du compte
+        $service->updateSoldeWithAjustement($compte, $ajustement);
+    }
+
+    /**
+     * @depends testVideService
+     * @param SoldeUpdater $service
+     */
+    public function testFailUpdateSoldeWithOperationCompteInactif(SoldeUpdater $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // création du compte
+        $compte = new Compte();
+        $compte->setActive(false);
+
+        // création d'un operation
+        $operation = new OperationCourante();
+
+        // test de la méthode de mise a jour du solde du compte suite à une opération
+        $service->updateSoldeWithOperation($compte, $operation);
+    }
+
+    /**
+     * @depends testVideService
+     * @param SoldeUpdater $service
+     */
     public function testFailUpdateSoldeWithAjustementMauvaisSoldeAvant(SoldeUpdater $service)
     {
         // On s'attends à la levé d'un expection avec le code d'erreur correspondant
@@ -202,34 +242,5 @@ class SoldeUpdaterTest extends AbstractMasterService
                 300.92,
             ],
         ];
-    }
-
-    /**
-     * @depends testVideService
-     * @param SoldeUpdater $service
-     */
-    public function testUpdateSoldeWithOperationRelationFinale(
-        SoldeUpdater $service
-    ) {
-        // création d'un compte
-        $compte = new Compte();
-        // affectation d'un type de compte
-        $typeCompte =  new TypeCompte();
-        $typeCompte->setEtreNegatif(true);
-
-        $compte->setType($typeCompte);
-        $compte->setSolde(45.20);
-
-        // création d'un opération
-        $operation = new OperationCourante();
-        $operation->setMontant(-10.63);
-        $service->updateSoldeWithOperation($compte, $operation);
-
-        // test si le compte de l'opération est bien $compte
-        $this->assertEquals($compte, $operation->getCompte());
-
-        // test si le compte possèdent bien $operation parmi ses opérations
-        $possedeOperation = $compte->getOperations()->contains($operation);
-        $this->assertTrue($possedeOperation);
     }
 }

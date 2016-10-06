@@ -2,25 +2,16 @@
 
 namespace CoreBundle\DataFixtures\ORM;
 
-use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\Categorie;
-use CoreBundle\Entity\Chequier;
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteCheque;
-use CoreBundle\Entity\CompteSolde;
 use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\Couleur;
 use CoreBundle\Entity\ModePaiement;
-use CoreBundle\Entity\Operation;
 use CoreBundle\Entity\OperationTicket;
-use CoreBundle\Entity\TypeCompte;
+use CoreBundle\Entity\VirementInterne;
 use CoreBundle\Enum\ModePaiementEnum;
-use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\SoldeUpdater;
 use CoreBundle\Service\Compte\TicketUpdater;
 use Doctrine\Common\Persistence\ObjectManager;
-use EmagUserBundle\DataFixtures\ORM\EmagUserData;
-use EmagUserBundle\Entity\EmagUser;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
 
 /**
@@ -107,8 +98,6 @@ class OperationData extends AbstractMasterFixtures
                 // recherche de l'objet Compte grâce à l'id
                 /** @var Compte $compteObj */
                 $compteObj = $this->getReferenceWithId($this->compteData, $compteId);
-                dump($compteObj->getType());
-
 
                 // parcourt des différentes opérations
                 foreach ($operations as $operation) {
@@ -116,6 +105,9 @@ class OperationData extends AbstractMasterFixtures
 
                     // création d'une nouvelle opération en fonction du mode de paiement
                     $opeObj = ModePaiementEnum::createNewOperation($modePaiementEnum);
+
+                    // affectation du compte à l'opération
+                    $opeObj->setCompte($compteObj);
 
                     // attribution de la date
                     $dateObj = new \DateTime($operation["date"]);
@@ -127,39 +119,37 @@ class OperationData extends AbstractMasterFixtures
                     // attribution du mode de paiement
                     $opeObj->setModePaiement($modePaiementObj);
 
-//                    // attribution du montant
-//                    if ($opeObj instanceof OperationTicket) {
-//                        $opeObj->setNbTicket($operation["nbTickets"]);
-//                        // vérification et affectation du compte
-//                        /** @var CompteTicket $compteObj */
-//                        $serviceTicket->updateNbTicket($compteObj, $opeObj);
-//                    } else {
-//                        // toute les autres opérations possédent déja un montant
-//                        $opeObj->setMontant($operation["montant"]);
-//                    }
-//
-//                    // vérification et calcul du nouveau solde du compte
-//                    if ($compteObj instanceof CompteSolde) {
-//                        // vérification et affectation du compte
-//                        /** @var CompteSolde $compteObj */
-//                        $serviceSolde->updateSoldeWithOperation($compteObj, $opeObj);
-//                    }
-//
-//                    // affectation des catégories
-//                    // parcourt des différentes catégories
-//                    foreach ($operation["categories"] as $catId) {
-//                        // recherche de la catégorie par référence
-//                        /** @var Categorie $catObj */
-//                        $catObj = $this->getReferenceWithId($this->categorieData, $catId);
-//
-//                        $opeObj->addCatogory($catObj);
-//                    }
+                    // attribution du montant
+                    if ($opeObj instanceof OperationTicket) {
+                        $opeObj->setNbTicket($operation["nbTickets"]);
+                        // vérification et affectation du compte
+                        /** @var CompteTicket $compteObj */
+                        $serviceTicket->updateNbTicket($compteObj, $opeObj);
+                    } elseif ($opeObj instanceof VirementInterne) {
+                        // TODO: ici utilisation du service
+                    } else {
+                        // toute les autres opérations possédent déja un montant
+                        $opeObj->setMontant($operation["montant"]);
+                        // vérification et calcul du nouveau solde du compte
+                        /** @var Compte $compteObj */
+                        $serviceSolde->updateSoldeWithOperation($compteObj, $opeObj);
+                    }
 
-//                    // persisitance des entités grâce à la cascade
-//                    $manager->persist($opeObj);
+                    // affectation des catégories
+                    // parcourt des différentes catégories
+                    foreach ($operation["categories"] as $catId) {
+                        // recherche de la catégorie par référence
+                        /** @var Categorie $catObj */
+                        $catObj = $this->getReferenceWithId($this->categorieData, $catId);
+
+                        $opeObj->addCatogory($catObj);
+                    }
+
+                    // persisitance des entités grâce à la cascade
+                    $manager->persist($opeObj);
 //                    $manager->persist($compteObj);
 //                    $manager->persist($catObj);
-//                    $manager->flush();
+                    $manager->flush();
                 }
             }
 

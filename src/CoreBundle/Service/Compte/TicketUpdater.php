@@ -31,6 +31,15 @@ class TicketUpdater
      */
     public function updateNbTicket(CompteTicket $compte, OperationTicket $operation)
     {
+        // vérification si le compte est inactif
+        if (!$compte->isActive()) {
+            throw new EmagException(
+                "Impossible d'effectuer cette opération sur le compte ::$compte car celui-ci est inactif",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
         // récupération du nombre de ticket du compte avant
         $nbTicketCompteAvant = (int) $compte->getNbTickets();
 
@@ -48,11 +57,11 @@ class TicketUpdater
                 __METHOD__
             );
         }
+        
+        // affectation du nouveau montant de l'opération
+        $operation->calculMontant($compte->getMontantTicket());
 
         // modification du nombre de ticket du compte
         $compte->setNbTickets($nbTicketTheorique);
-
-        // affectation du compte à l'opération
-        $operation->setCompte($compte);
     }
 }

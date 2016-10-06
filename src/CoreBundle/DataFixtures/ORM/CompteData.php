@@ -8,9 +8,11 @@ use CoreBundle\Entity\CompteCheque;
 use CoreBundle\Entity\CompteSolde;
 use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\Couleur;
+use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\SoldeUpdater;
+use CoreBundle\Service\Compte\TicketRenouvellement;
 use Doctrine\Common\Persistence\ObjectManager;
 use EmagUserBundle\DataFixtures\ORM\EmagUserData;
 use EmagUserBundle\Entity\EmagUser;
@@ -82,6 +84,10 @@ class CompteData extends AbstractMasterFixtures
         /** @var SoldeUpdater $serviceSolde */
         $serviceSolde = $this->get('emag.core.compte.solde_updater');
 
+        // acces au service de renouvellement des ticket de compte
+        /** @var TicketRenouvellement $renouvellementService */
+        $renouvellementService = $this->get('emag.core.compte.ticket_renouvellement');
+
         // parcourt les différents utilisateurs
         foreach ($users as $userId => $comptes) {
             // recherche de la référence de l'utilisateur
@@ -126,7 +132,7 @@ class CompteData extends AbstractMasterFixtures
                     $serviceSolde->updateSoldeWithAjustement($compteObj, $ajustement);
                 }
 
-                // si le compte est de type CompteCheque
+                // si le compte possede des chequiers
                 if (isset($compteData["chequiers"])) {
                     // si le compte possèdent des chèques
                     /** @var array $chequierIds */
@@ -147,8 +153,19 @@ class CompteData extends AbstractMasterFixtures
 
                 // si le compte possèdent des tickets
                 if ($compteObj instanceof CompteTicket) {
-                    $compteObj->setNbTickets($compteData["nbTickets"]);
                     $compteObj->setMontantTicket($compteData["montantTicket"]);
+
+                    // création d'un renouvellement initial
+                    $renouvellement = new Renouvellement();
+                    $renouvellement->setNbTickets($compteData["nbTickets"]);
+                    $now = new \DateTime();
+                    $renouvellement->setDate($now);
+
+                    // ajustement du compte
+                    $renouvellementService->renouvellerCompte($compteObj, $renouvellement);
+
+                    // ajout du renouvellement au compte
+                    $compteObj->addRenouvellement($renouvellement);
                 }
 
                 // ajout du compte à l'utilisateur

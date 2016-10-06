@@ -33,6 +33,15 @@ class SoldeUpdater
         Compte $compte,
         AjustementSolde $ajustement
     ) {
+        // vérification si le compte est inactif
+        if (!$compte->isActive()) {
+            throw new EmagException(
+                "Impossible d'effectuer cette opération sur le compte ::$compte car celui-ci est inactif",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
         // récupération de solde actuel du compte
         $soldeAvant = $compte->getSolde();
         
@@ -71,6 +80,15 @@ class SoldeUpdater
         Compte $compte,
         Operation $operation
     ) {
+        // vérification si le compte est inactif
+        if (!$compte->isActive()) {
+            throw new EmagException(
+                "Impossible d'effectuer cette opération sur le compte ::$compte car celui-ci est inactif",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
         // récupération du solde actuel du compte
         $soldeAvant = $compte->getSolde();
         // récupération du montant de l'opération
@@ -84,9 +102,6 @@ class SoldeUpdater
 
         // ajustement du nouveau solde
         $compte->setSolde($soldeTheorique);
-
-        // affectation de l'opération au compte
-        $operation->setCompte($compte);
     }
 
     /**

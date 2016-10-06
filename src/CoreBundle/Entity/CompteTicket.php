@@ -30,7 +30,7 @@ class CompteTicket extends Compte
      *
      * @ORM\Column(name="nb_tickets", type="integer")
      */
-    private $nbTickets;
+    private $nbTickets = 0;
 
     /**
      * @var float
@@ -42,7 +42,7 @@ class CompteTicket extends Compte
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Renouvellement")
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Renouvellement", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="emag_ticket_renouvellement",
      *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},

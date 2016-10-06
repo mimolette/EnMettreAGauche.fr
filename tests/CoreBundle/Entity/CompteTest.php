@@ -13,6 +13,7 @@ class CompteTest extends \PHPUnit_Framework_TestCase
     {
         $compte = new Compte();
         $this->assertNull($compte->getId());
+        $this->assertTrue($compte->isActive());
 
         return $compte;
     }

@@ -52,7 +52,12 @@ class OperationTicket extends Operation
      */
     public function getNbTicket()
     {
-        return $this->nbTicket;
+        // return 0 si null
+        if (null === $this->nbTicket) {
+            return 0;
+        } else {
+            return $this->nbTicket;
+        }
     }
 
     /**
@@ -77,5 +82,13 @@ class OperationTicket extends Operation
     public function getDate()
     {
         return $this->date;
+    }
+
+    public function calculMontant($montantTicket)
+    {
+        // convertion du montant du ticket
+        $montantTicket = floatval($montantTicket);
+
+        $this->montant = $montantTicket * $this->getNbTicket();
     }
 }

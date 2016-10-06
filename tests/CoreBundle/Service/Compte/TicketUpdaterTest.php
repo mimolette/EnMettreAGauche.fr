@@ -21,6 +21,26 @@ class TicketUpdaterTest extends AbstractMasterService
     }
 
     /**
+     * @depends testVideService
+     * @param TicketUpdater $service
+     */
+    public function testFailUpdateNbTicketCompteInactif(TicketUpdater $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // création du compte
+        $compte = new CompteTicket();
+        $compte->setActive(false);
+
+        // création d'une opération
+        $operation = new OperationTicket();
+
+        // test de la méthode de mise à jour du nombre de ticket
+        $service->updateNbTicket($compte, $operation);
+    }
+
+    /**
      * @param TicketUpdater $service
      * @depends testVideService
      */

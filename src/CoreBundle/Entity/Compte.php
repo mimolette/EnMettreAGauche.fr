@@ -61,12 +61,12 @@ class Compte
      *
      * @ORM\Column(name="active", type="boolean")
      */
-    protected $active;
+    protected $active = true;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="solde", type="integer")
+     * @ORM\Column(name="solde", type="float", nullable=true)
      */
     private $solde;
 
@@ -103,7 +103,7 @@ class Compte
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\AjustementSolde")
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\AjustementSolde", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="emag_compte_ajustements",
      *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
@@ -115,7 +115,7 @@ class Compte
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Chequier")
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Chequier", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="emag_compte_chequier",
      *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
@@ -358,7 +358,7 @@ class Compte
     /**
      * Set solde
      *
-     * @param integer $solde
+     * @param float $solde
      *
      * @return Compte
      */
@@ -372,11 +372,16 @@ class Compte
     /**
      * Get solde
      *
-     * @return integer
+     * @return float
      */
     public function getSolde()
     {
-        return $this->solde;
+        // renvoi 0.0 si le solde est null
+        if (null === $this->solde) {
+            return 0.0;
+        } else {
+            return $this->solde;
+        }
     }
 
     /**
