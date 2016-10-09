@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\OperationEspeces;
+
 /**
  * OperationEspecesTest class file
  *
@@ -19,5 +21,16 @@ namespace CoreBundle\Tests\Entity;
  */
 class OperationEspecesTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return OperationEspeces
+     * @covers OperationEspeces::getId
+     */
+    public function testVideOperationEspeces()
+    {
+        // création d'une nouvelle opération d'espèces
+        $ope = new OperationEspeces;
+        $this->assertNull($ope->getId());
 
+        return $ope;
+    }
 }

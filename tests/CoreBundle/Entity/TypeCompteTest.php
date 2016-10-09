@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\TypeCompte;
+
 /**
  * TypeCompteTest class file
  *
@@ -19,5 +21,16 @@ namespace CoreBundle\Tests\Entity;
  */
 class TypeCompteTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return TypeCompte
+     * @covers TypeCompte::getId
+     */
+    public function testVideTypeCompte()
+    {
+        // création d'un nouveau type de compte
+        $type = new TypeCompte;
+        $this->assertNull($type->getId());
 
+        return $type;
+    }
 }

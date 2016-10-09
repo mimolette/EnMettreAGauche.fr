@@ -3,7 +3,7 @@
 namespace CoreBundle\Service\ModePaiement;
 
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\Operation;
+use CoreBundle\Entity\AbstractOperation;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -24,11 +24,11 @@ use MasterBundle\Exception\EmagException;
 class ModePaiementService
 {
     /**
-     * @param Operation $operation
+     * @param AbstractOperation $operation
      * @param Compte $compte
      * @return bool
      */
-    public function isModePaiementAutorise(Operation $operation, Compte $compte)
+    public function isModePaiementAutorise(AbstractOperation $operation, Compte $compte)
     {
         // récupération du mode paiement de l'opération
         $modePaiementOperation = $operation->getModePaiement();

@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="emag_operation_especes")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationEspecesRepository")
  */
-class OperationEspeces extends Operation
+class OperationEspeces extends AbstractOperation
 {
     
 }

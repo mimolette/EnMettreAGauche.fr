@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="emag_prelevement")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\PrelevementRepository")
  */
-class Prelevement extends Operation
+class Prelevement extends AbstractOperation
 {
 
 }

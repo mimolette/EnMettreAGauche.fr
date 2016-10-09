@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="emag_operation_cheque")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationChequeRepository")
  */
-class OperationCheque extends Operation
+class OperationCheque extends AbstractOperation
 {
     /**
      * @var Chequier

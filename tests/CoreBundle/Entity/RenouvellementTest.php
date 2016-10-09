@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\Renouvellement;
+
 /**
  * RenouvellementTest class file
  *
@@ -19,5 +21,16 @@ namespace CoreBundle\Tests\Entity;
  */
 class RenouvellementTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return Renouvellement
+     * @covers Renouvellement::getId
+     */
+    public function testVideRenouvellement()
+    {
+        // création d'un nouveau renouvellement
+        $renouvellement = new Renouvellement;
+        $this->assertNull($renouvellement->getId());
 
+        return $renouvellement;
+    }
 }

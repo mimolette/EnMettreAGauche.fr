@@ -4,7 +4,7 @@ namespace CoreBundle\Service\Compte;
 
 use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\Operation;
+use CoreBundle\Entity\AbstractOperation;
 use CoreBundle\Entity\TransfertArgent;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\ModePaiement\ModePaiementService;
@@ -123,10 +123,10 @@ class SoldeUpdater
     }
 
     /**
-     * @param Operation $operation
+     * @param AbstractOperation $operation
      * @throws EmagException
      */
-    public function updateSoldeWithOperation(Operation $operation)
+    public function updateSoldeWithOperation(AbstractOperation $operation)
     {
         // acces aux services
         $paiementService = $this->getModePaiementService();

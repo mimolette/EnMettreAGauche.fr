@@ -2,10 +2,10 @@
 
 namespace CoreBundle\Tests\Entity;
 
-use CoreBundle\Entity\OperationCourante;
+use CoreBundle\Entity\OperationCheque;
 
 /**
- * OperationCouranteTest class file
+ * OperationChequeTest class file
  *
  * PHP Version 5.6
  *
@@ -14,21 +14,21 @@ use CoreBundle\Entity\OperationCourante;
  */
 
 /**
- * OperationCouranteTest class
+ * OperationChequeTest class
  *
  * @category Test
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-class OperationCouranteTest extends \PHPUnit_Framework_TestCase
+class OperationChequeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @return OperationCourante
-     * @covers OperationCourante::getId
+     * @return OperationCheque
+     * @covers OperationCheque::getId
      */
-    public function testVideOperationCourante()
+    public function testVideOperationCheque()
     {
         // création d'une nouvelle opération courante
-        $ope = new OperationCourante();
+        $ope = new OperationCheque;
         $this->assertNull($ope->getId());
 
         return $ope;

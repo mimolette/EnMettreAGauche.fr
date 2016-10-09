@@ -2,15 +2,7 @@
 
 namespace CoreBundle\Enum;
 
-/**
- * ModePaiementEnum class file
- *
- * PHP Version 5.6
- *
- * @category Enumeration
- * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
- */
-use CoreBundle\Entity\Operation;
+use CoreBundle\Entity\AbstractOperation;
 use CoreBundle\Entity\OperationCheque;
 use CoreBundle\Entity\OperationCourante;
 use CoreBundle\Entity\OperationEspeces;
@@ -20,6 +12,15 @@ use CoreBundle\Entity\Virement;
 use CoreBundle\Entity\TransfertArgent;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
+
+/**
+ * ModePaiementEnum class file
+ *
+ * PHP Version 5.6
+ *
+ * @category Enumeration
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
 
 /**
  * ModePaiementEnum class
@@ -40,7 +41,7 @@ final class ModePaiementEnum
 
     /**
      * @param int $modePaiement
-     * @return Operation
+     * @return AbstractOperation
      * @throws EmagException
      */
     static function createNewOperation($modePaiement)
@@ -48,7 +49,7 @@ final class ModePaiementEnum
         // vérification $modePaiement est un entier
         $modePaiement = (int) $modePaiement;
 
-        // revoie d'une instance d'Operation en fonction du numéro type
+        // revoie d'une instance d'AbstractOperation en fonction du numéro type
         switch ($modePaiement) {
             case self::TRANSFERT_ARGENT:
                 return new TransfertArgent();

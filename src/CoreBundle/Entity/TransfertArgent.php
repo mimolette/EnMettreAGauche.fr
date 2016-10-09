@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="emag_virement_interne")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\TransfertArgentRepository")
  */
-class TransfertArgent extends Operation
+class TransfertArgent extends AbstractOperation
 {
     /**
      * @var Compte

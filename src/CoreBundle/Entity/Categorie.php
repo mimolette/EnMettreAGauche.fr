@@ -51,7 +51,7 @@ class Categorie
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Operation", mappedBy="categories")
+     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\AbstractOperation", mappedBy="categories")
      */
     private $operations;
 
@@ -147,11 +147,11 @@ class Categorie
     /**
      * Add operation
      *
-     * @param Operation $operation
+     * @param AbstractOperation $operation
      *
      * @return Categorie
      */
-    public function addOperation(Operation $operation)
+    public function addOperation(AbstractOperation $operation)
     {
         $this->operations[] = $operation;
 
@@ -161,9 +161,9 @@ class Categorie
     /**
      * Remove operation
      *
-     * @param Operation $operation
+     * @param AbstractOperation $operation
      */
-    public function removeOperation(Operation $operation)
+    public function removeOperation(AbstractOperation $operation)
     {
         $this->operations->removeElement($operation);
     }

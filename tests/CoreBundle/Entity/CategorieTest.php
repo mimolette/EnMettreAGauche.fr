@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\Categorie;
+
 /**
  * CategorieTest class file
  *
@@ -10,7 +12,6 @@ namespace CoreBundle\Tests\Entity;
  * @category Test
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-use CoreBundle\Entity\Categorie;
 
 /**
  * CategorieTest class

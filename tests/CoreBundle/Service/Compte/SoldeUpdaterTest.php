@@ -5,7 +5,7 @@ namespace CoreBundle\Tests\Service\Compte;
 use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\OperationCourante;
+use CoreBundle\Entity\AbstractOperationCourante;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\SoldeUpdater;
@@ -79,7 +79,7 @@ class SoldeUpdaterTest extends AbstractMasterService
         $compte->setActive(false);
 
         // création d'un operation
-        $operation = new OperationCourante();
+        $operation = new AbstractOperationCourante();
         $operation->setCompte($compte);
 
         // test de la méthode de mise a jour du solde du compte suite à une opération
@@ -116,7 +116,7 @@ class SoldeUpdaterTest extends AbstractMasterService
         $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
 
         // création d'un ajustement
-        $operation = new OperationCourante();
+        $operation = new AbstractOperationCourante();
 
         // test de la méthode de mise à jour d'une solde de compte
         $service->updateSoldeWithOperation($operation);
@@ -287,7 +287,7 @@ class SoldeUpdaterTest extends AbstractMasterService
         $compte->setSolde(256.23);
 
         // création d'une nouvelle opération
-        $operation = new OperationCourante();
+        $operation = new AbstractOperationCourante();
         $operation->setMontant(-325.50);
         $service->updateSoldeWithOperation($operation);
     }
@@ -320,7 +320,7 @@ class SoldeUpdaterTest extends AbstractMasterService
         //parcourt des différents montants d'opération
         foreach ($montants as $montant) {
             // création d'une nouvelle opération
-            $operation = new OperationCourante();
+            $operation = new AbstractOperationCourante();
             $operation->setMontant($montant);
             $service->updateSoldeWithOperation($operation);
         }

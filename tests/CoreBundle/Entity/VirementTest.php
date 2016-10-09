@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\Virement;
+
 /**
  * VirementTest class file
  *
@@ -19,5 +21,16 @@ namespace CoreBundle\Tests\Entity;
  */
 class VirementTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return Virement
+     * @covers Virement::getId
+     */
+    public function testVideVirement()
+    {
+        // création d'une nouvelle opération courante
+        $ope = new Virement;
+        $this->assertNull($ope->getId());
 
+        return $ope;
+    }
 }

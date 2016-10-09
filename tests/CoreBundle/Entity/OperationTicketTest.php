@@ -22,20 +22,24 @@ use CoreBundle\Entity\OperationTicket;
 class OperationTicketTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @covers OperationTicket::getId
      * @return OperationTicket
      */
     public function testVideOperationTicket()
     {
         $operation = new OperationTicket();
         $this->assertNull($operation->getId());
-        $this->assertEquals(0, $operation->getNbTicket());
 
         return $operation;
     }
 
     /**
+     * @uses vérifie que la fonction calculMontant effectue le bon calcul.
+     *               Le montant de l'opération doit être mise à jour en conséquence
      * @depends testVideOperationTicket
      * @param OperationTicket $operation
+     * @covers OperationTicket::calculMontant
+     * @covers OperationTicket::getMontant
      */
     public function testCalculMontant(OperationTicket $operation)
     {

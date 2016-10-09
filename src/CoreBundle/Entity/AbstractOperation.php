@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Operation class file
+ * AbstractOperation class file
  *
  * PHP Version 5.6
  *
@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 
 /**
- * Operation class
+ * AbstractOperation class
  *
  * @category Entity
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
@@ -36,7 +36,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-abstract class Operation
+abstract class AbstractOperation
 {
     /**
      * @var int
@@ -97,7 +97,7 @@ abstract class Operation
     protected $modePaiement;
 
     /**
-     * Operation constructor.
+     * AbstractOperation constructor.
      */
     public function __construct()
     {
@@ -120,7 +120,7 @@ abstract class Operation
      *
      * @param float $montant
      *
-     * @return Operation
+     * @return AbstractOperation
      */
     public function setMontant($montant)
     {
@@ -144,7 +144,7 @@ abstract class Operation
      *
      * @param string $libelle
      *
-     * @return Operation
+     * @return AbstractOperation
      */
     public function setLibelle($libelle)
     {
@@ -168,7 +168,7 @@ abstract class Operation
      *
      * @param Compte $compte
      *
-     * @return Operation
+     * @return AbstractOperation
      */
     public function setCompte(Compte $compte = null)
     {
@@ -194,7 +194,7 @@ abstract class Operation
      *
      * @param Categorie $catogory
      *
-     * @return Operation
+     * @return AbstractOperation
      */
     public function addCatogory(Categorie $catogory)
     {
@@ -240,7 +240,7 @@ abstract class Operation
      *
      * @param \DateTime $date
      *
-     * @return Operation
+     * @return AbstractOperation
      */
     public function setDate($date)
     {
@@ -264,7 +264,7 @@ abstract class Operation
      *
      * @param ModePaiement $modePaiement
      *
-     * @return Operation
+     * @return AbstractOperation
      */
     public function setModePaiement(ModePaiement $modePaiement = null)
     {

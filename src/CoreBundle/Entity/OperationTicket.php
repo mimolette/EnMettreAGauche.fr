@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="emag_operation_ticket")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\OperationTicketRepository")
  */
-class OperationTicket extends Operation
+class OperationTicket extends AbstractOperation
 {
     /**
      * @var int
@@ -52,12 +52,7 @@ class OperationTicket extends Operation
      */
     public function getNbTicket()
     {
-        // return 0 si null
-        if (null === $this->nbTicket) {
-            return 0;
-        } else {
-            return $this->nbTicket;
-        }
+        return $this->nbTicket;
     }
 
     /**
@@ -84,6 +79,9 @@ class OperationTicket extends Operation
         return $this->date;
     }
 
+    /**
+     * @param float $montantTicket
+     */
     public function calculMontant($montantTicket)
     {
         // convertion du montant du ticket

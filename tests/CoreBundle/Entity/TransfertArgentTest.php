@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\TransfertArgent;
+
 /**
  * TransfertArgentTest class file
  *
@@ -19,5 +21,16 @@ namespace CoreBundle\Tests\Entity;
  */
 class TransfertArgentTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return TransfertArgent
+     * @covers TransfertArgent::getId
+     */
+    public function testVideTransfertArgent()
+    {
+        // création d'un nouveau transfert d'argent
+        $ope = new TransfertArgent;
+        $this->assertNull($ope->getId());
 
+        return $ope;
+    }
 }

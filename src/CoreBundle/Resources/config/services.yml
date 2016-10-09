@@ -1,6 +1,6 @@
 services:
     emag.core.operation.tranfert_argent:
-        class:  CoreBundle\Service\Operation\TransfertArgentService
+        class:  CoreBundle\Service\AbstractOperation\TransfertArgentService
         lazy:   true
         shared: true
 

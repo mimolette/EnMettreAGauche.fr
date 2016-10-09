@@ -89,7 +89,7 @@ class Compte
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Operation", mappedBy="compte")
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\AbstractOperation", mappedBy="compte")
      */
     protected $operations;
 
@@ -263,11 +263,11 @@ class Compte
     /**
      * Add operation
      *
-     * @param Operation $operation
+     * @param AbstractOperation $operation
      *
      * @return Compte
      */
-    public function addOperation(Operation $operation)
+    public function addOperation(AbstractOperation $operation)
     {
         $this->operations[] = $operation;
 
@@ -277,9 +277,9 @@ class Compte
     /**
      * Remove operation
      *
-     * @param Operation $operation
+     * @param AbstractOperation $operation
      */
-    public function removeOperation(Operation $operation)
+    public function removeOperation(AbstractOperation $operation)
     {
         $this->operations->removeElement($operation);
     }

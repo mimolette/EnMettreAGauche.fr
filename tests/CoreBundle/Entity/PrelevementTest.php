@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Tests\Entity;
 
+use CoreBundle\Entity\Prelevement;
+
 /**
  * PrelevementTest class file
  *
@@ -19,5 +21,16 @@ namespace CoreBundle\Tests\Entity;
  */
 class PrelevementTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return Prelevement
+     * @covers Prelevement::getId
+     */
+    public function testVidePrelevement()
+    {
+        // création d'un nouveau prélèvement
+        $prelevement = new Prelevement;
+        $this->assertNull($prelevement->getId());
 
+        return $prelevement;
+    }
 }
