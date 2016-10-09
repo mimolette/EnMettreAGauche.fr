@@ -7,7 +7,7 @@ use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Entity\OperationTicket;
-use CoreBundle\Entity\VirementInterne;
+use CoreBundle\Entity\TransfertArgent;
 use CoreBundle\Enum\ModePaiementEnum;
 use CoreBundle\Service\Compte\SoldeUpdater;
 use CoreBundle\Service\Compte\TicketUpdater;
@@ -93,7 +93,7 @@ class OperationData extends AbstractMasterFixtures
                 $modePaiementEnum
             );
 
-            // parcourt des différentes comptes
+            // parcourt des différents comptes
             foreach ($comptes as $compteId => $operations) {
                 // recherche de l'objet Compte grâce à l'id
                 /** @var Compte $compteObj */
@@ -101,8 +101,6 @@ class OperationData extends AbstractMasterFixtures
 
                 // parcourt des différentes opérations
                 foreach ($operations as $operation) {
-                    // TODO : vérifier si ce type d'opération est autorisé pour ce compte
-
                     // création d'une nouvelle opération en fonction du mode de paiement
                     $opeObj = ModePaiementEnum::createNewOperation($modePaiementEnum);
 
@@ -124,15 +122,19 @@ class OperationData extends AbstractMasterFixtures
                         $opeObj->setNbTicket($operation["nbTickets"]);
                         // vérification et affectation du compte
                         /** @var CompteTicket $compteObj */
-                        $serviceTicket->updateNbTicket($compteObj, $opeObj);
-                    } elseif ($opeObj instanceof VirementInterne) {
-                        // TODO: ici utilisation du service
+                        $serviceTicket->updateNbTicket($opeObj);
+                    } elseif ($opeObj instanceof TransfertArgent) {
+                        // recherche du compte créditeur
+                        /** @var Compte $compteCrediteur */
+                        $compteCrediteur = $this->getReferenceWithId($this->compteData, $operation["compteCrediteur"]);
+                        $opeObj->setCompteCrediteur($compteCrediteur);
+                        // vérification et calcul du nouveau solde du compte
+                        $serviceSolde->updateSoldeWithOperation($opeObj);
                     } else {
                         // toute les autres opérations possédent déja un montant
                         $opeObj->setMontant($operation["montant"]);
                         // vérification et calcul du nouveau solde du compte
-                        /** @var Compte $compteObj */
-                        $serviceSolde->updateSoldeWithOperation($compteObj, $opeObj);
+                        $serviceSolde->updateSoldeWithOperation($opeObj);
                     }
 
                     // affectation des catégories

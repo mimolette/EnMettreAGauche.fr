@@ -1,14 +1,30 @@
 services:
-    emag.core.compte.solde_updater:
-        class:  CoreBundle\Service\Compte\SoldeUpdater
+    emag.core.operation.tranfert_argent:
+        class:  CoreBundle\Service\Operation\TransfertArgentService
+        lazy:   true
+        shared: true
+
+    emag.core.mode_paiement:
+        class:  CoreBundle\Service\ModePaiement\ModePaiementService
         lazy:   true
         sharde: true
+
     emag.core.compte.ticket_updater:
         class:  CoreBundle\Service\Compte\TicketUpdater
         lazy:   true
         sharde: true
+        arguments:
+            - "@emag.core.mode_paiement"
+            - "@emag.core.operation.tranfert_argent"
+
     emag.core.compte.ticket_renouvellement:
         class:  CoreBundle\Service\Compte\TicketRenouvellement
         lazy:   true
         shared: true
         arguments: ["@emag.core.compte.ticket_updater"]
+
+    emag.core.compte.solde_updater:
+        class:  CoreBundle\Service\Compte\SoldeUpdater
+        lazy:   true
+        sharde: true
+        arguments: ["@emag.core.mode_paiement"]

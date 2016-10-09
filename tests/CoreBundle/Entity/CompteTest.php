@@ -4,10 +4,27 @@ namespace CoreBundle\Tests\Entity;
 
 use CoreBundle\Entity\Compte;
 
+/**
+ * CompteTest class file
+ *
+ * PHP Version 5.6
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
+
+/**
+ * CompteTest class
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
 class CompteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return Compte
+     * @covers Compte::getId
+     * @covers Compte::isActive
      */
     public function testVideCompte()
     {
@@ -19,8 +36,11 @@ class CompteTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @uses vérifie si l'affichage d'un compte sous forme de chaine de caractères renvoi bien son nom
+     *               et son numéro ou bien seulement l'un des deux
      * @depends testVideCompte
      * @param Compte $compte
+     * @covers Compte::__toString
      */
     public function testToString(Compte $compte)
     {
@@ -41,13 +61,16 @@ class CompteTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @uses vérifie si le solde du compte renvoi bien 0.0 lorsque celui-ci n'as pas été initialisé
      * @depends testVideCompte
      * @param Compte $compte
+     * @covers Compte::getSolde
      */
     public function testGetSolde(Compte $compte)
     {
         // si aucune valeur assigné au solde
         $this->assertEquals(0.0, $compte->getSolde());
+        $this->assertNotNull($compte->getSolde());
 
         // affectation d'un valeur de solde
         $compte->setSolde(45.56);

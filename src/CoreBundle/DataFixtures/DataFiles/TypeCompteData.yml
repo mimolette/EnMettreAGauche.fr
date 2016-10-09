@@ -3,8 +3,8 @@
 # 2 : espèces
 # 3 : cheque
 # 4 : ticket restaurant
-# 5 : virement externe
-# 6 : virement interne
+# 5 : virement
+# 6 : transfert argent
 # 7 : retrait espece
 # 8 : prélèvement
 
@@ -21,7 +21,7 @@ Livret/Compte épargne:
 Porte monnaie:
     id: 2
     etreNegatif: false
-    modePaiements: [2, 7]
+    modePaiements: [2, 6, 7]
 Compte chèque:
     id: 3
     etreNegatif: true

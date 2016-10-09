@@ -7,7 +7,23 @@ use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Service\Compte\TicketRenouvellement;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
+use MasterBundle\Test\AbstractMasterService;
 
+/**
+ * TicketRenouvellementTest class file
+ *
+ * PHP Version 5.6
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
+
+/**
+ * TicketRenouvellementTest class
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
 class TicketRenouvellementTest extends AbstractMasterService
 {
     /**

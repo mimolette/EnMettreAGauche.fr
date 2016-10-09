@@ -4,26 +4,47 @@ namespace CoreBundle\Tests\Entity;
 
 use CoreBundle\Entity\Chequier;
 
+/**
+ * ChequierTest class file
+ *
+ * PHP Version 5.6
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
+
+/**
+ * ChequierTest class
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
 class ChequierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return Chequier
+     * @covers Chequier::isActive
+     * @covers Chequier::getId
      */
     public function testVideChequier()
     {
         $chequier = new Chequier();
         $this->assertNull($chequier->getId());
+        $this->assertTrue($chequier->isActive());
 
         return $chequier;
     }
 
     /**
+     * @uses vérifie si l'affichage d'un chequier sous forme de chaine de caractère renvoi son nom
+     *               et son numéro, ou l'un des deux.
      * @depends testVideChequier
      * @param Chequier $chequier
+     * @covers Chequier::__toString
      */
     public function testToString(Chequier $chequier)
     {
-        // si aucune valeur assigné au nom ou numéro
+        // si aucune valeur assignée au nom ou numéro
         $this->assertEquals('', $chequier);
 
         // affectation d'un nom mais pas de numéro

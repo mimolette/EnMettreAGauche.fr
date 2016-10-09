@@ -42,11 +42,10 @@ class CompteTicket extends Compte
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\Renouvellement", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="emag_ticket_renouvellement",
-     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="renouvellement_id", referencedColumnName="id_renouvellement")}
+     * @ORM\OneToMany(
+     *     targetEntity="CoreBundle\Entity\Renouvellement",
+     *     mappedBy="compte",
+     *     cascade={"persist"}
      * )
      */
     private $renouvellements;

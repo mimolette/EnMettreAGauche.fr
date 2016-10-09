@@ -96,18 +96,17 @@ class Compte
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\VirementInterne", mappedBy="compteCrediteur")
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\TransfertArgent", mappedBy="compteCrediteur")
      */
     protected $virementCrediteurs;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\AjustementSolde", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="emag_compte_ajustements",
-     *     joinColumns={@ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="ajustement_solde_id", referencedColumnName="id_ajustement_solde")}
+     * @ORM\OneToMany(
+     *     targetEntity="CoreBundle\Entity\AjustementSolde",
+     *     mappedBy="compte",
+     *     cascade={"persist"}
      * )
      */
     protected $ajustements;
@@ -298,11 +297,11 @@ class Compte
     /**
      * Add virementCrediteur
      *
-     * @param VirementInterne $virementCrediteur
+     * @param TransfertArgent $virementCrediteur
      *
      * @return Compte
      */
-    public function addVirementCrediteur(VirementInterne $virementCrediteur)
+    public function addVirementCrediteur(TransfertArgent $virementCrediteur)
     {
         $this->virementCrediteurs[] = $virementCrediteur;
 
@@ -312,9 +311,9 @@ class Compte
     /**
      * Remove virementCrediteur
      *
-     * @param VirementInterne $virementCrediteur
+     * @param TransfertArgent $virementCrediteur
      */
-    public function removeVirementCrediteur(VirementInterne $virementCrediteur)
+    public function removeVirementCrediteur(TransfertArgent $virementCrediteur)
     {
         $this->virementCrediteurs->removeElement($virementCrediteur);
     }

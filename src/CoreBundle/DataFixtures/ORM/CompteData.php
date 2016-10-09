@@ -127,9 +127,10 @@ class CompteData extends AbstractMasterFixtures
 
                     // ajout de l'ajustement au compte
                     $compteObj->addAjustement($ajustement);
+                    $ajustement->setCompte($compteObj);
 
                     // mise à jour du solde grâce au service
-                    $serviceSolde->updateSoldeWithAjustement($compteObj, $ajustement);
+                    $serviceSolde->updateSoldeWithAjustement($ajustement);
                 }
 
                 // si le compte possede des chequiers
@@ -160,9 +161,10 @@ class CompteData extends AbstractMasterFixtures
                     $renouvellement->setNbTickets($compteData["nbTickets"]);
                     $now = new \DateTime();
                     $renouvellement->setDate($now);
+                    $renouvellement->setCompte($compteObj);
 
                     // ajustement du compte
-                    $renouvellementService->renouvellerCompte($compteObj, $renouvellement);
+                    $renouvellementService->renouvellerCompte($renouvellement);
 
                     // ajout du renouvellement au compte
                     $compteObj->addRenouvellement($renouvellement);

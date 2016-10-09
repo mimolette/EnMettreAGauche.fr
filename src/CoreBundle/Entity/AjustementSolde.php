@@ -55,6 +55,14 @@ class AjustementSolde
     private $date;
 
     /**
+     * @var Compte
+     *
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="ajustements")
+     * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
+     */
+    private $compte;
+
+    /**
      * AjustementSolde constructor.
      */
     public function __construct()
@@ -149,5 +157,29 @@ class AjustementSolde
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set compte
+     *
+     * @param Compte $compte
+     *
+     * @return AjustementSolde
+     */
+    public function setCompte(Compte $compte = null)
+    {
+        $this->compte = $compte;
+
+        return $this;
+    }
+
+    /**
+     * Get compte
+     *
+     * @return Compte
+     */
+    public function getCompte()
+    {
+        return $this->compte;
     }
 }

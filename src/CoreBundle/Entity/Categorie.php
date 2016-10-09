@@ -46,7 +46,7 @@ class Categorie
      *
      * @ORM\Column(name="active", type="boolean")
      */
-    private $active;
+    private $active = true;
 
     /**
      * @var ArrayCollection
@@ -128,6 +128,8 @@ class Categorie
     public function setActive($active)
     {
         $this->active = $active;
+        // propafation aux enfants
+        $this->propageActiveAuxEnfants();
 
         return $this;
     }
@@ -137,7 +139,7 @@ class Categorie
      *
      * @return bool
      */
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }
@@ -186,6 +188,8 @@ class Categorie
     public function setCouleur(Couleur $couleur = null)
     {
         $this->couleur = $couleur;
+        // propagation aux enfants
+        $this->propageCouleurAuxEnfants();
 
         return $this;
     }
@@ -209,6 +213,9 @@ class Categorie
      */
     public function addEnfant(Categorie $enfant)
     {
+        // affectation de la couleur et état du parent
+        $enfant->setCouleur($this->couleur);
+        $enfant->setActive($this->active);
         $this->enfants[] = $enfant;
 
         return $this;
@@ -232,5 +239,33 @@ class Categorie
     public function getEnfants()
     {
         return $this->enfants;
+    }
+
+    /**
+     * propageCouleurAuxEnfants
+     */
+    private function propageCouleurAuxEnfants()
+    {
+        // parcourt des différents enfants pour leur affecté la couleur
+        $enfants = $this->getEnfants();
+        /** @var Categorie $categorie */
+        foreach ($enfants as $categorie) {
+            // affectation de la couleur
+            $categorie->setCouleur($this->couleur);
+        }
+    }
+
+    /**
+     * propageActiveAuxEnfants
+     */
+    private function propageActiveAuxEnfants()
+    {
+        // parcourt des différents enfants pour leur affecté l'activité
+        $enfants = $this->getEnfants();
+        /** @var Categorie $categorie */
+        foreach ($enfants as $categorie) {
+            // affectation de la couleur
+            $categorie->setActive($this->active);
+        }
     }
 }

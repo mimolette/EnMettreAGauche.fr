@@ -26,7 +26,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\DiscriminatorColumn(name="type_opration", type="string")
  * @ORM\DiscriminatorMap(
  *     {
- *          "virement_interne" = "CoreBundle\Entity\VirementInterne",
+ *          "virement_interne" = "CoreBundle\Entity\TransfertArgent",
  *          "courante" = "CoreBundle\Entity\OperationCourante",
  *          "virement" = "CoreBundle\Entity\Virement",
  *          "cheque" = "CoreBundle\Entity\OperationCheque",

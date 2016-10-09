@@ -1,6 +1,6 @@
 <?php
 
-namespace CoreBundle\Tests\Service\Compte;
+namespace MasterBundle\Test;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;

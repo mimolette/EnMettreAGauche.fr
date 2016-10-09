@@ -17,7 +17,7 @@ use CoreBundle\Entity\OperationEspeces;
 use CoreBundle\Entity\OperationTicket;
 use CoreBundle\Entity\Prelevement;
 use CoreBundle\Entity\Virement;
-use CoreBundle\Entity\VirementInterne;
+use CoreBundle\Entity\TransfertArgent;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -34,7 +34,7 @@ final class ModePaiementEnum
     const CHEQUE = 3;
     const TICKET_RESTAURANT = 4;
     const VIREMENT = 5;
-    const VIREMENT_INTERNE = 6;
+    const TRANSFERT_ARGENT = 6;
     const RETRAIT_ESPECE = 7;
     const PRELEVEMENT = 8;
 
@@ -50,8 +50,8 @@ final class ModePaiementEnum
 
         // revoie d'une instance d'Operation en fonction du numéro type
         switch ($modePaiement) {
-            case self::VIREMENT_INTERNE:
-                return new VirementInterne();
+            case self::TRANSFERT_ARGENT:
+                return new TransfertArgent();
                 break;
             case self::TICKET_RESTAURANT:
                 return new OperationTicket();

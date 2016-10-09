@@ -60,7 +60,7 @@ class Chequier
      *
      * @ORM\Column(name="active", type="boolean")
      */
-    private $active;
+    private $active = true;
 
     /**
      * @var ArrayCollection
@@ -68,6 +68,14 @@ class Chequier
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\OperationCheque", mappedBy="chequier")
      */
     private $operations;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->operations = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -190,16 +198,9 @@ class Chequier
      *
      * @return bool
      */
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->operations = new ArrayCollection();
     }
 
     /**

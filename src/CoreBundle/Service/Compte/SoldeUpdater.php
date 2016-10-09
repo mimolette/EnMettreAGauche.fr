@@ -5,6 +5,10 @@ namespace CoreBundle\Service\Compte;
 use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\Operation;
+use CoreBundle\Entity\TransfertArgent;
+use CoreBundle\Enum\TypeCompteEnum;
+use CoreBundle\Service\ModePaiement\ModePaiementService;
+use CoreBundle\Service\Operation\TransfertArgentService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -24,23 +28,69 @@ use MasterBundle\Exception\EmagException;
  */
 class SoldeUpdater
 {
+    /** @var ModePaiementService */
+    private $modePaiementService;
+
+    /** @var TransfertArgentService */
+    private $transfertArgentService;
+
     /**
-     * @param Compte          $compte
+     * SoldeUpdater constructor.
+     * @param ModePaiementService    $modePaiementService
+     * @param TransfertArgentService $transfertService
+     */
+    public function __construct(
+        ModePaiementService $modePaiementService,
+        TransfertArgentService $transfertService
+    ) {
+        $this->modePaiementService = $modePaiementService;
+        $this->transfertArgentService = $transfertService;
+    }
+
+    /**
+     * @return ModePaiementService
+     */
+    public function getModePaiementService()
+    {
+        return $this->modePaiementService;
+    }
+
+    /**
+     * @return TransfertArgentService
+     */
+    public function getTransfertArgentService()
+    {
+        return $this->transfertArgentService;
+    }
+
+    /**
      * @param AjustementSolde $ajustement
      * @throws EmagException
      */
-    public function updateSoldeWithAjustement(
-        Compte $compte,
-        AjustementSolde $ajustement
-    ) {
-        // vérification si le compte est inactif
-        if (!$compte->isActive()) {
+    public function updateSoldeWithAjustement(AjustementSolde $ajustement)
+    {
+        // vérification si l'ajustements est bien relié à un compte
+        $compte = $ajustement->getCompte();
+        if (null === $compte) {
             throw new EmagException(
-                "Impossible d'effectuer cette opération sur le compte ::$compte car celui-ci est inactif",
+                "Impossible d'effectuer l'ajustement car il n'est rattaché à auncun compte.",
                 ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
                 __METHOD__
             );
         }
+
+        // vérification si le compte autorise les ajustements
+        $typeCompte = $compte->getType();
+        if (!TypeCompteEnum::autoriseAuxAjustements($typeCompte->getNumeroUnique())) {
+            throw new EmagException(
+                "Impossible d'effectuer l'ajustement car le compte ::$compte n'autorise pas les ajustements.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
+        // vérification si le compte est inactif
+        $this->throwExceptionIfNotActif($compte);
 
         // récupération de solde actuel du compte
         $soldeAvant = $compte->getSolde();
@@ -73,13 +123,25 @@ class SoldeUpdater
     }
 
     /**
-     * @param Compte    $compte
      * @param Operation $operation
+     * @throws EmagException
      */
-    public function updateSoldeWithOperation(
-        Compte $compte,
-        Operation $operation
-    ) {
+    public function updateSoldeWithOperation(Operation $operation)
+    {
+        // acces aux services
+        $paiementService = $this->getModePaiementService();
+        $transfertArgentService = $this->getTransfertArgentService();
+
+        // vérification si l'opération est bien rattaché à un compte
+        $compte = $operation->getCompte();
+        if (null === $compte) {
+            throw new EmagException(
+                "Impossible d'effectuer l'opération car elle n'est rattachée à auncun compte.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
         // vérification si le compte est inactif
         if (!$compte->isActive()) {
             throw new EmagException(
@@ -89,19 +151,34 @@ class SoldeUpdater
             );
         }
 
-        // récupération du solde actuel du compte
-        $soldeAvant = $compte->getSolde();
-        // récupération du montant de l'opération
-        $montant = $operation->getMontant();
+        // vérification si le compte autorise ce genre d'opération
+        $autorise = $paiementService->isModePaiementAutorise($operation, $compte);
+        if (!$autorise) {
+            throw new EmagException(
+                "Impossible d'effectuer cette opération sur le compte ::$compte ne l'autorise pas",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
 
-        // calcul du nouveau solde théorique pour effectuer des vérifications
-        $soldeTheorique = $this->ajoutDuMontant($soldeAvant, $montant);
-
-        // test si le nouveau solde est négatif et si le type de compte l'autorise
-        $this->isNouveauSoldeNegatif($soldeTheorique, $compte);
-
-        // ajustement du nouveau solde
-        $compte->setSolde($soldeTheorique);
+        // vérification si l'opération est un transfert d'argent, alors passage du relai au service concerné.
+        if ($operation instanceof TransfertArgent) {
+            $transfertArgentService->updateComptesSoldes($operation);
+        } else {
+            // récupération du solde actuel du compte
+            $soldeAvant = $compte->getSolde();
+            // récupération du montant de l'opération
+            $montant = $operation->getMontant();
+    
+            // calcul du nouveau solde théorique pour effectuer des vérifications
+            $soldeTheorique = $this->ajoutDuMontant($soldeAvant, $montant);
+    
+            // test si le nouveau solde est négatif et si le type de compte l'autorise
+            $this->isNouveauSoldeNegatif($soldeTheorique, $compte);
+    
+            // ajustement du nouveau solde
+            $compte->setSolde($soldeTheorique);
+        }
     }
 
     /**
@@ -122,8 +199,9 @@ class SoldeUpdater
     /**
      * @param float  $nouveauSolde
      * @param Compte $compte
+     * @throws EmagException
      */
-    private function isNouveauSoldeNegatif($nouveauSolde, $compte)
+    private function isNouveauSoldeNegatif($nouveauSolde, Compte $compte)
     {
         // si le nouveau solde est négatif
         if ($nouveauSolde < 0) {
@@ -136,6 +214,18 @@ class SoldeUpdater
                     __METHOD__
                 );
             }
+        }
+    }
+
+    private function throwExceptionIfNotActif(Compte $compte)
+    {
+        // vérifie si le compte est actif
+        if (!$compte->isActive()) {
+            throw new EmagException(
+                "Impossible d'effectuer cette opération sur le compte ::$compte car celui-ci est inactif",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
         }
     }
 }

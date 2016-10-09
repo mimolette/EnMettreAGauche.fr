@@ -5,7 +5,7 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * VirementInterne class file
+ * TransfertArgent class file
  *
  * PHP Version 5.6
  *
@@ -14,15 +14,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 
 /**
- * VirementInterne class
+ * TransfertArgent class
  *
  * @category Entity
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  *
  * @ORM\Table(name="emag_virement_interne")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\VirementInterneRepository")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\TransfertArgentRepository")
  */
-class VirementInterne extends Operation
+class TransfertArgent extends Operation
 {
     /**
      * @var Compte
@@ -37,7 +37,7 @@ class VirementInterne extends Operation
      *
      * @param Compte $compteCrediteur
      *
-     * @return VirementInterne
+     * @return TransfertArgent
      */
     public function setCompteCrediteur(Compte $compteCrediteur = null)
     {

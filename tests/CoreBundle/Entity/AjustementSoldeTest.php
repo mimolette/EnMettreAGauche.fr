@@ -4,10 +4,27 @@ namespace CoreBundle\Tests\Entity;
 
 use CoreBundle\Entity\AjustementSolde;
 
+/**
+ * AjustementSoldeTest class file
+ *
+ * PHP Version 5.6
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
+
+/**
+ * AjustementSoldeTest class
+ *
+ * @category Test
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
 class AjustementSoldeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return AjustementSolde
+     * @covers AjustementSolde::getId
+     * @covers AjustementSolde::getDate
      */
     public function testVideAjustementSolde()
     {

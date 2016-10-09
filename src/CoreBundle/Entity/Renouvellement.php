@@ -47,6 +47,13 @@ class Renouvellement
      */
     private $date;
 
+    /**
+     * @var CompteTicket
+     *
+     * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\CompteTicket", inversedBy="renouvellements")
+     * @ORM\JoinColumn(name="compte_id", referencedColumnName="id_compte")
+     */
+    private $compte;
 
     /**
      * Get id
@@ -104,5 +111,29 @@ class Renouvellement
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set compte
+     *
+     * @param CompteTicket $compte
+     *
+     * @return Renouvellement
+     */
+    public function setCompte(CompteTicket $compte = null)
+    {
+        $this->compte = $compte;
+
+        return $this;
+    }
+
+    /**
+     * Get compte
+     *
+     * @return CompteTicket
+     */
+    public function getCompte()
+    {
+        return $this->compte;
     }
 }

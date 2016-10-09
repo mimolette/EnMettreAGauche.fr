@@ -4,7 +4,7 @@
 # 3 : cheque
 # 4 : ticket restaurant
 # 5 : virement
-# 6 : virement interne
+# 6 : transfert argent
 # 7 : retrait espece
 # 8 : prélèvement
 
@@ -28,7 +28,7 @@ Virement:
     id: 5
     etreNegatif: true
     etrePositif: true
-Virement interne:
+Transfert argent:
     id: 6
     etreNegatif: false
     etrePositif: true

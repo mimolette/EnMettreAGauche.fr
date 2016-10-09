@@ -36,11 +36,29 @@ class TicketRenouvellement
     }
 
     /**
-     * @param CompteTicket $compte
      * @param Renouvellement $renouvellement
      */
-    public function renouvellerCompte(CompteTicket $compte, Renouvellement $renouvellement)
+    public function renouvellerCompte(Renouvellement $renouvellement)
     {
+        // vérification si le renouvellement est bien rattaché à un compte
+        $compte = $renouvellement->getCompte();
+        if (null === $compte) {
+            throw new EmagException(
+                "Impossible d'effectuer le renouvellement de ticket car aucun compte n'a été trouvé.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
+        // vérification si le compte est bien un compte ticket
+        if (!$compte instanceof CompteTicket) {
+            throw new EmagException(
+                "Impossible d'effectuer le renouvellement de ticket car le type de compte ne correspond pas.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
         // vérification si le compte est inactif
         if (!$compte->isActive()) {
             throw new EmagException(
