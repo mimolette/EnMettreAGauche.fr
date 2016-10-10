@@ -35,4 +35,5 @@ final class ExceptionCodeEnum
     const DOSSIER_INTROUVABLE = 4002;
     const ACCES_SERVICE_ERREUR = 4011;
     const ACCES_FICHIER_ERREUR = 4021;
+    const MAUVAIS_TYPE_VARIABLE = 4031;
 }

@@ -1,6 +1,11 @@
 services:
+    emag.core.compte:
+        class:  CoreBundle\Service\Compte\CompteService
+        lazy:   true
+        shared: true
+
     emag.core.operation.tranfert_argent:
-        class:  CoreBundle\Service\AbstractOperation\TransfertArgentService
+        class:  CoreBundle\Service\Operation\TransfertArgentService
         lazy:   true
         shared: true
 
@@ -27,4 +32,6 @@ services:
         class:  CoreBundle\Service\Compte\SoldeUpdater
         lazy:   true
         sharde: true
-        arguments: ["@emag.core.mode_paiement"]
+        arguments:
+            - "@emag.core.mode_paiement"
+            - "@emag.core.operation.tranfert_argent"
