@@ -268,4 +268,14 @@ class Categorie
             $categorie->setActive($this->active);
         }
     }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
 }

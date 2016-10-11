@@ -236,4 +236,14 @@ class Chequier
     {
         return $this->operations;
     }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
 }

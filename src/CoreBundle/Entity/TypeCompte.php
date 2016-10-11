@@ -56,6 +56,13 @@ class TypeCompte
     private $etreNegatif;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="autorise_ajustements", type="boolean")
+     */
+    private $autoriseAjustements;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="CoreBundle\Entity\ModePaiement")
@@ -189,5 +196,29 @@ class TypeCompte
     public function getModePaiements()
     {
         return $this->modePaiements;
+    }
+
+    /**
+     * Set autoriseAjustements
+     *
+     * @param boolean $autoriseAjustements
+     *
+     * @return TypeCompte
+     */
+    public function setAutoriseAjustements($autoriseAjustements)
+    {
+        $this->autoriseAjustements = $autoriseAjustements;
+
+        return $this;
+    }
+
+    /**
+     * Get autoriseAjustements
+     *
+     * @return boolean
+     */
+    public function isAutoriseAjustements()
+    {
+        return $this->autoriseAjustements;
     }
 }

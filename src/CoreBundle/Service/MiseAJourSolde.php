@@ -1,0 +1,73 @@
+<?php
+
+namespace CoreBundle\Service;
+
+use CoreBundle\Entity\AjustementSolde;
+use CoreBundle\Service\Compte\CompteService;
+use CoreBundle\Service\Operation\AjustementService;
+
+/**
+ * MiseAJourSolde class file
+ *
+ * PHP Version 5.6
+ *
+ * @category Service
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ */
+/**
+ * MiseAJourSolde class
+ *
+ * @category Service
+ * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
+ * @uses ce service à pour but mettre à jour les différents soldes des compte
+ * suite à des ajustements, opérations, modifications d'opération.
+ */
+class MiseAJourSolde
+{
+    /** @var CompteService */
+    private $compteService;
+
+    /** @var AjustementService */
+    private $ajustementService;
+
+    /**
+     * MiseAJourSolde constructor.
+     * @param CompteService     $compteService
+     * @param AjustementService $ajustementService
+     */
+    public function __construct(
+        CompteService $compteService,
+        AjustementService $ajustementService
+    ) {
+        $this->compteService = $compteService;
+        $this->ajustementService = $ajustementService;
+    }
+
+    /**
+     * @param AjustementSolde $ajustementSolde
+     * @throws \MasterBundle\Exception\EmagException
+     */
+    public function parAjustement(AjustementSolde $ajustementSolde)
+    {
+        // appel aux services de compte et d'ajustement
+        $cService = $this->compteService;
+        $aService = $this->ajustementService;
+
+        // récupération du compte associé à l'ajustement
+        $compte = $aService->getCompte($ajustementSolde);
+
+        // vérification si le compte est actif
+        $cService->isCompteActif($compte);
+
+        // vérification si le compte autorise les ajustements
+        $cService->isAutoriseAuxAjustements($compte);
+
+        // si la mise à jour à été effectuée, mise a jour de l'attribut solde avant
+        $soldeAvant = $compte->getSolde();
+        $ajustementSolde->setSoldeAvant($soldeAvant);
+
+        // si toute les vérifications sont passées, mise à jour du solde du compte
+        $nouveauSolde = $ajustementSolde->getSoldeApres();
+        $cService->setNouveauSolde($nouveauSolde, $compte);
+    }
+}

@@ -3,12 +3,9 @@
 namespace CoreBundle\Tests\Service\Compte;
 
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\OperationTicket;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\CompteService;
-use CoreBundle\Service\Compte\TicketUpdater;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 use MasterBundle\Test\AbstractMasterService;
@@ -38,6 +35,25 @@ class CompteServiceTest extends AbstractMasterService
         $this->setUp();
 
         return $this->get('emag.core.compte');
+    }
+
+    /**
+     * @uses vérifie si la méthode lève une exception dans le cas ou aucun type
+     * de compte n'est trouvé dans l'objet compte
+     * @depends testVideService
+     * @param CompteService $service
+     * @covers CompteService::getTypeCompte
+     */
+    public function testFailGetTypeCompte(CompteService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE);
+
+        // création d'un nouveau compte sans type de compte
+        $compte = new Compte();
+
+        // test d'utilisation de la méthode
+        $service->getTypeCompte($compte);
     }
 
     /**
@@ -97,7 +113,7 @@ class CompteServiceTest extends AbstractMasterService
 
         // création d'un type de compte qui n'autorise pas les ajustements
         $typeCompte = new TypeCompte();
-        $typeCompte->setNumeroUnique(TypeCompteEnum::TICKET_CHEQUE);
+        $typeCompte->setAutoriseAjustements(false);
 
         // test d'utilisation de la méthode sans affecté de type de compte
         $service->isAutoriseAuxAjustements($compte);
@@ -185,6 +201,30 @@ class CompteServiceTest extends AbstractMasterService
     }
 
     /**
+     * @uses vérifie qu'il est possible de mettre à jour le solde d'un compte inactif
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::setNouveauSolde
+     */
+    public function testSetNouveauSoldeCompteInactif(CompteService $service)
+    {
+        // création d'un nouveau compte avec un solde
+        $compte = new Compte();
+        $compte->setSolde(45.56);
+        $compte->setActive(false);
+
+        // création d'un type de compte qui autorise les soldes négatifs
+        $typeCompte = new TypeCompte();
+        $typeCompte->setEtreNegatif(true);
+        $compte->setType($typeCompte);
+
+        // test d'utilisation de la méthode permettant d'affecter un nouveau solde
+        $service->setNouveauSolde(14.20, $compte);
+
+        $this->assertEquals(14.20, $compte->getSolde());
+    }
+
+    /**
      * @uses vérifie que la méthode retourne bien un booléen dans le cas ou le compte
      * est autorisé aux ajustement ou bien si le paramètre de levée d'exception est
      * spécifié à faux (false)
@@ -199,7 +239,7 @@ class CompteServiceTest extends AbstractMasterService
 
         // création d'un type de compte qui autorise les ajustements
         $typeCompte = new TypeCompte();
-        $typeCompte->setNumeroUnique(TypeCompteEnum::COMPTE_CHEQUE);
+        $typeCompte->setAutoriseAjustements(true);
 
         // vérification que la méthode retourne bien un booléen
         $this->assertTrue($service->isAutoriseAuxAjustements($compte));
@@ -210,5 +250,24 @@ class CompteServiceTest extends AbstractMasterService
 
         // vérification que la méthode retourne bien un booléen
         $this->assertTrue($service->isAutoriseAuxAjustements($compte, false));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne bien l'objet TypeCompte
+     * @depends testVideService
+     * @param CompteService $service
+     * @covers CompteService::getTypeCompte
+     */
+    public function testGetTypeCompte(CompteService $service)
+    {
+        // création d'un nouveau compte
+        $compte = new Compte();
+
+        // création d'un type de compte
+        $typeCompte = new TypeCompte();
+        $compte->setType($typeCompte);
+
+        // test d'utilisation de la méthode
+        $this->assertEquals($typeCompte, $service->getTypeCompte($compte));
     }
 }

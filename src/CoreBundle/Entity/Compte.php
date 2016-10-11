@@ -345,16 +345,6 @@ class Compte
     }
 
     /**
-     * Get active
-     *
-     * @return boolean
-     */
-    public function getActive()
-    {
-        return $this->active;
-    }
-
-    /**
      * Set solde
      *
      * @param float $solde

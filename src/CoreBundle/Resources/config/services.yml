@@ -1,6 +1,21 @@
 services:
+    emag.core.type_compte:
+        class:  CoreBundle\Service\Compte\TypeCompteService
+        lazy:   true
+        shared: true
+
+    emag.core.ajustement:
+        class:  CoreBundle\Service\Operation\AjustementService
+        lazy:   true
+        shared: true
+
     emag.core.compte:
         class:  CoreBundle\Service\Compte\CompteService
+        lazy:   true
+        shared: true
+
+    emag.core.operation:
+        class:  CoreBundle\Service\Operation\OperationService
         lazy:   true
         shared: true
 
@@ -13,25 +28,29 @@ services:
         class:  CoreBundle\Service\ModePaiement\ModePaiementService
         lazy:   true
         sharde: true
+        arguments:
+            - "@emag.core.compte"
+            - "@emag.core.operation"
+            - "@emag.core.type_compte"
 
-    emag.core.compte.ticket_updater:
-        class:  CoreBundle\Service\Compte\TicketUpdater
+#    emag.core.compte.ticket_updater:
+#        class:  CoreBundle\Service\Compte\TicketUpdater
+#        lazy:   true
+#        sharde: true
+#        arguments:
+#            - "@emag.core.mode_paiement"
+#            - "@emag.core.operation.tranfert_argent"
+#
+#    emag.core.compte.ticket_renouvellement:
+#        class:  CoreBundle\Service\Compte\TicketRenouvellement
+#        lazy:   true
+#        shared: true
+#        arguments: ["@emag.core.compte.ticket_updater"]
+
+    emag.core.mise_a_jour_solde:
+        class:  CoreBundle\Service\MiseAJourSolde
         lazy:   true
         sharde: true
         arguments:
-            - "@emag.core.mode_paiement"
-            - "@emag.core.operation.tranfert_argent"
-
-    emag.core.compte.ticket_renouvellement:
-        class:  CoreBundle\Service\Compte\TicketRenouvellement
-        lazy:   true
-        shared: true
-        arguments: ["@emag.core.compte.ticket_updater"]
-
-    emag.core.compte.solde_updater:
-        class:  CoreBundle\Service\Compte\SoldeUpdater
-        lazy:   true
-        sharde: true
-        arguments:
-            - "@emag.core.mode_paiement"
-            - "@emag.core.operation.tranfert_argent"
+            - "@emag.core.compte"
+            - "@emag.core.ajustement"

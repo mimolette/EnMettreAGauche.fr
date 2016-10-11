@@ -4,6 +4,9 @@ namespace CoreBundle\Service\ModePaiement;
 
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\AbstractOperation;
+use CoreBundle\Service\Compte\CompteService;
+use CoreBundle\Service\Compte\TypeCompteService;
+use CoreBundle\Service\Operation\OperationService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -23,43 +26,62 @@ use MasterBundle\Exception\EmagException;
  */
 class ModePaiementService
 {
+    /** @var CompteService */
+    private $compteService;
+
+    /** @var OperationService */
+    private $operationService;
+
+    /** @var TypeCompteService */
+    private $typeCompteService;
+
+    /**
+     * ModePaiementService constructor.
+     * @param CompteService     $compteService
+     * @param OperationService  $opeService
+     * @param TypeCompteService $typeCompteService
+     */
+    public function __construct(
+        CompteService $compteService,
+        OperationService $opeService,
+        TypeCompteService $typeCompteService
+    ) {
+        $this->compteService = $compteService;
+        $this->operationService = $opeService;
+        $this->typeCompteService = $typeCompteService;
+    }
+
     /**
      * @param AbstractOperation $operation
      * @param Compte $compte
      * @return bool
      */
-    public function isModePaiementAutorise(AbstractOperation $operation, Compte $compte)
-    {
+    public function isModePaiementAutorise(
+        AbstractOperation $operation,
+        $throwException = true
+    ) {
         // récupération du mode paiement de l'opération
-        $modePaiementOperation = $operation->getModePaiement();
-        if (null === $modePaiementOperation) {
-            throw new EmagException(
-                "Impossible de vérifie le mode de paiement de l'opération.",
-                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
-                __METHOD__
-            );
-        }
+        $modePaiementOperation = $this->operationService->getModePaiement($operation);
+        
+        // récupération du compte débiteur
+        $compte = $this->operationService->getCompte($operation);
 
-        // récupération des mode de paiement autorisé par le type de compte
-        $typeCompte = $compte->getType();
-        if (null === $typeCompte) {
-            throw new EmagException(
-                "Impossible de trouver le type de compte du compte ::$compte.",
-                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
-                __METHOD__
-            );
-        }
-        $modePaiementAutorises = $typeCompte->getModePaiements();
-        if (0 === $modePaiementAutorises->count()) {
-            throw new EmagException(
-                "Impossible d'effectué l'opération car ce type de compte n'autorise aucun mode de paiement.",
-                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
-                __METHOD__
-            );
-        }
+        // récupération des modes de paiement autorisé par le type de compte
+        $typeCompte = $this->compteService->getTypeCompte($compte);
+        $modePaiementAutorises = $this->typeCompteService->getModePaiements($typeCompte);
 
         // vérifie si le mode de paiement de l'opération est autorisé par le type de compte
         $autorise = $modePaiementAutorises->contains($modePaiementOperation);
+
+        // si la méthode doit levé une exception
+        if (!$autorise && $throwException) {
+            // lève une exception car le mode de paiement n'est pas autorisé
+            throw new EmagException(
+                "Impossible d'effectuer ce genre d'opération sur le compte ::$compte",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
 
         return $autorise;
     }

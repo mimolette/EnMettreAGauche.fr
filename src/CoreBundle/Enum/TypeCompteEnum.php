@@ -62,39 +62,4 @@ final class TypeCompteEnum
                 break;
         }
     }
-
-    /**
-     * @uses renvoi vrai si le compte autorise les ajustements de solde, faux dans le cas contraire
-     * @param int $typeCompte
-     * @return bool
-     * @throws EmagException
-     */
-    static function autoriseAuxAjustements($typeCompte)
-    {
-        // vérification $typeCompte est un entier
-        $typeCompte = (int) $typeCompte;
-
-        // revoie d'une instance de Compte en fonction du numéro type
-        switch ($typeCompte) {
-            case self::COMPTE_CHEQUE:
-                return true;
-                break;
-            case self::LIVRET_COMPTE_EPARGNE:
-                return true;
-                break;
-            case self::PORTE_MONNAIE:
-                return true;
-                break;
-            case self::TICKET_CHEQUE:
-                return false;
-                break;
-            default:
-                throw new EmagException(
-                    "Ce type de compte n'éxiste pas !!!",
-                    __METHOD__,
-                    ExceptionCodeEnum::PAS_VALEUR_ATTENDUE
-                );
-                break;
-        }
-    }
 }

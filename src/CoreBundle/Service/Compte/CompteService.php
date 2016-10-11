@@ -4,7 +4,6 @@ namespace CoreBundle\Service\Compte;
 
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\TypeCompte;
-use CoreBundle\Enum\TypeCompteEnum;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -52,10 +51,14 @@ class CompteService
      */
     public function setNouveauSolde($nouveauSolde, Compte $compte)
     {
+        // vérifiaction du type de nouevauSolde
+        $nouveauSolde = (float) $nouveauSolde;
+
         // tentative d'affecter le nouveau solde au compte
         if ($nouveauSolde < 0) {
             // test si le type de compte autorise cette valeur de solde
-            $etreNegatif = $compte->getType()->getEtreNegatif();
+            $typeCompte = $this->getTypeCompte($compte);
+            $etreNegatif = $typeCompte->getEtreNegatif();
             if (!$etreNegatif) {
                 throw new EmagException(
                     "Impossible d'effectuer l'opération du compte ::$compte, le solde ne peut pas être négatif.",
@@ -73,9 +76,7 @@ class CompteService
     {
         // vérification si le type du compte autorise bien les ajustements
         $typeCompte = $this->getTypeCompte($compte);
-
-        $enumCompte = $typeCompte->getNumeroUnique();
-        $autorise = TypeCompteEnum::autoriseAuxAjustements($enumCompte);
+        $autorise = $typeCompte->isAutoriseAjustements();
 
         // si le compte n'est pas autorisé
         if (!$autorise && $throwException) {
@@ -95,7 +96,7 @@ class CompteService
      * @return TypeCompte
      * @throws EmagException
      */
-    private function getTypeCompte(Compte $compte)
+    public function getTypeCompte(Compte $compte)
     {
         $typeComtpe = $compte->getType();
         if (null === $typeComtpe) {
