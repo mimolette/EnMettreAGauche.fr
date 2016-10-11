@@ -3,6 +3,7 @@
 namespace CoreBundle\Service\Compte;
 
 use CoreBundle\Entity\Compte;
+use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\TypeCompte;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
@@ -70,6 +71,32 @@ class CompteService
 
         // mise à jour du solde du compte
         $compte->setSolde($nouveauSolde);
+    }
+
+    /**
+     * @param int          $nbTicket
+     * @param CompteTicket $compte
+     * @throws EmagException
+     */
+    public function addNbTicket($nbTicket, CompteTicket $compte)
+    {
+        // vérification que le nombre de ticket est au moins égale à 1
+        $nbTicket = (int) $nbTicket;
+        if ($nbTicket < 1) {
+            throw new EmagException(
+                "Impossible d'effectuer l'opération de renouvellement de ticket du compte ::$compte.",
+                ExceptionCodeEnum::VALEURS_INCOHERENTES,
+                __METHOD__
+            );
+        }
+
+        // mise à jour du nombre de tickets du compte
+        $nbTicketAvant = $compte->getNbTickets();
+        $compte->setNbTickets($nbTicketAvant+$nbTicket);
+
+        // mise à jour du solde du compte
+        $solde = $compte->getNbTickets()*$compte->getMontantTicket();
+        $this->setNouveauSolde($solde, $compte);
     }
     
     public function isAutoriseAuxAjustements(Compte $compte, $throwException = true)

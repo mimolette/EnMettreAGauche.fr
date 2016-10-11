@@ -2,7 +2,6 @@
 
 namespace CoreBundle\Tests\Enum;
 
-use CoreBundle\Enum\ModePaiementEnum;
 use CoreBundle\Enum\TypeCompteEnum;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;

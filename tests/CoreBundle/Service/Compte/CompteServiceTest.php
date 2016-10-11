@@ -3,6 +3,7 @@
 namespace CoreBundle\Tests\Service\Compte;
 
 use CoreBundle\Entity\Compte;
+use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\CompteService;
@@ -54,6 +55,25 @@ class CompteServiceTest extends AbstractMasterService
 
         // test d'utilisation de la méthode
         $service->getTypeCompte($compte);
+    }
+
+    /**
+     * @uses vérifie que la méthode lève une exception si le nombre de ticket n'est pas
+     * supérieur à 0
+     * @param CompteService $service
+     * @covers CompteService::addNbTicket
+     * @depends testVideService
+     */
+    public function testFailAddNbTicket(CompteService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
+
+        // création d'un compte ticket
+        $compte = new CompteTicket();
+
+        // test d'utilisation de la méthode
+        $service->addNbTicket(-5, $compte);
     }
 
     /**

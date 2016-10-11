@@ -9,6 +9,11 @@ services:
         lazy:   true
         shared: true
 
+    emag.core.renouvellement:
+        class:  CoreBundle\Service\Operation\RenouvellementService
+        lazy:   true
+        shared: true
+
     emag.core.compte:
         class:  CoreBundle\Service\Compte\CompteService
         lazy:   true
@@ -54,3 +59,4 @@ services:
         arguments:
             - "@emag.core.compte"
             - "@emag.core.ajustement"
+            - "@emag.core.renouvellement"

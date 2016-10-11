@@ -2,9 +2,12 @@
 
 namespace CoreBundle\Service;
 
+use CoreBundle\Entity\AbstractOperation;
 use CoreBundle\Entity\AjustementSolde;
+use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Service\Compte\CompteService;
 use CoreBundle\Service\Operation\AjustementService;
+use CoreBundle\Service\Operation\RenouvellementService;
 
 /**
  * MiseAJourSolde class file
@@ -30,17 +33,23 @@ class MiseAJourSolde
     /** @var AjustementService */
     private $ajustementService;
 
+    /** @var RenouvellementService */
+    private $renouvellementService;
+
     /**
      * MiseAJourSolde constructor.
-     * @param CompteService     $compteService
-     * @param AjustementService $ajustementService
+     * @param CompteService         $compteService
+     * @param AjustementService     $ajustementService
+     * @param RenouvellementService $renouvellementService
      */
     public function __construct(
         CompteService $compteService,
-        AjustementService $ajustementService
+        AjustementService $ajustementService,
+        RenouvellementService $renouvellementService
     ) {
         $this->compteService = $compteService;
         $this->ajustementService = $ajustementService;
+        $this->renouvellementService = $renouvellementService;
     }
 
     /**
@@ -69,5 +78,31 @@ class MiseAJourSolde
         // si toute les vérifications sont passées, mise à jour du solde du compte
         $nouveauSolde = $ajustementSolde->getSoldeApres();
         $cService->setNouveauSolde($nouveauSolde, $compte);
+    }
+
+    /**
+     * @param Renouvellement $renouvellement
+     * @throws \MasterBundle\Exception\EmagException
+     */
+    public function parRenouvellement(Renouvellement $renouvellement)
+    {
+        // appel aux service de compte et d'ajustement
+        $cService = $this->compteService;
+        $rService = $this->renouvellementService;
+        
+        // récupération du compte associé au renouvellement
+        $compte = $rService->getCompte($renouvellement);
+        
+        // vérification si le compte est actif
+        $cService->isCompteActif($compte);
+        
+        // si toute les vérifications sont passées, mise à jour du nombre de ticket 
+        // du compte, ainsi que de sont solde
+        $cService->addNbTicket($renouvellement->getNbTickets(), $compte);
+    }
+
+    public function parOperation(AbstractOperation $operation)
+    {
+        // appel aux service d'opération et de mode de paiement
     }
 }
