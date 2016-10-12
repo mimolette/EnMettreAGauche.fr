@@ -70,30 +70,60 @@ class ModePaiementServiceTest extends AbstractMasterService
 
         // autorise négatif avec montant négatif doit retrouner vrai
         $modePaiement->setEtreNegatif(true);
-        $service->isMontantOperationValide(-14.23, $modePaiement);
+        $valide = $service->isMontantOperationValide(-14.23, $modePaiement);
+        $this->assertTrue($valide);
 
         // autorise positif avec montant positif doit retourner vrai
         $modePaiement->setEtrePositif(true);
-        $service->isMontantOperationValide(149.23, $modePaiement);
+        $valide = $service->isMontantOperationValide(149.23, $modePaiement);
+        $this->assertTrue($valide);
 
         // n'autorise pas les négatif avec montant négatif doit retourner faux
         $modePaiement->setEtreNegatif(false);
-        $service->isMontantOperationValide(-526.50, $modePaiement, false);
+        $valide = $service->isMontantOperationValide(-526.50, $modePaiement, false);
+        $this->assertFalse($valide);
 
         // n'autorise pas les positif avec montant positif doit retourner faux
         $modePaiement->setEtrePositif(false);
-        $service->isMontantOperationValide(2, $modePaiement, false);
+        $valide = $service->isMontantOperationValide(2, $modePaiement, false);
+        $this->assertFalse($valide);
     }
 
     /**
-     * @uses vérifie si la méthode retourne faux dans le cas ou le montant est égale à 0
-     * quelle que soit les restriction du mode de paiement
+     * @uses vérifie si la méthode retourne faux dans le cas ou le montant est égale à 0 ou null
+     * quelle que soit les restriction du mode de paiement dans le cas ou aucune levée
+     * d'exception n'est prévue
      * @param ModePaiementService $service
      * @depends testVideService
      * @covers ModePaiementService::isMontantOperationValide
      */
     public function testIsMontantOperationValide2(ModePaiementService $service)
     {
+        // création d'un mode de paiement
+        $modePaiement = new ModePaiement();
 
+        // autorise négatif et pas positif
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(false);
+        $valide = $service->isMontantOperationValide(0.0, $modePaiement, false);
+        $this->assertFalse($valide);
+        $valide = $service->isMontantOperationValide(null, $modePaiement, false);
+        $this->assertFalse($valide);
+
+        // autorise négatif et positif
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(true);
+        $valide = $service->isMontantOperationValide(0.0, $modePaiement, false);
+        $this->assertFalse($valide);
+        $valide = $service->isMontantOperationValide(null, $modePaiement, false);
+        $this->assertFalse($valide);
+
+        // autorise positif et pas négatif
+        $modePaiement->setEtreNegatif(false);
+        $modePaiement->setEtrePositif(true);
+        $valide = $service->isMontantOperationValide(0.0, $modePaiement, false);
+        $this->assertFalse($valide);
+        $valide = $service->isMontantOperationValide(null, $modePaiement, false);
+        $this->assertFalse($valide);
     }
 }

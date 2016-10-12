@@ -10,6 +10,7 @@ use CoreBundle\Entity\OperationTicket;
 use CoreBundle\Entity\TransfertArgent;
 use CoreBundle\Service\Compte\CompteService;
 use CoreBundle\Service\Compte\TypeCompteService;
+use CoreBundle\Service\ModePaiement\ModePaiementService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -27,63 +28,24 @@ use MasterBundle\Exception\EmagException;
  * @category Service
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-class OperationService
+class OperationService extends AbstractOperationService
 {
-    /** @var CompteService */
-    private $compteService;
-
-    /** @var TypeCompteService */
-    private $typeCompteService;
+    /** @var ModePaiementService */
+    private $modePaiementService;
 
     /**
      * OperationService constructor.
-     * @param CompteService     $compteService
-     * @param TypeCompteService $typeCompteService
+     * @param CompteService       $compteService
+     * @param TypeCompteService   $typeCompteService
+     * @param ModePaiementService $modePaiementService
      */
     public function __construct(
         CompteService $compteService,
-        TypeCompteService $typeCompteService
+        TypeCompteService $typeCompteService,
+        ModePaiementService $modePaiementService
     ) {
-        $this->compteService = $compteService;
-        $this->typeCompteService = $typeCompteService;
-    }
-
-    /**
-     * @param AbstractOperation $operation
-     * @return Compte
-     * @throws EmagException
-     */
-    public function getCompte(AbstractOperation $operation)
-    {
-        $compte = $operation->getCompte();
-        if (null === $compte) {
-            throw new EmagException(
-                "Impossible d'accéder au compte de l'operation.",
-                ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE,
-                __METHOD__
-            );
-        }
-
-        return $compte;
-    }
-
-    /**
-     * @param AbstractOperation $operation
-     * @return ModePaiement
-     * @throws EmagException
-     */
-    public function getModePaiement(AbstractOperation $operation)
-    {
-        $modePaiement = $operation->getModePaiement();
-        if (null === $modePaiement) {
-            throw new EmagException(
-                "Impossible d'accéder au mode de paiement de l'opération.",
-                ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE,
-                __METHOD__
-            );
-        }
-
-        return $modePaiement;
+        parent::__construct($compteService, $typeCompteService);
+        $this->modePaiementService = $modePaiementService;
     }
 
     /**
@@ -102,12 +64,15 @@ class OperationService
         switch (true) {
             case $operation instanceof OperationTicket:
                 // si l'opération est du type opération de ticket
+                // appel du service d'opération de ticket
                 break;
             case $operation instanceof TransfertArgent:
                 // si l'opération est du type transfert d'argent
+                // appel du service de transfert d'argent
                 break;
             case $operation instanceof OperationCheque:
                 // si l'opération est du type opération de chèque
+                // appel du service d'opération de chèque
                 break;
             default:
                 // tous les autres types partages les mêmes vérifications
@@ -126,25 +91,29 @@ class OperationService
      * @return bool
      * @throws EmagException
      */
-    private function isClassiqueOperationValide(AbstractOperation $operation, $throwException)
+    private function isClassiqueOperationValide(AbstractOperation $operation, $throwException = true)
     {
-        // appel aux services de compte et type de compte
+        // appel aux services de compte, de type de compte et de mode de paiement
         $cService = $this->compteService;
         $tService = $this->typeCompteService;
+        $mService = $this->modePaiementService;
 
-        // récupération du compte, type de compte, modes de paiement du type de compte
-        // mode de paiement de l'opération
+        // récupération du compte, type de compte et du mode de paiement de l'opération
         $compte = $this->getCompte($operation);
         $typeCompte = $cService->getTypeCompte($compte);
-        $modesPaiements = $tService->getModePaiements($typeCompte);
         $modePaiementOpe = $this->getModePaiement($operation);
 
         // vérifie si l'opération possèdent bien un montant valide par rapport au mode de paiement
+        $montantOpe = $operation->getMontant();
+        $mService->isMontantOperationValide($montantOpe, $modePaiementOpe, $throwException);
 
         // vérifie si le compte est actif
+        $cService->isCompteActif($compte, $throwException);
 
         // vérifie si le compte autorise ce genre de mode de paiement
+        $tService->isModePaiementAutorise($modePaiementOpe, $typeCompte, $throwException);
 
+        // aucune vérification n'as levée d'exception, l'opération est valide
         return true;
     }
 }
