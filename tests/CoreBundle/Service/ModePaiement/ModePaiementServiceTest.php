@@ -2,10 +2,7 @@
 
 namespace CoreBundle\Tests\Service\ModePaiement;
 
-use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\ModePaiement;
-use CoreBundle\Entity\OperationCourante;
-use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\ModePaiement\ModePaiementService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
@@ -39,75 +36,64 @@ class ModePaiementServiceTest extends AbstractMasterService
     }
 
     /**
-     * @uses vérifie que la méthode retourne une exception dans le cas ou l'opération
-     * n'est pas autorisé sur ce type de compte, car le paramètre de levée d'exception
-     * est égale à vrai (comportement par défaut)
+     * @uses vérifie si la méthode lève un exception dans le cas ou le montant n'est pas
+     * valide et que le paramètre de levée d'exception est égale à vrai (valeur par defaut).
      * @param ModePaiementService $service
      * @depends testVideService
-     * @covers ModePaiementService::isModePaiementAutorise
+     * @covers ModePaiementService::isMontantOperationValide
      */
-    public function testFailIsModePaiementAutorise(ModePaiementService $service)
+    public function testFailIsMontantOperationValide(ModePaiementService $service)
     {
         $this->expectException(EmagException::class);
         $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
 
-        // création d'un compte avec un type de compte
-        $compte = new Compte();
-        $typeCompte = new TypeCompte();
-        $compte->setType($typeCompte);
-
-        // ajout de deux mode de paiement autorisé pour le type de compte
-        $modePaiement1 = new ModePaiement();
-        $modePaiement2 = new ModePaiement();
-        $typeCompte->addModePaiement($modePaiement1);
-        $typeCompte->addModePaiement($modePaiement2);
-
-        // création d'une opération avec un autre mode de paiement
-        $operation = new OperationCourante();
-        $modePaiement3 = new ModePaiement();
-        $operation->setModePaiement($modePaiement3);
-        $operation->setCompte($compte);
+        // création d'un montant d'opération qui n'autorise pas les montant négatif
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(false);
 
         // test de la méthode
-        $service->isModePaiementAutorise($operation);
+        $service->isMontantOperationValide(-15.26, $modePaiement);
     }
 
     /**
-     * @uses vérifie que la méthode un booléen dans le cas ou l'opération est
-     * autorisé sur ce type de compte (avec ou sans la levée d'exception) ainsi
-     * que si l'opération n'es pas autorisé avec le paramètre de levée d'exception
-     * égale à faux
+     * @uses vérifie si la méthode retourne un booléen dans le cas ou l'opération est valide
+     * également dans le cas ou elle n'est pas valide est que le paramètre de levée d'exception
+     * est égale à faux.
      * @param ModePaiementService $service
      * @depends testVideService
-     * @covers ModePaiementService::isModePaiementAutorise
+     * @covers ModePaiementService::isMontantOperationValide
      */
-    public function testIsModePaiementAutorise(ModePaiementService $service)
+    public function testIsMontantOperationValide1(ModePaiementService $service)
     {
-        // création d'un compte avec un type de compte
-        $compte = new Compte();
-        $typeCompte = new TypeCompte();
-        $compte->setType($typeCompte);
+        // création d'un mode de paiement
+        $modePaiement = new ModePaiement();
 
-        // ajout de deux mode de paiement autorisé pour le type de compte
-        $modePaiement1 = new ModePaiement();
-        $modePaiement2 = new ModePaiement();
-        $typeCompte->addModePaiement($modePaiement1);
-        $typeCompte->addModePaiement($modePaiement2);
+        // autorise négatif avec montant négatif doit retrouner vrai
+        $modePaiement->setEtreNegatif(true);
+        $service->isMontantOperationValide(-14.23, $modePaiement);
 
-        // création d'une opération avec un autre mode de paiement
-        $operation = new OperationCourante();
-        $modePaiement3 = new ModePaiement();
-        $operation->setModePaiement($modePaiement3);
-        $operation->setCompte($compte);
+        // autorise positif avec montant positif doit retourner vrai
+        $modePaiement->setEtrePositif(true);
+        $service->isMontantOperationValide(149.23, $modePaiement);
 
-        // test de la méthode qui doit retourner faux
-        $this->assertFalse($service->isModePaiementAutorise($operation, false));
+        // n'autorise pas les négatif avec montant négatif doit retourner faux
+        $modePaiement->setEtreNegatif(false);
+        $service->isMontantOperationValide(-526.50, $modePaiement, false);
 
-        // changement du mode de paiement de l'opération pour un mode autorisé
-        $operation->setModePaiement($modePaiement1);
+        // n'autorise pas les positif avec montant positif doit retourner faux
+        $modePaiement->setEtrePositif(false);
+        $service->isMontantOperationValide(2, $modePaiement, false);
+    }
 
-        // test de la méthode qui doit retourner vrai
-        $this->assertTrue($service->isModePaiementAutorise($operation));
-        $this->assertTrue($service->isModePaiementAutorise($operation, true));
+    /**
+     * @uses vérifie si la méthode retourne faux dans le cas ou le montant est égale à 0
+     * quelle que soit les restriction du mode de paiement
+     * @param ModePaiementService $service
+     * @depends testVideService
+     * @covers ModePaiementService::isMontantOperationValide
+     */
+    public function testIsMontantOperationValide2(ModePaiementService $service)
+    {
+
     }
 }

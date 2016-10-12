@@ -58,6 +58,37 @@ class TypeCompteServiceTest extends AbstractMasterService
     }
 
     /**
+     * @uses verifie que la méthode lève une exception dans le cas ou le mode de paiement
+     * n'est pas autorisé pour ce type de compte à la condition que le parmètre de levée
+     * d'exception soit égale à vrai (par défaut)
+     * @param TypeCompteService $service
+     * @depends testVideService
+     * @covers TypeCompteService::isModePaiementAutorise
+     */
+    public function testFailIsModePaiementAutorise(TypeCompteService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // création d'un compte avec un type de compte
+        $compte = new Compte();
+        $typeCompte = new TypeCompte();
+        $compte->setType($typeCompte);
+
+        // ajout de deux modes de paiement autorisés pour le type de compte
+        $modePaiement1 = new ModePaiement();
+        $modePaiement2 = new ModePaiement();
+        $typeCompte->addModePaiement($modePaiement1);
+        $typeCompte->addModePaiement($modePaiement2);
+
+        // création d'un autre mode de paiement
+        $modePaiement3 = new ModePaiement();
+
+        //test de la méthode
+        $service->isModePaiementAutorise($modePaiement3, $typeCompte);
+    }
+
+    /**
      * @uses vérifie que la méthode retourne bien un tableau de ModePaiement
      * @depends testVideService
      * @param TypeCompteService $service
@@ -81,5 +112,37 @@ class TypeCompteServiceTest extends AbstractMasterService
 
         // test d'utilisation de la méthode
         $this->assertEquals($modes, $service->getModePaiements($typeCompte));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne un booléen dans le cas ou le mode de paiement
+     * est autorisé sur ce type de compte (avec ou sans la levée d'exception) ainsi que
+     * si le mode de paiement n'est pas autorisé.
+     * @param TypeCompteService $service
+     * @depends testVideService
+     * @covers TypeCompteService::isModePaiementAutorise
+     */
+    public function testIsModePaiementAutorise(TypeCompteService $service)
+    {
+        // création d'un compte avec un type de compte
+        $compte = new Compte();
+        $typeCompte = new TypeCompte();
+        $compte->setType($typeCompte);
+
+        // ajout de deux mode de paiement autorisé pour le type de compte
+        $modePaiement1 = new ModePaiement();
+        $modePaiement2 = new ModePaiement();
+        $typeCompte->addModePaiement($modePaiement1);
+        $typeCompte->addModePaiement($modePaiement2);
+
+        // création d'un autre mode de paiement
+        $modePaiement3 = new ModePaiement();
+
+        // test de la méthode qui doit retourner faux
+        $this->assertFalse($service->isModePaiementAutorise($modePaiement3, $typeCompte, false));
+
+        // test de la méthode qui doit retourner vrai
+        $this->assertTrue($service->isModePaiementAutorise($modePaiement1, $typeCompte));
+        $this->assertTrue($service->isModePaiementAutorise($modePaiement1, $typeCompte, true));
     }
 }

@@ -103,6 +103,8 @@ class MiseAJourSolde
 
     public function parOperation(AbstractOperation $operation)
     {
-        // appel aux service d'opération et de mode de paiement
+        // appel aux service d'opération
+        
+        
     }
 }
