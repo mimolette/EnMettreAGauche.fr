@@ -69,6 +69,7 @@ services:
         shared: true
         arguments:
             - "@emag.core.mode_paiement"
+            - "@emag.core.operation.ticket"
 
     emag.core.mise_a_jour_solde:
         class:  CoreBundle\Service\MiseAJourSolde

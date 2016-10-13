@@ -33,19 +33,25 @@ class OperationService extends AbstractOperationService
     /** @var ModePaiementService */
     private $modePaiementService;
 
+    /** @var OperationTicketService */
+    private $operationTicketService;
+
     /**
      * OperationService constructor.
-     * @param CompteService       $compteService
-     * @param TypeCompteService   $typeCompteService
-     * @param ModePaiementService $modePaiementService
+     * @param CompteService          $compteService
+     * @param TypeCompteService      $typeCompteService
+     * @param ModePaiementService    $modePaiementService
+     * @param OperationTicketService $operationTicketService
      */
     public function __construct(
         CompteService $compteService,
         TypeCompteService $typeCompteService,
-        ModePaiementService $modePaiementService
+        ModePaiementService $modePaiementService,
+        OperationTicketService $operationTicketService
     ) {
         parent::__construct($compteService, $typeCompteService);
         $this->modePaiementService = $modePaiementService;
+        $this->operationTicketService = $operationTicketService;
     }
 
     /**
@@ -65,6 +71,8 @@ class OperationService extends AbstractOperationService
             case $operation instanceof OperationTicket:
                 // si l'opération est du type opération de ticket
                 // appel du service d'opération de ticket
+                $opeService = $this->operationTicketService;
+                $valide = $opeService->isTicketOperationValide($operation, $throwException);
                 break;
             case $operation instanceof TransfertArgent:
                 // si l'opération est du type transfert d'argent
@@ -93,6 +101,9 @@ class OperationService extends AbstractOperationService
      */
     private function isClassiqueOperationValide(AbstractOperation $operation, $throwException = true)
     {
+        // validité du montant
+        $valide = true;
+        
         // appel aux services de compte, de type de compte et de mode de paiement
         $cService = $this->compteService;
         $tService = $this->typeCompteService;
@@ -105,15 +116,15 @@ class OperationService extends AbstractOperationService
 
         // vérifie si l'opération possèdent bien un montant valide par rapport au mode de paiement
         $montantOpe = $operation->getMontant();
-        $mService->isMontantOperationValide($montantOpe, $modePaiementOpe, $throwException);
+        $valide = $valide && $mService->isMontantOperationValide($montantOpe, $modePaiementOpe, $throwException);
 
         // vérifie si le compte est actif
-        $cService->isCompteActif($compte, $throwException);
+        $valide = $valide && $cService->isCompteActif($compte, $throwException);
 
         // vérifie si le compte autorise ce genre de mode de paiement
-        $tService->isModePaiementAutorise($modePaiementOpe, $typeCompte, $throwException);
+        $valide = $valide && $tService->isModePaiementAutorise($modePaiementOpe, $typeCompte, $throwException);
 
         // aucune vérification n'as levée d'exception, l'opération est valide
-        return true;
+        return $valide;
     }
 }

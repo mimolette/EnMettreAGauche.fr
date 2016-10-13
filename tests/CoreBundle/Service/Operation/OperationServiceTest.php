@@ -5,6 +5,7 @@ namespace CoreBundle\Tests\Service\Operation;
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Entity\OperationCourante;
+use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\Operation\OperationService;
 use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
@@ -35,6 +36,37 @@ class OperationServiceTest extends AbstractMasterService
         $this->setUp();
 
         return $this->get('emag.core.operation');
+    }
+
+    /**
+     * @uses retourne une opération lié à un compte, type de compte,
+     * mode de paiement
+     * @return OperationCourante
+     */
+    public function testVideOperationTicket()
+    {
+        // création d'un type de compte
+        $typeCompte = new TypeCompte();
+        // création de mode de paiements
+        $modePaiement1 = new ModePaiement();
+        $modePaiement2 = new ModePaiement();
+        $modePaiement3 = new ModePaiement();
+        $modePaiement4 = new ModePaiement();
+        // création d'un compte
+        $compte = new Compte();
+        // création d'un opération courante
+        $operation = new OperationCourante();
+
+        // affectation des relations
+        $operation->setCompte($compte);
+        $operation->setModePaiement($modePaiement3);
+        $typeCompte->addModePaiement($modePaiement1);
+        $typeCompte->addModePaiement($modePaiement2);
+        $typeCompte->addModePaiement($modePaiement3);
+        $typeCompte->addModePaiement($modePaiement4);
+        $compte->setType($typeCompte);
+
+        return $operation;
     }
 
     /**
@@ -111,5 +143,53 @@ class OperationServiceTest extends AbstractMasterService
 
         // test d'utilisation de la méthode
         $this->assertEquals($mode, $service->getModePaiement($operation));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne vrai si l'opération courante est valide
+     * quelque soit la valeur du paramètre de levée d'exception.
+     * Elle doit égelement retourné faux si l'opération n'est pas valide et
+     * que le paramètre de levée d'exception est égale à faux
+     * @param OperationService $service
+     * @depends testVideService
+     * @depends testVideOperationTicket
+     * @covers OperationService::isTicketOperationValide
+     */
+    public function testIsTicketOperationValide(
+        OperationService $service,
+        OperationCourante $operation
+    ) {
+        // test opération valide
+        $operation->setMontant(-14.52);
+        /** @var Compte $compte */
+        $compte = $operation->getCompte();
+        $compte->setSolde(7.30);
+        $compte->setActive(true);
+        $modePaiement = $operation->getModePaiement();
+        // le mode de paiement autorise les opération en négatif
+        $modePaiement->setEtreNegatif(true);
+        $typeCompte = $compte->getType();
+        // le type de compte autorise les solde en négatif
+        $typeCompte->setEtreNegatif(true);
+
+        // test de la méthode, doit retourner vrai
+        $this->assertTrue($service->isOperationValide($operation));
+        $this->assertTrue($service->isOperationValide($operation, false));
+
+        // test opération non-valide
+        // Le mode de paiement n'autorise plus les opération négative
+        $modePaiement->setEtreNegatif(false);
+
+        // test de la méthode, doit retourner faux
+        $this->assertFalse($service->isOperationValide($operation, false));
+
+        // test opération non-valide
+        // le compte n'est plus actif
+        $compte->setActive(false);
+        // l'opération est positive
+        $operation->setMontant(58.26);
+
+        // test de la méthode, doit retourner faux
+        $this->assertFalse($service->isOperationValide($operation, false));
     }
 }
