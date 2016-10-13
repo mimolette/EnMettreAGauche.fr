@@ -32,23 +32,4 @@ class OperationTicketTest extends \PHPUnit_Framework_TestCase
 
         return $operation;
     }
-
-    /**
-     * @uses vérifie que la fonction calculMontant effectue le bon calcul.
-     *               Le montant de l'opération doit être mise à jour en conséquence
-     * @depends testVideOperationTicket
-     * @param OperationTicket $operation
-     * @covers OperationTicket::calculMontant
-     * @covers OperationTicket::getMontant
-     */
-    public function testCalculMontant(OperationTicket $operation)
-    {
-        // affectation d'un nombre de ticket
-        $operation->setNbTicket(8);
-
-        // calcul du montant
-        $operation->calculMontant(7.5);
-
-        $this->assertEquals(60.0, $operation->getMontant());
-    }
 }

@@ -4,9 +4,9 @@ namespace CoreBundle\Tests\Service\ModePaiement;
 
 use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Service\ModePaiement\ModePaiementService;
+use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
-use MasterBundle\Test\AbstractMasterService;
 
 /**
  * ModePaiementServiceTest class file

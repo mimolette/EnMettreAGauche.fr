@@ -8,7 +8,6 @@ use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\MiseAJourSolde;
-use MasterBundle\Test\AbstractMasterService;
 
 /**
  * MiseAJourSoldeTest class file

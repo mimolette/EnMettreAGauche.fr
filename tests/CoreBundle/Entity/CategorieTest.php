@@ -3,6 +3,7 @@
 namespace CoreBundle\Tests\Entity;
 
 use CoreBundle\Entity\Categorie;
+use CoreBundle\Entity\Couleur;
 
 /**
  * CategorieTest class file
@@ -64,14 +65,18 @@ class CategorieTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetCouleur(Categorie $categorie)
     {
+        // création d'une nouvelle couleur
+        $couleur = new Couleur();
+        $couleur->setCodeHexa('#454545');
+
         // changement de la couleur de la catégorie parent
-        $categorie->setCouleur('#454545');
+        $categorie->setCouleur($couleur);
 
         // vérification si les enfants possèdent aussi cette couleur
         /** @var Categorie $catEnfant */
         foreach ($categorie->getEnfants() as $catEnfant) {
             // test si l'enfant possèdent la même couleur
-            $this->assertEquals('#454545', $catEnfant->getCouleur());
+            $this->assertEquals($couleur, $catEnfant->getCouleur());
         }
     }
 
@@ -102,9 +107,13 @@ class CategorieTest extends \PHPUnit_Framework_TestCase
      */
     public function testaddEnfant(Categorie $categorie)
     {
+        // création d'une nouvelle couleur
+        $couleur = new Couleur();
+        $couleur->setCodeHexa('#125896');
+
         // changement d'état et couleur de la catégorie parent
         $categorie->setActive(false);
-        $categorie->setCouleur('#125896');
+        $categorie->setCouleur($couleur);
 
         // création d'un enfant
         $catEnfant = new Categorie();
@@ -114,6 +123,6 @@ class CategorieTest extends \PHPUnit_Framework_TestCase
 
         // vérification si l'enfants possèdent la même couleur et état
         $this->assertFalse($catEnfant->isActive());
-        $this->assertEquals('#125896', $catEnfant->getCouleur());
+        $this->assertEquals($couleur, $catEnfant->getCouleur());
     }
 }

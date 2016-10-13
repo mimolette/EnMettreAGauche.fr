@@ -29,7 +29,7 @@ class ModePaiementTest extends \PHPUnit_Framework_TestCase
     {
         // création d'un mode de paiement
         $mode = new ModePaiement();
-        $this->assertNotNull($mode->getId());
+        $this->assertNull($mode->getId());
 
         return $mode;
     }

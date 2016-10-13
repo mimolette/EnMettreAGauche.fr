@@ -4,13 +4,10 @@ namespace CoreBundle\Tests\Service\Operation;
 
 use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\ModePaiement;
-use CoreBundle\Entity\OperationCourante;
 use CoreBundle\Service\Operation\AjustementService;
-use CoreBundle\Service\Operation\OperationService;
+use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
-use MasterBundle\Test\AbstractMasterService;
 
 /**
  * AjustementServiceTest class file

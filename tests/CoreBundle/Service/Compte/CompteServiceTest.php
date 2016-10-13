@@ -7,9 +7,9 @@ use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\CompteService;
+use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
-use MasterBundle\Test\AbstractMasterService;
 
 /**
  * CompteServiceTest class file
@@ -134,6 +134,7 @@ class CompteServiceTest extends AbstractMasterService
         // création d'un type de compte qui n'autorise pas les ajustements
         $typeCompte = new TypeCompte();
         $typeCompte->setAutoriseAjustements(false);
+        $compte->setType($typeCompte);
 
         // test d'utilisation de la méthode sans affecté de type de compte
         $service->isAutoriseAuxAjustements($compte);
@@ -260,6 +261,7 @@ class CompteServiceTest extends AbstractMasterService
         // création d'un type de compte qui autorise les ajustements
         $typeCompte = new TypeCompte();
         $typeCompte->setAutoriseAjustements(true);
+        $compte->setType($typeCompte);
 
         // vérification que la méthode retourne bien un booléen
         $this->assertTrue($service->isAutoriseAuxAjustements($compte));

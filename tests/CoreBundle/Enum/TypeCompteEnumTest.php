@@ -36,28 +36,4 @@ class TypeCompteEnumTest extends \PHPUnit_Framework_TestCase
         // utilisation de la méthode qui doit retrouner un objet de type Compte
         TypeCompteEnum::createNewCompte(-1);
     }
-
-    /**
-     * @uses vérifie que la méthode indiquant si un type de compte donnée autorise ou non
-     *               les ajustement lève un excpetion dans le cas ou un type de compte
-     *               invalide est donné.
-     * @covers ModePaiementEnum::autoriseAuxAjustements
-     */
-    public function testFailAutoriseAuxAjustements()
-    {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::PAS_VALEUR_ATTENDUE);
-
-        // utilistation de la méthode retournant si le type de compte autorise les ajustements
-        TypeCompteEnum::autoriseAuxAjustements(-1);
-    }
-
-    /**
-     * @uses verifie que la méthode retourne bien la valeur attendu, soit un boolean
-     * @covers TypeCompteEnum::autoriseAuxAjustements
-     */
-    public function testAutoriseAuxAjustements()
-    {
-        $this->assertTrue(TypeCompteEnum::autoriseAuxAjustements(TypeCompteEnum::COMPTE_CHEQUE));
-    }
 }

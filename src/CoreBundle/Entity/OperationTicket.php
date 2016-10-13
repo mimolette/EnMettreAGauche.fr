@@ -78,15 +78,4 @@ class OperationTicket extends AbstractOperation
     {
         return $this->date;
     }
-
-    /**
-     * @param float $montantTicket
-     */
-    public function calculMontant($montantTicket)
-    {
-        // convertion du montant du ticket
-        $montantTicket = floatval($montantTicket);
-
-        $this->montant = $montantTicket * $this->getNbTicket();
-    }
 }

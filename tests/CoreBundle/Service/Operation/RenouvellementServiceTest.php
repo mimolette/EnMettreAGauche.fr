@@ -2,12 +2,12 @@
 
 namespace CoreBundle\Tests\Service\Operation;
 
-use CoreBundle\Entity\Compte;
+use CoreBundle\Entity\CompteTicket;
 use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Service\Operation\RenouvellementService;
+use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
-use MasterBundle\Test\AbstractMasterService;
 
 /**
  * RenouvellementServiceTest class file
@@ -67,7 +67,7 @@ class RenouvellementServiceTest extends AbstractMasterService
         $renouvellement = new Renouvellement();
 
         // création d'un compte
-        $compte = new Compte();
+        $compte = new CompteTicket();
         $renouvellement->setCompte($compte);
 
         // test d'utilisation de la méthode

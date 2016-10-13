@@ -56,8 +56,8 @@ final class TypeCompteEnum
             default:
                 throw new EmagException(
                     "Ce type de compte n'éxiste pas !!!",
-                    __METHOD__,
-                    ExceptionCodeEnum::PAS_VALEUR_ATTENDUE
+                    ExceptionCodeEnum::PAS_VALEUR_ATTENDUE,
+                    __METHOD__
                 );
                 break;
         }

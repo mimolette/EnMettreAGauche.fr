@@ -60,7 +60,7 @@ class OperationService extends AbstractOperationService
     public function isOperationValide(AbstractOperation $operation, $throwException = true)
     {
         $valide = false;
-        // répartition des vérification en fonction du type de l'opération
+        // répartition des vérifications en fonction du type de l'opération
         switch (true) {
             case $operation instanceof OperationTicket:
                 // si l'opération est du type opération de ticket

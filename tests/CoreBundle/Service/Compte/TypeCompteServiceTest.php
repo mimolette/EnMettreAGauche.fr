@@ -4,12 +4,11 @@ namespace CoreBundle\Tests\Service\Compte;
 
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\ModePaiement;
-use CoreBundle\Entity\OperationCourante;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\Compte\TypeCompteService;
+use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
-use MasterBundle\Test\AbstractMasterService;
 
 /**
  * TypeCompteServiceTest class file

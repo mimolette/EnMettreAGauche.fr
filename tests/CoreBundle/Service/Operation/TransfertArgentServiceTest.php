@@ -2,12 +2,7 @@
 
 namespace CoreBundle\Tests\Success\Service\Operation;
 
-use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\OperationTicket;
-use CoreBundle\Service\Compte\TicketUpdater;
-use MasterBundle\Enum\ExceptionCodeEnum;
-use MasterBundle\Exception\EmagException;
-use MasterBundle\Test\AbstractMasterService;
+use CoreBundle\Tests\Service\AbstractMasterService;
 
 /**
  * TransfertArgentServiceTest class file

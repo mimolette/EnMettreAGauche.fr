@@ -78,8 +78,8 @@ final class ModePaiementEnum
             default:
                 throw new EmagException(
                     "Ce type d' opération n'éxiste pas !!!",
-                    __METHOD__,
-                    ExceptionCodeEnum::PAS_VALEUR_ATTENDUE
+                    ExceptionCodeEnum::PAS_VALEUR_ATTENDUE,
+                    __METHOD__
                 );
                 break;
         }
