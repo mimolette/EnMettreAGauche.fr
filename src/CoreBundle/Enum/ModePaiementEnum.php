@@ -44,7 +44,7 @@ final class ModePaiementEnum
      * @return AbstractOperation
      * @throws EmagException
      */
-    static function createNewOperation($modePaiement)
+    static public function createNewOperation($modePaiement)
     {
         // vérification $modePaiement est un entier
         $modePaiement = (int) $modePaiement;
@@ -73,7 +73,7 @@ final class ModePaiementEnum
                 return new Prelevement();
                 break;
             case self::RETRAIT_ESPECE:
-                return new OperationEspeces();
+                return new TransfertArgent();
                 break;
             default:
                 throw new EmagException(

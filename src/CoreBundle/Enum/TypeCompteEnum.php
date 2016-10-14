@@ -34,7 +34,7 @@ final class TypeCompteEnum
      * @return Compte
      * @throws EmagException
      */
-    static function createNewCompte($typeCompte)
+    static public function createNewCompte($typeCompte)
     {
         // vérification $typeCompte est un entier
         $typeCompte = (int) $typeCompte;

@@ -113,7 +113,7 @@ class OperationServiceTest extends AbstractMasterService
      * @param OperationService $service
      * @covers OperationService::getCompte
      */
-    public function testGetTypeCompte(OperationService $service)
+    public function testGetCompte(OperationService $service)
     {
         // création d'une nouvelle opération
         $operation = new OperationCourante();

@@ -4,6 +4,8 @@ namespace CoreBundle\Service\Compte;
 
 use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Entity\TypeCompte;
+use CoreBundle\Enum\ModePaiementEnum;
+use CoreBundle\Enum\TypeCompteEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
@@ -24,6 +26,35 @@ use MasterBundle\Exception\EmagException;
  */
 class TypeCompteService
 {
+    /** @param array */
+    const ASSOCIATIONS_AUTORISES = [
+        TypeCompteEnum::COMPTE_CHEQUE => [
+            ModePaiementEnum::RETRAIT_ESPECE => [
+                TypeCompteEnum::PORTE_MONNAIE,
+            ],
+            ModePaiementEnum::TRANSFERT_ARGENT => [
+                TypeCompteEnum::COMPTE_CHEQUE,
+                TypeCompteEnum::LIVRET_COMPTE_EPARGNE,
+            ],
+        ],
+        TypeCompteEnum::LIVRET_COMPTE_EPARGNE => [
+            ModePaiementEnum::RETRAIT_ESPECE => [
+                TypeCompteEnum::PORTE_MONNAIE,
+            ],
+            ModePaiementEnum::TRANSFERT_ARGENT => [
+                TypeCompteEnum::COMPTE_CHEQUE,
+                TypeCompteEnum::LIVRET_COMPTE_EPARGNE,
+            ],
+        ],
+        TypeCompteEnum::PORTE_MONNAIE => [
+            ModePaiementEnum::TRANSFERT_ARGENT => [
+                TypeCompteEnum::PORTE_MONNAIE,
+                TypeCompteEnum::COMPTE_CHEQUE,
+                TypeCompteEnum::LIVRET_COMPTE_EPARGNE,
+            ],
+        ],
+    ];
+
     /**
      * @param TypeCompte $typeCompte
      * @return ArrayCollection
@@ -72,5 +103,81 @@ class TypeCompteService
         }
 
         return $autorise;
+    }
+
+    /**
+     * @uses vérifie si l'association entre deux compte avec un mode de paiement
+     * particuliers est autorisée
+     * @param int  $modePaiementEnum
+     * @param int  $typeCompteDebiteurEnum
+     * @param int  $typeCompteCrediteurEnum
+     * @param bool $throwException
+     * @return bool
+     * @throws EmagException
+     */
+    public function isAssociationTypeCompteAutorisePourModePaiement(
+        $modePaiementEnum,
+        $typeCompteDebiteurEnum,
+        $typeCompteCrediteurEnum,
+        $throwException = true
+    ) {
+        // validité de l'association
+        $valide = true;
+
+        // cast des enum en entier
+        $modePaiementEnum = (int) $modePaiementEnum;
+        $typeCompteDebiteurEnum = (int) $typeCompteDebiteurEnum;
+        $typeCompteCrediteurEnum = (int) $typeCompteCrediteurEnum;
+
+        // on recherche parmi les association autorisée
+        $associations = self::ASSOCIATIONS_AUTORISES;
+
+        $valide = $valide && isset($associations[$typeCompteDebiteurEnum]);
+        // si le type de compte n'autorise pas ce genre d'opération
+        if (!$valide && $throwException) {
+            throw new EmagException(
+                "Ce type de compte n'autorise pas ce genre d'opération.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
+        if (!$valide) {
+            return $valide;
+        }
+
+        // on continue les tests pour vérifier si le mode de paiement
+        // autorise la présence d'un compte créditeur
+        $compteDebiteur = $associations[$typeCompteDebiteurEnum];
+
+        $valide = $valide && isset($compteDebiteur[$modePaiementEnum]);
+        // si le mode de paiement n'autorise ne nécessite pas un compte créditeur
+        if (!$valide && $throwException) {
+            throw new EmagException(
+                "Ce mode de paiement ne nécessite pas de compte créditeur.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
+        if (!$valide) {
+            return $valide;
+        }
+
+        // on continue les tests pour vérifier si le type de compte créditeur est
+        // autorise pour ce type de compte débiteur et ce mode de paiement
+        $modePaiement = $compteDebiteur[$modePaiementEnum];
+
+        $valide = $valide && in_array($typeCompteCrediteurEnum, $modePaiement);
+        // si le mode de paiement n'autorise pas ce genre de type de compte
+        if (!$valide && $throwException) {
+            throw new EmagException(
+                "Ce mode de paiement n'autorise pas ce type de compte à être créditeur.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
+
+        return $valide;
     }
 }

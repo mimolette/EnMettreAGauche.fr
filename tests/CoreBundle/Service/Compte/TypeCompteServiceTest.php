@@ -5,6 +5,8 @@ namespace CoreBundle\Tests\Service\Compte;
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Entity\TypeCompte;
+use CoreBundle\Enum\ModePaiementEnum;
+use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\TypeCompteService;
 use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
@@ -88,6 +90,29 @@ class TypeCompteServiceTest extends AbstractMasterService
     }
 
     /**
+     * @uses verifie que la méthode lève une exception dans le cas ou l'association
+     * entre compte débiteur, créditeur et mode de paiement n'est pas autorisé, seulement
+     * dans le cas ou le paramètre de levée d'exception est égale à vrai (valeur par défaut)
+     * @param TypeCompteService $service
+     * @depends testVideService
+     * @covers TypeCompteService::isAssociationTypeCompteAutorisePourModePaiement
+     */
+    public function testFailIsAssociationTypeCompteAutorisePourModePaiement(
+        TypeCompteService $service
+    ) {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // une compte cheque ne doit pas pouvoir être créditeur dans une opération de
+        // type retrait d'espèce avec un autre compte chèque comme débiteur
+        $service->isAssociationTypeCompteAutorisePourModePaiement(
+            ModePaiementEnum::RETRAIT_ESPECE,
+            TypeCompteEnum::COMPTE_CHEQUE,
+            TypeCompteEnum::COMPTE_CHEQUE
+        );
+    }
+
+    /**
      * @uses vérifie que la méthode retourne bien un tableau de ModePaiement
      * @depends testVideService
      * @param TypeCompteService $service
@@ -143,5 +168,45 @@ class TypeCompteServiceTest extends AbstractMasterService
         // test de la méthode qui doit retourner vrai
         $this->assertTrue($service->isModePaiementAutorise($modePaiement1, $typeCompte));
         $this->assertTrue($service->isModePaiementAutorise($modePaiement1, $typeCompte, true));
+    }
+
+    /**
+     * @uses verifie que la méthode retourne un booléen qui valide ou invalide
+     * l'association entre compte débiteur, créditeur et mode de paiement.
+     * C'est méthode doit retourner vrai si lassociation est valide quelque soit
+     * la valeur du paramètre de levée d'exception et faux si l'association n'est
+     * pas valide à condition que le paramètre de levée d'exception soit égale à
+     * faux.
+     * @param TypeCompteService $service
+     * @depends testVideService
+     * @covers TypeCompteService::isAssociationTypeCompteAutorisePourModePaiement
+     */
+    public function testIsAssociationTypeCompteAutorisePourModePaiement(
+        TypeCompteService $service
+    ) {
+        // une compte cheque ne doit pas pouvoir être créditeur dans une opération de
+        // type retrait d'espèce avec un autre compte chèque comme débiteur
+        // valeur attendue : faux
+        $this->assertFalse($service->isAssociationTypeCompteAutorisePourModePaiement(
+            ModePaiementEnum::RETRAIT_ESPECE,
+            TypeCompteEnum::COMPTE_CHEQUE,
+            TypeCompteEnum::COMPTE_CHEQUE,
+            false
+        ));
+
+        // une compte cheque doit pouvoir être créditeur dans une opération de
+        // type transfert d'argent avec un porte monnaie comme débiteur
+        // valeur attendue : vrai (avec ou sans paramètre de levée d'exception)
+        $this->assertTrue($service->isAssociationTypeCompteAutorisePourModePaiement(
+            ModePaiementEnum::TRANSFERT_ARGENT,
+            TypeCompteEnum::PORTE_MONNAIE,
+            TypeCompteEnum::COMPTE_CHEQUE
+        ));
+        $this->assertTrue($service->isAssociationTypeCompteAutorisePourModePaiement(
+            ModePaiementEnum::TRANSFERT_ARGENT,
+            TypeCompteEnum::PORTE_MONNAIE,
+            TypeCompteEnum::COMPTE_CHEQUE,
+            false
+        ));
     }
 }

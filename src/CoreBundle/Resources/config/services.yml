@@ -24,29 +24,11 @@ services:
         lazy:   true
         shared: true
 
-    emag.core.operation.tranfert_argent:
-        class:  CoreBundle\Service\Operation\TransfertArgentService
-        lazy:   true
-        shared: true
-
     emag.core.mode_paiement:
         class:  CoreBundle\Service\ModePaiement\ModePaiementService
         lazy:   true
         shared: true
 
-#    emag.core.compte.ticket_updater:
-#        class:  CoreBundle\Service\Compte\TicketUpdater
-#        lazy:   true
-#        sharde: true
-#        arguments:
-#            - "@emag.core.mode_paiement"
-#            - "@emag.core.operation.tranfert_argent"
-#
-#    emag.core.compte.ticket_renouvellement:
-#        class:  CoreBundle\Service\Compte\TicketRenouvellement
-#        lazy:   true
-#        shared: true
-#        arguments: ["@emag.core.compte.ticket_updater"]
     emag.core.abstract.operation:
         class:    CoreBundle\Service\Operation\AbstractOperationService
         lazy:     true
@@ -55,6 +37,11 @@ services:
         arguments:
             - "@emag.core.compte"
             - "@emag.core.type_compte"
+
+    emag.core.operation.tranfert_argent:
+        class:  CoreBundle\Service\Operation\TransfertArgentService
+        parent: emag.core.abstract.operation
+        shared: true
 
     emag.core.operation.ticket:
         class:  CoreBundle\Service\Operation\OperationTicketService

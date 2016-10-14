@@ -78,7 +78,7 @@ class OperationService extends AbstractOperationService
                 // si l'opération est du type transfert d'argent
                 // appel du service de transfert d'argent
 
-                // les vérifications des opérations classique s'applique aussi à ce
+                // les vérifications des opérations classiques s'appliquent aussi à ce
                 // type d'opération
 
                 break;
@@ -86,7 +86,7 @@ class OperationService extends AbstractOperationService
                 // si l'opération est du type opération de chèque
                 // appel du service d'opération de chèque
 
-                // les vérifications des opérations classique s'applique aussi à ce
+                // les vérifications des opérations classiques s'appliquent aussi à ce
                 // type d'opération
                 
                 break;

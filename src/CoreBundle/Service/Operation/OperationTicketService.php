@@ -45,7 +45,7 @@ class OperationTicketService extends AbstractOperationService
     }
 
     /**
-     * @uses cette fonction regroupe toutes les vérifications à effectués sur les
+     * @uses cette fonction regroupe toutes les vérifications à effectuer sur les
      * opérations de type ticket
      * @param OperationTicket $operation
      * @param bool            $throwException
@@ -57,7 +57,7 @@ class OperationTicketService extends AbstractOperationService
         // validité de l'opération
         $valide = true;
 
-        // appel aux services de compte, de type de compte et de mode de paiement
+        // appel aux services de compte, de type de compte
         $cService = $this->compteService;
         $tService = $this->typeCompteService;
 
