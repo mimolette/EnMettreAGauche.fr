@@ -49,10 +49,14 @@ class TransfertArgentService extends AbstractOperationService
         $modePaiementTransfert = $this->getModePaiement($transfert);
 
         // vérifie si le compte créditeur est actif
-        $valide = $valide && $cService->isCompteActif($compteCrediteur);
+        $valide = $valide && $cService->isCompteActif($compteCrediteur, $throwException);
 
         // vérifie si le compte créditeur autorise ce genre de mode de paiement
-        $valide = $valide && $tService->isModePaiementAutorise($modePaiementTransfert, $typeCompteCrediteur);
+        $valide = $valide && $tService->isModePaiementAutorise(
+                $modePaiementTransfert,
+                $typeCompteCrediteur,
+                $throwException
+            );
         
         // verifie si l'association entre type de compte débiteur, créidteur et mode
         // de paiement est valide

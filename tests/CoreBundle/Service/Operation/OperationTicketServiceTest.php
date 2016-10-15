@@ -54,7 +54,11 @@ class OperationTicketServiceTest extends AbstractMasterService
         $modePaiement4 = new ModePaiement();
         // création d'un compte ticket
         $compteTicket = new CompteTicket();
-        // création d'un opération de ticket
+
+        // test si le compte est actif
+        $this->assertTrue($compteTicket->isActive());
+
+        // création d'une opération de ticket
         $operation = new OperationTicket();
 
         // affectation des relations
@@ -86,19 +90,105 @@ class OperationTicketServiceTest extends AbstractMasterService
     }
 
     /**
+     * @uses vérifie que la méthode lève une exception si le paramètre de levée d'exception
+     * est égale à vrai (valeur par défaut) et dans le cas ou le compte ticket n'est pas
+     * actif
+     * @param OperationTicketService $service
+     * @depends testVideService
+     * @covers OperationTicketService::isTicketOperationValide
+     */
+    public function testFailIsTicketOperationValide1(OperationTicketService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        $operation = $this->testVideOperationTicket();
+        // désactivation du compte ticket
+        $compteTicket = $operation->getCompte();
+        $compteTicket->setActive(false);
+
+        // test de la méthode
+        $service->isTicketOperationValide($operation);
+    }
+
+    /**
+     * @uses vérifie que la méthode lève une exception si le paramètre de levée d'exception
+     * est égale à vrai (valeur par défaut) et dans le cas ou le mode de paiement n'est pas
+     * autorisé sur ce type de compte
+     * @param OperationTicketService $service
+     * @depends testVideService
+     * @covers OperationTicketService::isTicketOperationValide
+     */
+    public function testFailIsTicketOperationValide2(OperationTicketService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        $operation = $this->testVideOperationTicket();
+        // changement du mode de paiement de l'opération
+        $modePaiement = new ModePaiement();
+        $operation->setModePaiement($modePaiement);
+
+        // test de la méthode
+        $service->isTicketOperationValide($operation);
+    }
+
+    /**
+     * @uses vérifie que la méthode lève une exception si le paramètre de levée d'exception
+     * est égale à vrai (valeur par défaut) et dans le cas ou le nombre de ticket de l'opération
+     * n'est pas valide
+     * @param OperationTicketService $service
+     * @depends testVideService
+     * @covers OperationTicketService::isTicketOperationValide
+     */
+    public function testFailIsTicketOperationValide3(OperationTicketService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
+
+        $operation = $this->testVideOperationTicket();
+        // attribution d'un nombre de ticket égale à 0
+        $operation->setNbTicket(0);
+
+        // test de la méthode
+        $service->isTicketOperationValide($operation);
+    }
+
+    /**
+     * @uses vérifie que la méthode lève une exception si le paramètre de levée d'exception
+     * est égale à vrai (valeur par défaut) et dans le cas ou le montant des ticket du compte
+     * n'est pas valide
+     * @param OperationTicketService $service
+     * @depends testVideService
+     * @covers OperationTicketService::isTicketOperationValide
+     */
+    public function testFailIsTicketOperationValide4(OperationTicketService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
+
+        $operation = $this->testVideOperationTicket();
+        // attribution d'un montant de ticket du compte négatif
+        /** @var CompteTicket $compteTicket */
+        $compteTicket = $operation->getCompte();
+        $compteTicket->setMontantTicket(-15.23);
+
+        // test de la méthode
+        $service->isTicketOperationValide($operation);
+    }
+
+    /**
      * @uses vérifie que la méthode retourne vrai si l'opération de tiket est valide
      * quelque soit la valeur du paramètre de levée d'exception.
      * Elle doit égelement retourné faux si l'opération n'est pas valide et
      * que le paramètre de levée d'exception est égale à faux
      * @param OperationTicketService $service
      * @depends testVideService
-     * @depends testVideOperationTicket
      * @covers OperationTicketService::isTicketOperationValide
      */
-    public function testIsTicketOperationValide(
-        OperationTicketService $service,
-        OperationTicket $operation
-    ) {
+    public function testIsTicketOperationValide(OperationTicketService $service)
+    {
+        $operation = $this->testVideOperationTicket();
         // test opération valide
         $operation->setNbTicket(4);
         /** @var CompteTicket $compte */
