@@ -25,6 +25,20 @@ use Doctrine\ORM\Mapping as ORM;
 class OperationCheque extends AbstractOperation
 {
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="encaisse", type="boolean")
+     */
+    private $encaisse = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="annule", type="boolean")
+     */
+    private $annule = false;
+    
+    /**
      * @var Chequier
      *
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Chequier", inversedBy="operations")
@@ -54,5 +68,73 @@ class OperationCheque extends AbstractOperation
     public function getChequier()
     {
         return $this->chequier;
+    }
+
+    /**
+     * Get comptabilise
+     *
+     * @return boolean
+     */
+    public function getComptabilise()
+    {
+        return $this->comptabilise;
+    }
+
+    /**
+     * Set encaisse
+     *
+     * @param boolean $encaisse
+     *
+     * @return OperationCheque
+     */
+    public function setEncaisse($encaisse)
+    {
+        $this->encaisse = $encaisse;
+
+        return $this;
+    }
+
+    /**
+     * Is encaisse
+     *
+     * @return boolean
+     */
+    public function isEncaisse()
+    {
+        return $this->encaisse;
+    }
+
+    /**
+     * Get encaisse
+     *
+     * @return boolean
+     */
+    public function getEncaisse()
+    {
+        return $this->encaisse;
+    }
+
+    /**
+     * Set annule
+     *
+     * @param boolean $annule
+     *
+     * @return OperationCheque
+     */
+    public function setAnnule($annule)
+    {
+        $this->annule = $annule;
+
+        return $this;
+    }
+
+    /**
+     * Is annule
+     *
+     * @return boolean
+     */
+    public function isAnnule()
+    {
+        return $this->annule;
     }
 }

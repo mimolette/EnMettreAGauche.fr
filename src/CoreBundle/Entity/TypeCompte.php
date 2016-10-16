@@ -221,4 +221,14 @@ class TypeCompte
     {
         return $this->autoriseAjustements;
     }
+
+    /**
+     * Get autoriseAjustements
+     *
+     * @return boolean
+     */
+    public function getAutoriseAjustements()
+    {
+        return $this->autoriseAjustements;
+    }
 }

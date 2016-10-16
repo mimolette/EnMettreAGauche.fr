@@ -70,6 +70,13 @@ abstract class AbstractOperation
     protected $date;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="comptabilise", type="boolean")
+     */
+    protected $comptabilise = false;
+
+    /**
      * @var Compte
      * 
      * @ORM\ManyToOne(targetEntity="CoreBundle\Entity\Compte", inversedBy="operations", cascade={"persist"})
@@ -282,5 +289,29 @@ abstract class AbstractOperation
     public function getModePaiement()
     {
         return $this->modePaiement;
+    }
+
+    /**
+     * Set comptabilise
+     *
+     * @param bool $comptabilise
+     *
+     * @return AbstractOperation
+     */
+    public function setComptabilise($comptabilise)
+    {
+        $this->comptabilise = $comptabilise;
+
+        return $this;
+    }
+
+    /**
+     * Is comptabilise
+     *
+     * @return bool
+     */
+    public function isComptabilise()
+    {
+        return $this->comptabilise;
     }
 }

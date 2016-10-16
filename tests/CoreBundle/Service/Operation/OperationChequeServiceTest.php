@@ -37,6 +37,89 @@ class OperationChequeServiceTest extends AbstractMasterService
     }
 
     /**
+     * @uses retourne une opération de cheque lié à un chequier actif
+     * @return OperationCheque
+     */
+    public function testVideOperation()
+    {
+        // création de l'opération de cheque
+        $operation = new OperationCheque();
+        // création d'un chequier actif
+        $chequier = new Chequier();
+        // test si le chequier est actif
+        $this->assertTrue($chequier->isActive());
+
+        // affectation du chequier à l'opération
+        $operation->setChequier($chequier);
+
+        return $operation;
+    }
+
+    /**
+     * @uses vérifie si la méthode lève une exception dans le cas le chequier de l'opération
+     * n'est pas actif et que la paramètre de levée d'exception est égale à vrai
+     * (valeur par défaut)
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testFailIsOperationChequeValide1(OperationChequeService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        $operation = $this->testVideOperation();
+        // on met le chequier inactif
+        $chequier = $operation->getChequier();
+        $chequier->setActive(false);
+
+        // test de la méthode
+        $service->isOperationChequeValide($operation);
+    }
+
+    /**
+     * @uses vérifie si la méthode lève une exception dans le cas le chequier de l'opération
+     * contient un nombre de chèque égale à 0 (invalide) et que la paramètre de levée
+     * d'exception est égale à vrai (valeur par défaut)
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testFailIsOperationChequeValide2(OperationChequeService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        $operation = $this->testVideOperation();
+        // on met le nombre de chèque égale à 0
+        $chequier = $operation->getChequier();
+        $chequier->setNbCheques(0);
+
+        // test de la méthode
+        $service->isOperationChequeValide($operation);
+    }
+
+    /**
+     * @uses vérifie si la méthode lève une exception dans le cas l'opération n'est lié à
+     * aucun chèquier
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testFailIsOperationChequeValide3(OperationChequeService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE);
+
+        $operation = $this->testVideOperation();
+        // on supprime la liaison avec le chequier
+        $operation->setChequier(null);
+
+        // test de la méthode
+        $service->isOperationChequeValide($operation);
+    }
+
+    /**
      * @uses vérifie si la méthode lève une exception dans le cas ou aucun chequier
      * n'est trouvé dans l'objet OperationCheque
      * @depends testVideService
@@ -73,5 +156,79 @@ class OperationChequeServiceTest extends AbstractMasterService
 
         // test d'utilisation de la méthode
         $this->assertEquals($chequier, $service->getChequier($operation));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne vrai si l'opération de cheque est valide
+     * et si le paramètre de levée d'exception est égale à vrai (valeur par défaut)
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testIsOperationChequeValide1(OperationChequeService $service)
+    {
+        $operation = $this->testVideOperation();
+        // attribut un nombre de chèques positif au chequier
+        $chequier = $operation->getChequier();
+        $chequier->setNbCheques(4);
+
+        // test de la méhode
+        $this->assertTrue($service->isOperationChequeValide($operation));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne vrai si l'opération de cheque est valide
+     * et si le paramètre de levée d'exception est égale à faux
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testIsOperationChequeValide2(OperationChequeService $service)
+    {
+        $operation = $this->testVideOperation();
+        // attribut un nombre de chèques positif au chequier
+        $chequier = $operation->getChequier();
+        $chequier->setNbCheques(1);
+
+        // test de la méhode
+        $this->assertTrue($service->isOperationChequeValide($operation, false));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne faux si l'opération de cheque est invalide
+     * car le chequier est inactif et si le paramètre de levée d'exception est égale
+     * à faux
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testIsOperationChequeValide3(OperationChequeService $service)
+    {
+        $operation = $this->testVideOperation();
+        // attribut un nombre de chèques positif au chequier
+        $chequier = $operation->getChequier();
+        $chequier->setActive(false);
+
+        // test de la méhode
+        $this->assertFalse($service->isOperationChequeValide($operation, false));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne faux si l'opération de cheque est invalide
+     * car le nombre de chèque du chequier est égale à 0 et si le paramètre de
+     * levée d'exception est égale à faux
+     * @depends testVideService
+     * @param OperationChequeService $service
+     * @covers OperationChequeService::isOperationChequeValide
+     */
+    public function testIsOperationChequeValide4(OperationChequeService $service)
+    {
+        $operation = $this->testVideOperation();
+        // attribut un nombre de chèques positif au chequier
+        $chequier = $operation->getChequier();
+        $chequier->setNbCheques(0);
+
+        // test de la méhode
+        $this->assertFalse($service->isOperationChequeValide($operation, false));
     }
 }

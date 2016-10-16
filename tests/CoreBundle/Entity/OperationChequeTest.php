@@ -30,6 +30,10 @@ class OperationChequeTest extends \PHPUnit_Framework_TestCase
         // création d'une nouvelle opération courante
         $ope = new OperationCheque;
         $this->assertNull($ope->getId());
+        // vérifie que par défault une opération de chèque n'est pas encaissée
+        $this->assertFalse($ope->isEncaisse());
+        // vérifie que par défaut une opération de chèque n'est pas annulée
+        $this->assertFalse($ope->isAnnule());
 
         return $ope;
     }

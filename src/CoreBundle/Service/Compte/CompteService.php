@@ -52,7 +52,7 @@ class CompteService
      */
     public function setNouveauSolde($nouveauSolde, Compte $compte)
     {
-        // vérifiaction du type de nouevauSolde
+        // vérification du type de nouveauSolde
         $nouveauSolde = (float) $nouveauSolde;
 
         // tentative d'affecter le nouveau solde au compte

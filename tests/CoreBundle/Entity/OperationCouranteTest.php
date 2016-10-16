@@ -30,6 +30,7 @@ class OperationCouranteTest extends \PHPUnit_Framework_TestCase
         // création d'une nouvelle opération courante
         $ope = new OperationCourante();
         $this->assertNull($ope->getId());
+        $this->assertFalse($ope->isComptabilise());
 
         return $ope;
     }

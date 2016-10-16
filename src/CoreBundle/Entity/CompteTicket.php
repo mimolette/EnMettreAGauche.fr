@@ -140,4 +140,38 @@ class CompteTicket extends Compte
     {
         return $this->renouvellements;
     }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set lastMiseJour
+     *
+     * @param \DateTime $lastMiseJour
+     *
+     * @return CompteTicket
+     */
+    public function setLastMiseJour($lastMiseJour)
+    {
+        $this->lastMiseJour = $lastMiseJour;
+
+        return $this;
+    }
+
+    /**
+     * Get lastMiseJour
+     *
+     * @return \DateTime
+     */
+    public function getLastMiseJour()
+    {
+        return $this->lastMiseJour;
+    }
 }

@@ -25,4 +25,14 @@ use Doctrine\ORM\Mapping as ORM;
 class OperationEspeces extends AbstractOperation
 {
     
+
+    /**
+     * Get comptabilise
+     *
+     * @return boolean
+     */
+    public function getComptabilise()
+    {
+        return $this->comptabilise;
+    }
 }

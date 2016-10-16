@@ -66,9 +66,16 @@ class Compte
     /**
      * @var int
      *
-     * @ORM\Column(name="solde", type="float", nullable=true)
+     * @ORM\Column(name="solde", type="float")
      */
-    private $solde;
+    protected $solde;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_mise_jour", type="date")
+     */
+    protected $lastMiseJour;
 
     /**
      * @var TypeCompte
@@ -439,5 +446,39 @@ class Compte
     public function getChequiers()
     {
         return $this->chequiers;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set lastMiseJour
+     *
+     * @param \DateTime $lastMiseJour
+     *
+     * @return Compte
+     */
+    public function setLastMiseJour($lastMiseJour)
+    {
+        $this->lastMiseJour = $lastMiseJour;
+
+        return $this;
+    }
+
+    /**
+     * Get lastMiseJour
+     *
+     * @return \DateTime
+     */
+    public function getLastMiseJour()
+    {
+        return $this->lastMiseJour;
     }
 }

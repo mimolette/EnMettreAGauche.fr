@@ -4,6 +4,9 @@ namespace CoreBundle\Service\Operation;
 
 use CoreBundle\Entity\Chequier;
 use CoreBundle\Entity\OperationCheque;
+use CoreBundle\Service\Compte\ChequierService;
+use CoreBundle\Service\Compte\CompteService;
+use CoreBundle\Service\Compte\TypeCompteService;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -24,6 +27,24 @@ use MasterBundle\Exception\EmagException;
  */
 class OperationChequeService extends AbstractOperationService
 {
+    /** @var ChequierService */
+    private $chequierService;
+
+    /**
+     * OperationChequeService constructor.
+     * @param CompteService     $compteService
+     * @param TypeCompteService $typeCompteService
+     * @param ChequierService   $chequierService
+     */
+    public function __construct(
+        CompteService $compteService,
+        TypeCompteService $typeCompteService,
+        ChequierService $chequierService
+    ) {
+        parent::__construct($compteService, $typeCompteService);
+        $this->chequierService = $chequierService;
+    }
+
     /**
      * @uses fonction qui vérifie si l'opération de chèque est valide, a savoir si elle est bien
      * lié à un chequier valide.
@@ -36,6 +57,18 @@ class OperationChequeService extends AbstractOperationService
     {
         // validité de l'opération
         $valide = true;
+
+        // appel au services du chequier
+        $cService = $this->chequierService;
+
+        // récupération du chequier de l'opération
+        $chequier = $this->getChequier($operation);
+
+        // vérification si le chequier est actif
+        $valide = $valide && $cService->isChequierActif($chequier, $throwException);
+
+        // vérification si le nombre de chèque du chequier est valide pour un opération
+        $valide = $valide && $cService->isNbChequeValidePourOperation($chequier, $throwException);
 
         // aucune vérification n'as levée d'exception, l'opération est valide
         return $valide;

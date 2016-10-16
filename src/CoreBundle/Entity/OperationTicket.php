@@ -78,4 +78,14 @@ class OperationTicket extends AbstractOperation
     {
         return $this->date;
     }
+
+    /**
+     * Get comptabilise
+     *
+     * @return boolean
+     */
+    public function getComptabilise()
+    {
+        return $this->comptabilise;
+    }
 }

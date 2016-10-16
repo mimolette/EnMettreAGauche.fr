@@ -4,6 +4,11 @@ services:
         lazy:   true
         shared: true
 
+    emag.core.chequier:
+        class:  CoreBundle\Service\Compte\ChequierService
+        lazy:   true
+        shared: true
+
     emag.core.ajustement:
         class:  CoreBundle\Service\Operation\AjustementService
         lazy:   true
@@ -47,6 +52,8 @@ services:
         class:  CoreBundle\Service\Operation\OperationChequeService
         parent: emag.core.abstract.operation
         shared: true
+        arguments:
+            - "@emag.core.chequier"
 
     emag.core.operation.ticket:
         class:  CoreBundle\Service\Operation\OperationTicketService
@@ -63,6 +70,7 @@ services:
             - "@emag.core.mode_paiement"
             - "@emag.core.operation.ticket"
             - "@emag.core.operation.tranfert_argent"
+            - "@emag.core.operation.cheque"
 
     emag.core.mise_a_jour_solde:
         class:  CoreBundle\Service\MiseAJourSolde

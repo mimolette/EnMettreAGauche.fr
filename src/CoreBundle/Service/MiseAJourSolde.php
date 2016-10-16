@@ -8,6 +8,7 @@ use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Service\Compte\CompteService;
 use CoreBundle\Service\Operation\AjustementService;
 use CoreBundle\Service\Operation\RenouvellementService;
+use MasterBundle\Exception\EmagException;
 
 /**
  * MiseAJourSolde class file
@@ -54,7 +55,7 @@ class MiseAJourSolde
 
     /**
      * @param AjustementSolde $ajustementSolde
-     * @throws \MasterBundle\Exception\EmagException
+     * @throws EmagException
      */
     public function parAjustement(AjustementSolde $ajustementSolde)
     {
@@ -82,7 +83,7 @@ class MiseAJourSolde
 
     /**
      * @param Renouvellement $renouvellement
-     * @throws \MasterBundle\Exception\EmagException
+     * @throws EmagException
      */
     public function parRenouvellement(Renouvellement $renouvellement)
     {
@@ -97,7 +98,7 @@ class MiseAJourSolde
         $cService->isCompteActif($compte);
         
         // si toute les vérifications sont passées, mise à jour du nombre de ticket 
-        // du compte, ainsi que de sont solde
+        // du compte, ainsi que de son solde
         $cService->addNbTicket($renouvellement->getNbTickets(), $compte);
     }
 

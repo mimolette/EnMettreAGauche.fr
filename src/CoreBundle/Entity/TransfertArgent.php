@@ -55,4 +55,14 @@ class TransfertArgent extends AbstractOperation
     {
         return $this->compteCrediteur;
     }
+
+    /**
+     * Get comptabilise
+     *
+     * @return boolean
+     */
+    public function getComptabilise()
+    {
+        return $this->comptabilise;
+    }
 }

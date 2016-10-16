@@ -36,6 +36,9 @@ class OperationService extends AbstractOperationService
     /** @var TransfertArgentService */
     private $transfertArgentService;
 
+    /** @var OperationChequeService */
+    private $chequeService;
+
     /**
      * OperationService constructor.
      * @param CompteService          $compteService
@@ -43,18 +46,21 @@ class OperationService extends AbstractOperationService
      * @param ModePaiementService    $modePaiementService
      * @param OperationTicketService $operationTicketService
      * @param TransfertArgentService $transfertArgentService
+     * @param OperationChequeService $chequeService
      */
     public function __construct(
         CompteService $compteService,
         TypeCompteService $typeCompteService,
         ModePaiementService $modePaiementService,
         OperationTicketService $operationTicketService,
-        TransfertArgentService $transfertArgentService
+        TransfertArgentService $transfertArgentService,
+        OperationChequeService $chequeService
     ) {
         parent::__construct($compteService, $typeCompteService);
         $this->modePaiementService = $modePaiementService;
         $this->operationTicketService = $operationTicketService;
         $this->transfertArgentService = $transfertArgentService;
+        $this->chequeService = $chequeService;
     }
 
     /**
@@ -91,10 +97,11 @@ class OperationService extends AbstractOperationService
             case $operation instanceof OperationCheque:
                 // si l'opération est du type opération de chèque
                 // appel du service d'opération de chèque
-
+                $chequeServ = $this->chequeService;
                 // les vérifications des opérations classiques s'appliquent aussi à ce
                 // type d'opération
-                
+                $valide = $valide && $this->isClassiqueOperationValide($operation, $throwException);
+                $valide = $valide && $chequeServ->isOperationChequeValide($operation, $throwException);
                 break;
             default:
                 // tous les autres types partages les mêmes vérifications
