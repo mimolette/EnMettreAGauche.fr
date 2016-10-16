@@ -7,6 +7,7 @@
 # 6 : transfert argent
 # 7 : retrait espece
 # 8 : prélèvement
+# 9 : remise de chèque
 
 Carte bancaire:
     id: 1
@@ -19,7 +20,7 @@ Espèces:
 Chèque:
     id: 3
     etreNegatif: true
-    etrePositif: true
+    etrePositif: false
 Ticket restaurant:
     id: 4
     etreNegatif: true
@@ -40,3 +41,7 @@ Prélèvement:
     id: 8
     etreNegatif: true
     etrePositif: false
+Remise Chèque:
+    id: 9
+    etreNegatif: false
+    etrePositif: true

@@ -7,17 +7,19 @@
 # 6 : transfert argent
 # 7 : retrait espece
 # 8 : prélèvement
+# 9 : remise de chèque
 
 # CoreBundle\Enum\TypeCompteEnum
 # 1 : livret compte epargne
 # 2 : porte monnaie
 # 3 : compte cheque
 # 4 : ticket cheque
+# 5 : tirelire
 
 Livret/Compte épargne:
     id: 1
     etreNegatif: false
-    modePaiements: [5, 6, 7]
+    modePaiements: [5, 6, 7, 9]
 Porte monnaie:
     id: 2
     etreNegatif: false
@@ -25,8 +27,12 @@ Porte monnaie:
 Compte chèque:
     id: 3
     etreNegatif: true
-    modePaiements: [1, 3, 5, 6, 7, 8]
+    modePaiements: [1, 3, 5, 6, 7, 8, 9]
 Ticket/Chèque:
     id: 4
     etreNegatif: false
     modePaiements: [4]
+Tirelire:
+    id: 5
+    etreNegatif: false
+    modePaiements: [2, 6, 7]

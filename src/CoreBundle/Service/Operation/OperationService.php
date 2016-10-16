@@ -3,15 +3,12 @@
 namespace CoreBundle\Service\Operation;
 
 use CoreBundle\Entity\AbstractOperation;
-use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\ModePaiement;
 use CoreBundle\Entity\OperationCheque;
 use CoreBundle\Entity\OperationTicket;
 use CoreBundle\Entity\TransfertArgent;
 use CoreBundle\Service\Compte\CompteService;
 use CoreBundle\Service\Compte\TypeCompteService;
 use CoreBundle\Service\ModePaiement\ModePaiementService;
-use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
 /**
@@ -36,22 +33,28 @@ class OperationService extends AbstractOperationService
     /** @var OperationTicketService */
     private $operationTicketService;
 
+    /** @var TransfertArgentService */
+    private $transfertArgentService;
+
     /**
      * OperationService constructor.
      * @param CompteService          $compteService
      * @param TypeCompteService      $typeCompteService
      * @param ModePaiementService    $modePaiementService
      * @param OperationTicketService $operationTicketService
+     * @param TransfertArgentService $transfertArgentService
      */
     public function __construct(
         CompteService $compteService,
         TypeCompteService $typeCompteService,
         ModePaiementService $modePaiementService,
-        OperationTicketService $operationTicketService
+        OperationTicketService $operationTicketService,
+        TransfertArgentService $transfertArgentService
     ) {
         parent::__construct($compteService, $typeCompteService);
         $this->modePaiementService = $modePaiementService;
         $this->operationTicketService = $operationTicketService;
+        $this->transfertArgentService = $transfertArgentService;
     }
 
     /**
@@ -65,22 +68,25 @@ class OperationService extends AbstractOperationService
      */
     public function isOperationValide(AbstractOperation $operation, $throwException = true)
     {
-        $valide = false;
+        // validité de l'opération
+        $valide = true;
+        
         // répartition des vérifications en fonction du type de l'opération
         switch (true) {
             case $operation instanceof OperationTicket:
                 // si l'opération est du type opération de ticket
                 // appel du service d'opération de ticket
                 $opeService = $this->operationTicketService;
-                $valide = $opeService->isTicketOperationValide($operation, $throwException);
+                $valide = $valide && $opeService->isTicketOperationValide($operation, $throwException);
                 break;
             case $operation instanceof TransfertArgent:
                 // si l'opération est du type transfert d'argent
                 // appel du service de transfert d'argent
-
+                $tranService = $this->transfertArgentService;
                 // les vérifications des opérations classiques s'appliquent aussi à ce
                 // type d'opération
-
+                $valide = $valide && $this->isClassiqueOperationValide($operation, $throwException);
+                $valide = $valide && $tranService->isTransfertArgentValide($operation, $throwException);
                 break;
             case $operation instanceof OperationCheque:
                 // si l'opération est du type opération de chèque
@@ -92,7 +98,7 @@ class OperationService extends AbstractOperationService
                 break;
             default:
                 // tous les autres types partages les mêmes vérifications
-                $valide = $this->isClassiqueOperationValide($operation, $throwException);
+                $valide = $valide && $this->isClassiqueOperationValide($operation, $throwException);
                 break;
         }
 

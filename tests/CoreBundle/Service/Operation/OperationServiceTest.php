@@ -43,7 +43,7 @@ class OperationServiceTest extends AbstractMasterService
      * mode de paiement
      * @return OperationCourante
      */
-    public function testVideOperationTicket()
+    public function testVideOperation()
     {
         // création d'un type de compte
         $typeCompte = new TypeCompte();
@@ -54,6 +54,8 @@ class OperationServiceTest extends AbstractMasterService
         $modePaiement4 = new ModePaiement();
         // création d'un compte
         $compte = new Compte();
+        // test si le compte est actif par défaut
+        $this->assertTrue($compte->isActive());
         // création d'un opération courante
         $operation = new OperationCourante();
 
@@ -152,19 +154,16 @@ class OperationServiceTest extends AbstractMasterService
      * que le paramètre de levée d'exception est égale à faux
      * @param OperationService $service
      * @depends testVideService
-     * @depends testVideOperationTicket
-     * @covers OperationService::isTicketOperationValide
+     * @covers OperationService::isOperationValide
      */
-    public function testIsTicketOperationValide(
-        OperationService $service,
-        OperationCourante $operation
-    ) {
+    public function testIsOperationValide(OperationService $service)
+    {
+        $operation = $this->testVideOperation();
         // test opération valide
         $operation->setMontant(-14.52);
         /** @var Compte $compte */
         $compte = $operation->getCompte();
         $compte->setSolde(7.30);
-        $compte->setActive(true);
         $modePaiement = $operation->getModePaiement();
         // le mode de paiement autorise les opération en négatif
         $modePaiement->setEtreNegatif(true);

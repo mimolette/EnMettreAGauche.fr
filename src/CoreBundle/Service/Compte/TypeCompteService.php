@@ -31,6 +31,7 @@ class TypeCompteService
         TypeCompteEnum::COMPTE_CHEQUE => [
             ModePaiementEnum::RETRAIT_ESPECE => [
                 TypeCompteEnum::PORTE_MONNAIE,
+                TypeCompteEnum::TIRELIRE,
             ],
             ModePaiementEnum::TRANSFERT_ARGENT => [
                 TypeCompteEnum::COMPTE_CHEQUE,
@@ -40,6 +41,7 @@ class TypeCompteService
         TypeCompteEnum::LIVRET_COMPTE_EPARGNE => [
             ModePaiementEnum::RETRAIT_ESPECE => [
                 TypeCompteEnum::PORTE_MONNAIE,
+                TypeCompteEnum::TIRELIRE,
             ],
             ModePaiementEnum::TRANSFERT_ARGENT => [
                 TypeCompteEnum::COMPTE_CHEQUE,
@@ -51,6 +53,15 @@ class TypeCompteService
                 TypeCompteEnum::PORTE_MONNAIE,
                 TypeCompteEnum::COMPTE_CHEQUE,
                 TypeCompteEnum::LIVRET_COMPTE_EPARGNE,
+                TypeCompteEnum::TIRELIRE,
+            ],
+        ],
+        TypeCompteEnum::TIRELIRE => [
+            ModePaiementEnum::TRANSFERT_ARGENT => [
+                TypeCompteEnum::PORTE_MONNAIE,
+                TypeCompteEnum::COMPTE_CHEQUE,
+                TypeCompteEnum::LIVRET_COMPTE_EPARGNE,
+                TypeCompteEnum::TIRELIRE,
             ],
         ],
     ];

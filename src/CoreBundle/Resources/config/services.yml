@@ -43,6 +43,11 @@ services:
         parent: emag.core.abstract.operation
         shared: true
 
+    emag.core.operation.cheque:
+        class:  CoreBundle\Service\Operation\OperationChequeService
+        parent: emag.core.abstract.operation
+        shared: true
+
     emag.core.operation.ticket:
         class:  CoreBundle\Service\Operation\OperationTicketService
         parent: emag.core.abstract.operation
@@ -57,6 +62,7 @@ services:
         arguments:
             - "@emag.core.mode_paiement"
             - "@emag.core.operation.ticket"
+            - "@emag.core.operation.tranfert_argent"
 
     emag.core.mise_a_jour_solde:
         class:  CoreBundle\Service\MiseAJourSolde

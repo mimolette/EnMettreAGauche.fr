@@ -8,6 +8,7 @@ use CoreBundle\Entity\OperationCourante;
 use CoreBundle\Entity\OperationEspeces;
 use CoreBundle\Entity\OperationTicket;
 use CoreBundle\Entity\Prelevement;
+use CoreBundle\Entity\RemiseCheque;
 use CoreBundle\Entity\Virement;
 use CoreBundle\Entity\TransfertArgent;
 use MasterBundle\Enum\ExceptionCodeEnum;
@@ -38,6 +39,7 @@ final class ModePaiementEnum
     const TRANSFERT_ARGENT = 6;
     const RETRAIT_ESPECE = 7;
     const PRELEVEMENT = 8;
+    const REMISE_CHEQUE = 9;
 
     /**
      * @param int $modePaiement
@@ -74,6 +76,9 @@ final class ModePaiementEnum
                 break;
             case self::RETRAIT_ESPECE:
                 return new TransfertArgent();
+                break;
+            case self::REMISE_CHEQUE:
+                return new RemiseCheque();
                 break;
             default:
                 throw new EmagException(

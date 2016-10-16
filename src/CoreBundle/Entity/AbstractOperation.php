@@ -32,7 +32,8 @@ use Doctrine\ORM\Mapping as ORM;
  *          "cheque" = "CoreBundle\Entity\OperationCheque",
  *          "especes" = "CoreBundle\Entity\OperationEspeces",
  *          "prelevement" = "CoreBundle\Entity\Prelevement",
- *          "ticket" = "CoreBundle\Entity\OperationTicket"
+ *          "ticket" = "CoreBundle\Entity\OperationTicket",
+ *          "remise_cheque" = "CoreBundle\Entity\RemiseCheque"
  *      }
  * )
  */

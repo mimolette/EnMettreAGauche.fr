@@ -193,7 +193,7 @@ class TransfertArgentServiceTest extends AbstractMasterService
      * @uses vérifie que la méthode retourne bien l'objet Compte
      * @depends testVideService
      * @param TransfertArgentService $service
-     * @covers TransfertArgentService::getCompte
+     * @covers TransfertArgentService::getCompteCrediteur
      */
     public function testGetCompte(TransfertArgentService $service)
     {

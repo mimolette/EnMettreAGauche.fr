@@ -7,6 +7,7 @@
 # 6 : virement interne
 # 7 : retrait espece
 # 8 : prélèvement
+# 9 : remise de chèque
 
 1:
     compte-commun-bobby:

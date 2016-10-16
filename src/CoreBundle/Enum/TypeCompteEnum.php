@@ -28,6 +28,7 @@ final class TypeCompteEnum
     const PORTE_MONNAIE = 2;
     const COMPTE_CHEQUE = 3;
     const TICKET_CHEQUE = 4;
+    const TIRELIRE = 5;
 
     /**
      * @param int $typeCompte
@@ -52,6 +53,9 @@ final class TypeCompteEnum
                 break;
             case self::TICKET_CHEQUE:
                 return new CompteTicket();
+                break;
+            case self::TIRELIRE:
+                return new Compte();
                 break;
             default:
                 throw new EmagException(
