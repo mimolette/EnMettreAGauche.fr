@@ -4,7 +4,9 @@ namespace CoreBundle\Tests\Service\Operation;
 
 use CoreBundle\Entity\Compte;
 use CoreBundle\Entity\ModePaiement;
+use CoreBundle\Entity\OperationCheque;
 use CoreBundle\Entity\OperationCourante;
+use CoreBundle\Entity\OperationTicket;
 use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Service\Operation\OperationService;
 use CoreBundle\Tests\Service\AbstractMasterService;
@@ -190,5 +192,207 @@ class OperationServiceTest extends AbstractMasterService
 
         // test de la méthode, doit retourner faux
         $this->assertFalse($service->isOperationValide($operation, false));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne vrai dans le cas ou l'opération doit être
+     * comptabilisée car la date de l'opération est inférieure à la date du jour
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::isOperationDoitEtreComptabilisee
+     */
+    public function testIsOperationDoitEtreComptabilisee1(OperationService $service)
+    {
+        // création d'un nouvelle opération
+        $operation = new OperationCourante();
+
+        // utilisation d'une date inférieure à la date du jour
+        $operation->setDate($this->getDateDiffDateJour(-1));
+
+        // test de la méthode
+        $this->assertTrue($service->isOperationDoitEtreComptabilisee($operation));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne faux dans le cas ou l'opération ne doit pas être
+     * comptabilisée car la date de l'opération est supérieure à la date du jour
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::isOperationDoitEtreComptabilisee
+     */
+    public function testIsOperationDoitEtreComptabilisee2(OperationService $service)
+    {
+        // création d'un nouvelle opération
+        $operation = new OperationCourante();
+
+        // utilisation d'une date supérieure à la date du jour
+        $operation->setDate($this->getDateDiffDateJour(1));
+
+        // test de la méthode
+        $this->assertFalse($service->isOperationDoitEtreComptabilisee($operation));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne vrai dans le cas ou l'opération doit être
+     * comptabilisée car la date de l'opération est égale à la date du jour
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::isOperationDoitEtreComptabilisee
+     */
+    public function testIsOperationDoitEtreComptabilisee3(OperationService $service)
+    {
+        // création d'un nouvelle opération
+        $operation = new OperationCourante();
+
+        // utilisation d'une date égale à la date du jour
+        $operation->setDate(new \DateTime());
+
+        // test de la méthode
+        $this->assertTrue($service->isOperationDoitEtreComptabilisee($operation));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne faux dans le cas ou l'opération ne doit pas être
+     * comptabilisée car l'opération à déja été comptabilisée même si la date de l'opération
+     * est égale à la date du jour
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::isOperationDoitEtreComptabilisee
+     */
+    public function testIsOperationDoitEtreComptabilisee4(OperationService $service)
+    {
+        // création d'un nouvelle opération
+        $operation = new OperationCourante();
+
+        // utilisation d'une date égale à la date du jour
+        $operation->setDate(new \DateTime());
+        // l'opération à déja été comptabilisé
+        $operation->setComptabilise(true);
+
+        // test de la méthode
+        $this->assertFalse($service->isOperationDoitEtreComptabilisee($operation));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne faux dans le cas ou l'opération ne doit pas être
+     * comptabilisée car l'opération à déja été comptabilisée même si la date de l'opération
+     * est inférieure à la date du jour
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::isOperationDoitEtreComptabilisee
+     */
+    public function testIsOperationDoitEtreComptabilisee5(OperationService $service)
+    {
+        // création d'un nouvelle opération
+        $operation = new OperationCourante();
+
+        // utilisation d'une date inférieure à la date du jour
+        $operation->setDate($this->getDateDiffDateJour(-2));
+        // l'opération à déja été comptabilisé
+        $operation->setComptabilise(true);
+
+        // test de la méthode
+        $this->assertFalse($service->isOperationDoitEtreComptabilisee($operation));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne faux dans le cas ou l'opération est de type chèque
+     * et que celle-ci n'est pas encaissée même si la date de l'opération est inférieure à
+     * la date du jour
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::isOperationDoitEtreComptabilisee
+     */
+    public function testIsOperationDoitEtreComptabilisee6(OperationService $service)
+    {
+        // création d'un nouvelle opération chèque
+        $operation = new OperationCheque();
+
+        // utilisation d'une date inférieure à la date du jour
+        $operation->setDate($this->getDateDiffDateJour(-2));
+        // l'opération à déja été comptabilisé
+        $operation->setEncaisse(false);
+
+        // test de la méthode
+        $this->assertFalse($service->isOperationDoitEtreComptabilisee($operation));
+    }
+
+    /**
+     * @uses vérifie que le montant de l'opération courante est égale à -98.60 dans le
+     * cas ou celle-ci est lié à un mode de paiement qui n'autorise que les opérations
+     * négatives et si le montant le l'opération est égale à 98.60 intitialement
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::devinerSigneOperation
+     */
+    public function testDevinerSigneOperation1(OperationService $service)
+    {
+        // création du mode de paiement
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(false);
+
+        // création de l'opération
+        $operation = new OperationCourante();
+        $operation->setMontant(98.60);
+
+        // ajout du mode de paiement à l'opération
+        $operation->setModePaiement($modePaiement);
+
+        // utilisation de la méthode pour deviner le signe de l'opération
+        $service->devinerSigneOperation($operation);
+
+        // test d'égalité
+        $this->assertEquals(-98.60, $operation->getMontant());
+    }
+
+    /**
+     * @uses vérifie que le montant de l'opération chèque est égale à -125.24 dans le
+     * cas ou celle-ci est lié à un mode de paiement qui autorise des opérations
+     * négatives ou positives et si le montant le l'opération est égale à -125.24
+     * intitialement
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::devinerSigneOperation
+     */
+    public function testDevinerSigneOperation2(OperationService $service)
+    {
+        // création du mode de paiement
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(true);
+
+        // création de l'opération
+        $operation = new OperationCheque();
+        $operation->setMontant(-125.24);
+
+        // ajout du mode de paiement à l'opération
+        $operation->setModePaiement($modePaiement);
+
+        // utilisation de la méthode pour deviner le signe de l'opération
+        $service->devinerSigneOperation($operation);
+
+        // test d'égalité
+        $this->assertEquals(-125.24, $operation->getMontant());
+    }
+
+    /**
+     * @uses vérifie que le nombre de ticket de l'opération de ticket est égale à 5
+     * dans le cas ou le montant initiale est égale à -5
+     * @param OperationService $service
+     * @depends testVideService
+     * @covers OperationService::devinerSigneOperation
+     */
+    public function testDevinerSigneOperation3(OperationService $service)
+    {
+        // création de l'opération
+        $operation = new OperationTicket();
+        $operation->setNbTicket(-5);
+
+        // utilisation de la méthode pour deviner le signe de l'opération
+        $service->devinerSigneOperation($operation);
+
+        // test d'égalité
+        $this->assertEquals(5, $operation->getNbTicket());
     }
 }

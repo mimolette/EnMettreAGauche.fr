@@ -25,7 +25,7 @@ class ModePaiementService
 {
     /**
      * @uses vérifie si le montant de l'opération est cohérent par rapport aux différentes
-     * restriction du mode de paiement
+     * restrictions du mode de paiement
      * @param float        $montant
      * @param ModePaiement $modePaiement
      * @param bool         $throwException
@@ -62,5 +62,40 @@ class ModePaiementService
         }
 
         return $valide;
+    }
+
+    /**
+     * @uses fonction qui retourne la valeur du montant en positif ou négatif selon
+     * le mode de paiement.
+     * @param float $montant
+     * @param ModePaiement $modePaiement
+     * @return float
+     */
+    public function devinerMontantParDeduction($montant, ModePaiement $modePaiement)
+    {
+        // cast du montant en flotant
+        $montant = (float) $montant;
+
+        // récupérations des restriction du mode de paiement
+        $etreNegatif = $modePaiement->getEtreNegatif();
+        $etrePositif = $modePaiement->getEtrePositif();
+
+        if ($etreNegatif && !$etrePositif && $montant > 0) {
+            // si le mode de paiement oblige un montant négatif
+            // et que le montant n'est pas déja négatif
+            $nouveauMontant = -$montant;
+        } elseif (!$etreNegatif && $etrePositif && $montant < 0) {
+            // si le mode de paiement oblige un montant positif
+            // et que le montant n'est pas déja positif
+            $nouveauMontant = abs($montant);
+        } else {
+            // si le mode de paiement permet un montant négatif ou positif
+            // dans tous ces cas on ne peut pas deviner le signe du montant
+            // ou bien celui-ci est déja correct
+            $nouveauMontant = $montant;
+        }
+
+        // retourne la nouvelle valeur du montant
+        return $nouveauMontant;
     }
 }

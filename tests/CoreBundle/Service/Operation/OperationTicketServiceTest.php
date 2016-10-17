@@ -242,7 +242,7 @@ class OperationTicketServiceTest extends AbstractMasterService
 
     /**
      * @uses vérifie que la méthode retourne met à jour le montant de l'opération
-     * ticket en fonction du nombre de ticket ainsi que du montant des ticket du
+     * ticket en fonction du nombre de ticket ainsi que du montant des tickets du
      * compte ticket.
      * @depends testVideService
      * @dataProvider operationsProvider
@@ -287,27 +287,27 @@ class OperationTicketServiceTest extends AbstractMasterService
             [
                 "nbTicket" => 2,
                 "montantTicket" => 7.50,
-                "valeurAttendue" => 15.0,
+                "valeurAttendue" => -15.0,
             ],
             [
                 "nbTicket" => 1,
                 "montantTicket" => 4.20,
-                "valeurAttendue" => 4.20,
+                "valeurAttendue" => -4.20,
             ],
             [
                 "nbTicket" => 8,
                 "montantTicket" => 14.25,
-                "valeurAttendue" => 114.0,
+                "valeurAttendue" => -114.0,
             ],
             [
                 "nbTicket" => 3,
                 "montantTicket" => 10.0,
-                "valeurAttendue" => 30.0,
+                "valeurAttendue" => -30.0,
             ],
             [
                 "nbTicket" => 45,
                 "montantTicket" => 9.50,
-                "valeurAttendue" => 427.50,
+                "valeurAttendue" => -427.50,
             ],
         ];
     }

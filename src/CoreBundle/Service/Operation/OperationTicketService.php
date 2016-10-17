@@ -109,7 +109,8 @@ class OperationTicketService extends AbstractOperationService
         $valide = $valide && $this->isNbTicketValide($nbTicket, $throwException);
 
         // calcul du montant de l'opération
-        $operation->setMontant($nbTicket*$montantTicket);
+        $montant = -($nbTicket*$montantTicket);
+        $operation->setMontant($montant);
 
         return $valide;
     }

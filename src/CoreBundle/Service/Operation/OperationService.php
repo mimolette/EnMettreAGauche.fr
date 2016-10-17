@@ -113,6 +113,76 @@ class OperationService extends AbstractOperationService
     }
 
     /**
+     * @uses vérifie si l'opération doit être comptabilisée et donc impacter le solde
+     * du ou des comptes auxquel elle est rattachée
+     * @param AbstractOperation $operation
+     * @return bool
+     */
+    public function isOperationDoitEtreComptabilisee(AbstractOperation $operation)
+    {
+        // comptabilisation de l'opération
+        $comptabilise = true;
+
+        // récupération de la date de l'opération
+        $dateOperation = $operation->getDate();
+        // création de la date du jour
+        $dateJour = new \DateTime();
+
+        // on ne comptabilise que si la date de l'opération est inférieure ou égale à la dete du jour
+        $comptabilise = $comptabilise && $dateOperation <= $dateJour;
+
+        // on ne comptabilise que si l'opération n'as pas déja été comptabilisée
+        $comptabilise = $comptabilise && !$operation->isComptabilise();
+
+        // traitement spéciale dans le cas d'une opération de chèque
+        if ($operation instanceof OperationCheque) {
+            // on ne comptabilise que si l'opération est encaissée
+            $comptabilise = $comptabilise && $operation->isEncaisse();
+        }
+
+        return $comptabilise;
+    }
+
+    /**
+     * @uses fonction qui tente de deviner le signe d'une opération en fonction du mode de paiement
+     * de celle-ci
+     * @param AbstractOperation $operation
+     */
+    public function devinerSigneOperation(AbstractOperation $operation)
+    {
+        // si l'opération est du type operationTicket
+        if ($operation instanceof OperationTicket) {
+            // ce type d'opération ne possède pas de montant directement mais plutôt un nombre
+            // de ticket qui doit forcément être positif
+            // récupération du nombre de ticket
+            $nbTicket = $operation->getNbTicket();
+            // si le nombre de ticket n'est pas déja positif
+            if ($nbTicket < 0) {
+                $operation->setNbTicket(abs($nbTicket));
+            }
+        } else {
+            // dans tous les autre cas, l'opération possède un montant
+            // appel du service de mode de paiement
+            $mService = $this->modePaiementService;
+
+            // récupération du mode de paiement de l'opération
+            $modePaiement = $operation->getModePaiement();
+
+            // récupération du montant de l'operation
+            $montant = $operation->getMontant();
+
+            // utilisation de la méthode du service de mode de paiement
+            // pour deviner le signe de l'opération
+            $nouveauMontant = $mService->devinerMontantParDeduction($montant, $modePaiement);
+
+            // mise à jour du montant de l'opération si les deux montant sont différents
+            if ($nouveauMontant !== $montant) {
+                $operation->setMontant($nouveauMontant);
+            }
+        }
+    }
+
+    /**
      * @uses cette fonction regroupe toutes les vérifications à effectués sur les
      * opérations standards
      * @param AbstractOperation $operation

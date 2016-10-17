@@ -7,6 +7,7 @@ use CoreBundle\Entity\AjustementSolde;
 use CoreBundle\Entity\Renouvellement;
 use CoreBundle\Service\Compte\CompteService;
 use CoreBundle\Service\Operation\AjustementService;
+use CoreBundle\Service\Operation\OperationService;
 use CoreBundle\Service\Operation\RenouvellementService;
 use MasterBundle\Exception\EmagException;
 
@@ -37,20 +38,26 @@ class MiseAJourSolde
     /** @var RenouvellementService */
     private $renouvellementService;
 
+    /** @var OperationService */
+    private $operationService;
+
     /**
      * MiseAJourSolde constructor.
      * @param CompteService         $compteService
      * @param AjustementService     $ajustementService
      * @param RenouvellementService $renouvellementService
+     * @param OperationService      $operationService
      */
     public function __construct(
         CompteService $compteService,
         AjustementService $ajustementService,
-        RenouvellementService $renouvellementService
+        RenouvellementService $renouvellementService,
+        OperationService $operationService
     ) {
         $this->compteService = $compteService;
         $this->ajustementService = $ajustementService;
         $this->renouvellementService = $renouvellementService;
+        $this->operationService = $operationService;
     }
 
     /**
@@ -105,7 +112,16 @@ class MiseAJourSolde
     public function parOperation(AbstractOperation $operation)
     {
         // appel aux service d'opération
-        
+        $oService = $this->operationService;
+
+        // tentative de deviner le signe de l'opération
+
+        // vérification si l'opération est valide (si ce n'est pas le cas, une exception
+        // sera levée
+        $oService->isOperationValide($operation);
+
+        // vérifie si l'opération doit être comptabilisée
+        $comptabilise = $oService->isOperationDoitEtreComptabilisee($operation);
         
     }
 }

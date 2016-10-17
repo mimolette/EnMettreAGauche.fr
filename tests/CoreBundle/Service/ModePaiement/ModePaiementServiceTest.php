@@ -126,4 +126,76 @@ class ModePaiementServiceTest extends AbstractMasterService
         $valide = $service->isMontantOperationValide(null, $modePaiement, false);
         $this->assertFalse($valide);
     }
+
+    /**
+     * @uses vérifie si la méthode retourne -15.23 dans le cas ou le mode de paiement
+     * est obligatoirement négatif et si le montant de départ est 15.23
+     * @param ModePaiementService $service
+     * @depends testVideService
+     * @covers ModePaiementService::devinerMontantParDeduction
+     */
+    public function testDevinerMontantParDeduction1(ModePaiementService $service)
+    {
+        // création du mode de paiement obligatoirement négatif
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(false);
+
+        // test de la méthode
+        $this->assertEquals(-15.23, $service->devinerMontantParDeduction(15.23, $modePaiement));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne 7.50 dans le cas ou le mode de paiement
+     * est obligatoirement positif et si le montant de départ est 7.50
+     * @param ModePaiementService $service
+     * @depends testVideService
+     * @covers ModePaiementService::devinerMontantParDeduction
+     */
+    public function testDevinerMontantParDeduction2(ModePaiementService $service)
+    {
+        // création du mode de paiement obligatoirement positif
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(false);
+        $modePaiement->setEtrePositif(true);
+
+        // test de la méthode
+        $this->assertEquals(7.50, $service->devinerMontantParDeduction(7.50, $modePaiement));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne 120.26 dans le cas ou le mode de paiement
+     * est soit positif soit négatif et si le montant de départ est 120.26
+     * @param ModePaiementService $service
+     * @depends testVideService
+     * @covers ModePaiementService::devinerMontantParDeduction
+     */
+    public function testDevinerMontantParDeduction3(ModePaiementService $service)
+    {
+        // création du mode de paiement positif ou négatif
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(true);
+
+        // test de la méthode
+        $this->assertEquals(120.26, $service->devinerMontantParDeduction(120.26, $modePaiement));
+    }
+
+    /**
+     * @uses vérifie si la méthode retourne -120.26 dans le cas ou le mode de paiement
+     * est soit positif soit négatif et si le montant de départ est -120.26
+     * @param ModePaiementService $service
+     * @depends testVideService
+     * @covers ModePaiementService::devinerMontantParDeduction
+     */
+    public function testDevinerMontantParDeduction4(ModePaiementService $service)
+    {
+        // création du mode de paiement positif ou négatif
+        $modePaiement = new ModePaiement();
+        $modePaiement->setEtreNegatif(true);
+        $modePaiement->setEtrePositif(true);
+
+        // test de la méthode
+        $this->assertEquals(-120.26, $service->devinerMontantParDeduction(-120.26, $modePaiement));
+    }
 }

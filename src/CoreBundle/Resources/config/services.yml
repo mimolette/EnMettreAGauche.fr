@@ -80,3 +80,4 @@ services:
             - "@emag.core.compte"
             - "@emag.core.ajustement"
             - "@emag.core.renouvellement"
+            - "@emag.core.operation"
