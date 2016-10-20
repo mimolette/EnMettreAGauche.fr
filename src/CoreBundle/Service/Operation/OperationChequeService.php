@@ -47,7 +47,8 @@ class OperationChequeService extends AbstractOperationService
 
     /**
      * @uses fonction qui vérifie si l'opération de chèque est valide, a savoir si elle est bien
-     * lié à un chequier valide.
+     * lié à un chequier valide dans le cas ou le montant est négatif c'est donc un chèque émis et
+     * non reçu.
      * @param OperationCheque $operation
      * @param bool            $throwException
      * @return bool
@@ -58,17 +59,35 @@ class OperationChequeService extends AbstractOperationService
         // validité de l'opération
         $valide = true;
 
-        // appel au services du chequier
-        $cService = $this->chequierService;
+        // seulement si le montant de l'opération est négative
+        if ($operation->getMontant() < 0) {
+            // appel au services du chequier
+            $cService = $this->chequierService;
 
-        // récupération du chequier de l'opération
-        $chequier = $this->getChequier($operation);
+            // récupération du chequier de l'opération
+            $chequier = $this->getChequier($operation);
 
-        // vérification si le chequier est actif
-        $valide = $valide && $cService->isChequierActif($chequier, $throwException);
+            // vérification si le chequier est actif
+            $valide = $valide && $cService->isChequierActif($chequier, $throwException);
 
-        // vérification si le nombre de chèque du chequier est valide pour un opération
-        $valide = $valide && $cService->isNbChequeValidePourOperation($chequier, $throwException);
+            // vérification si le nombre de chèque du chequier est valide pour un opération
+            $valide = $valide && $cService->isNbChequeValidePourOperation($chequier, $throwException);
+        } else {
+            // l'opération ne doit pas être liée à un chequier car c'est un chèque reçu
+            if (null !== $operation->getChequier()) {
+                // seulement si le paramètre de levée d'exception est égale à vrai
+                if ($throwException) {
+                    throw new EmagException(
+                        "Impossible d'affecté un chequier à une opération de chèque reçu.",
+                        ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                        __METHOD__
+                    );
+                } else {
+                    // invalidité de l'opération
+                    $valide = false;
+                }
+            }
+        }
 
         // aucune vérification n'as levée d'exception, l'opération est valide
         return $valide;

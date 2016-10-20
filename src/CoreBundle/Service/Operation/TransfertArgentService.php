@@ -31,6 +31,7 @@ class TransfertArgentService extends AbstractOperationService
      * @param bool            $throwException
      * @return bool
      * @throws EmagException
+     * // TODO : vérifier qu'on ne puisse pas avoir compte débiteur = compte créditeur
      */
     public function isTransfertArgentValide(TransfertArgent $transfert, $throwException = true)
     {
@@ -47,6 +48,17 @@ class TransfertArgentService extends AbstractOperationService
         $typeCompteCrediteur = $cService->getTypeCompte($compteCrediteur);
         $typeCompteDebiteur = $cService->getTypeCompte($compteDebiteur);
         $modePaiementTransfert = $this->getModePaiement($transfert);
+
+        // lève une exception si les deux compte sont égaux
+        $pasLesMemes = $compteCrediteur !== $compteDebiteur;
+        $valide = $valide && $pasLesMemes;
+        if (!$pasLesMemes && $throwException) {
+            throw new EmagException(
+                "Impossible d'effectuer un transfert d'argent sur le même compte ou porte monnaie.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
+                __METHOD__
+            );
+        }
 
         // vérifie si le compte créditeur est actif
         $valide = $valide && $cService->isCompteActif($compteCrediteur, $throwException);

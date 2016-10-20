@@ -55,7 +55,7 @@ class ModePaiementService
         // si le paramètre de levée d'exception est vrai
         if (!$valide && $throwException) {
             throw new EmagException(
-                "Impossible d'accéder au mode de paiement de l'opération.",
+                "Ce mode de paiement n'autorise pas ce genre de montant.",
                 ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
                 __METHOD__
             );

@@ -20,7 +20,7 @@ Espèces:
 Chèque:
     id: 3
     etreNegatif: true
-    etrePositif: false
+    etrePositif: true
 Ticket restaurant:
     id: 4
     etreNegatif: true

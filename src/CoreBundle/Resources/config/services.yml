@@ -3,7 +3,6 @@ services:
         class:  CoreBundle\Service\Master\PersistentService
         lazy:   true
         shared: true
-        abstract: true
         arguments: ["@doctrine.orm.default_entity_manager"]
 
     emag.core.type_compte:

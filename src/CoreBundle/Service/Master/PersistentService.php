@@ -38,7 +38,7 @@ class PersistentService
      * @param Object $objet
      * @throws EmagException
      */
-    protected function persistSingleObject($objet)
+    public function persistSingleObject($objet)
     {
         try {
             // tentative de persistence de l'objet
@@ -52,9 +52,6 @@ class PersistentService
                 __METHOD__,
                 $exception
             );
-        } finally {
-            // fermeture de la connection
-            $this->entityManager->close();
         }
     }
 
@@ -62,7 +59,7 @@ class PersistentService
      * @param array $objets
      * @throws EmagException
      */
-    protected function persistMultipleObject(array $objets)
+    public function persistMultipleObject(array $objets)
     {
         try {
             // parcourt des objets
@@ -80,9 +77,6 @@ class PersistentService
                 __METHOD__,
                 $exception
             );
-        } finally {
-            // fermeture de la connection
-            $this->entityManager->close();
         }
     }
 }

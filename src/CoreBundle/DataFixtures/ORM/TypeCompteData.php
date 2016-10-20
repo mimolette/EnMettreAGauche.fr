@@ -56,6 +56,7 @@ class TypeCompteData extends AbstractMasterFixtures
             $typeObj->setNom($nomType);
             $typeObj->setEtreNegatif($typeData["etreNegatif"]);
             $typeObj->setNumeroUnique($typeData["id"]);
+            $typeObj->setAutoriseAjustements($typeData["ajustement"]);
             // ajout des modes de paiements autorisés
             foreach ($typeData["modePaiements"] as $mode) {
                 // recherche de la réference

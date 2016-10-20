@@ -44,8 +44,7 @@ class CompteTicket extends Compte
      *
      * @ORM\OneToMany(
      *     targetEntity="CoreBundle\Entity\Renouvellement",
-     *     mappedBy="compte",
-     *     cascade={"persist"}
+     *     mappedBy="compte"
      * )
      */
     private $renouvellements;

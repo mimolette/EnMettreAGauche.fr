@@ -11,6 +11,8 @@ use CoreBundle\Entity\TransfertArgent;
 use CoreBundle\Enum\ModePaiementEnum;
 use CoreBundle\Service\Compte\SoldeUpdater;
 use CoreBundle\Service\Compte\TicketUpdater;
+use CoreBundle\Service\Master\PersistentService;
+use CoreBundle\Service\MiseAJourSolde;
 use Doctrine\Common\Persistence\ObjectManager;
 use MasterBundle\DataFixtures\ORM\AbstractMasterFixtures;
 
@@ -77,12 +79,8 @@ class OperationData extends AbstractMasterFixtures
     public function loadWithData(ObjectManager $manager, $typeOperation)
     {
         // acces au service de mise a jour des solde de compte
-        /** @var SoldeUpdater $serviceSolde */
-        $serviceSolde = $this->get('emag.core.compte.solde_updater');
-
-        // acces au service de mise a jour des nombre de ticket de compte
-        /** @var TicketUpdater $serviceTicket */
-        $serviceTicket = $this->get('emag.core.compte.ticket_updater');
+        /** @var MiseAJourSolde $serviceSolde */
+        $serviceSolde = $this->get('emag.core.mise_a_jour_solde');
 
         // parcourt des différents type d'opérations
         foreach ($typeOperation as $modePaiementEnum => $comptes) {
@@ -117,24 +115,21 @@ class OperationData extends AbstractMasterFixtures
                     // attribution du mode de paiement
                     $opeObj->setModePaiement($modePaiementObj);
 
+                    dump(get_class($opeObj));
+
                     // attribution du montant
                     if ($opeObj instanceof OperationTicket) {
                         $opeObj->setNbTicket($operation["nbTickets"]);
-                        // vérification et affectation du compte
-                        /** @var CompteTicket $compteObj */
-                        $serviceTicket->updateNbTicket($opeObj);
                     } elseif ($opeObj instanceof TransfertArgent) {
                         // recherche du compte créditeur
                         /** @var Compte $compteCrediteur */
                         $compteCrediteur = $this->getReferenceWithId($this->compteData, $operation["compteCrediteur"]);
                         $opeObj->setCompteCrediteur($compteCrediteur);
-                        // vérification et calcul du nouveau solde du compte
-                        $serviceSolde->updateSoldeWithOperation($opeObj);
+                        // ajout du montant
+                        $opeObj->setMontant($operation["montant"]);
                     } else {
                         // toute les autres opérations possédent déja un montant
                         $opeObj->setMontant($operation["montant"]);
-                        // vérification et calcul du nouveau solde du compte
-                        $serviceSolde->updateSoldeWithOperation($opeObj);
                     }
 
                     // affectation des catégories
@@ -147,11 +142,13 @@ class OperationData extends AbstractMasterFixtures
                         $opeObj->addCatogory($catObj);
                     }
 
-                    // persisitance des entités grâce à la cascade
-                    $manager->persist($opeObj);
-//                    $manager->persist($compteObj);
-//                    $manager->persist($catObj);
-                    $manager->flush();
+                    // vérification de la validité des opération plus mise à jour des soldes
+                    $elementsAPersister = $serviceSolde->parOperation($opeObj);
+
+                    // persisitance des entités grâce aux service
+                    /** @var PersistentService $persistService */
+                    $persistService = $this->get('emag.core.master.persistent');
+                    $persistService->persistMultipleObject($elementsAPersister);
                 }
             }
 

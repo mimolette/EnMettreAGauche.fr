@@ -112,8 +112,7 @@ class Compte
      *
      * @ORM\OneToMany(
      *     targetEntity="CoreBundle\Entity\AjustementSolde",
-     *     mappedBy="compte",
-     *     cascade={"persist"}
+     *     mappedBy="compte"
      * )
      */
     protected $ajustements;

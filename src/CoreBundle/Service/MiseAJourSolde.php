@@ -98,7 +98,6 @@ class MiseAJourSolde
      * @param Renouvellement $renouvellement
      * @throws EmagException
      * @return array des éléments à persiter
-     * // TODO : tester le retour
      */
     public function parRenouvellement(Renouvellement $renouvellement)
     {

@@ -55,6 +55,13 @@
             libelle:
             categories: [Bobby-Revenus-Salaire Guillaume]
 6:
+    compte-commun-bobby:
+        1:
+            compteCrediteur: cel-bobby
+            montant: 150.0
+            date: "2016-07-03"
+            libelle: Achat vélo Charlotte
+            categories: [Bobby-Imprévus-Cadeaux-Famille]
     cel-bobby:
         1:
             compteCrediteur: compte-commun-bobby
@@ -62,16 +69,10 @@
             date: "2016-07-04"
             libelle: Mise de coté
             categories: [Bobby-Revenus-Economies]
+7:
     compte-commun-bobby:
         1:
-            compteCrediteur: compte-commun-bobby
-            montant: 150.0
-            date: "2016-07-11"
-            libelle: Achat vélo Charlotte
-            categories: [Bobby-Imprévus-Cadeaux-Famille]
-7:
-    porte-monnaie-bobby:
-        1:
+            compteCrediteur: porte-monnaie-bobby
             montant: 20.0
             date: "2016-07-03"
             libelle:

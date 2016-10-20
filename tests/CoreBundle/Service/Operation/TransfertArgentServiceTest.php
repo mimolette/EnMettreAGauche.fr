@@ -169,6 +169,28 @@ class TransfertArgentServiceTest extends AbstractMasterService
     }
 
     /**
+     * @uses vérifie que la méthode lève une exception si le compte débiteur est égale
+     * au compte créditeur, dans le cas ou le paramètre de levée d'exception est égale
+     * à vrai (valeur par défaut)
+     * @param TransfertArgentService $service
+     * @depends testVideService
+     * @covers TransfertArgentService::isTransfertArgentValide
+     */
+    public function testFailIsTransfertArgentValide4(TransfertArgentService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        $transfert = $this->testVideTransfertArgent();
+        // affecation du compte créditeur égale compte débiteur
+        $compteDebiteur = $transfert->getCompte();
+        $transfert->setCompteCrediteur($compteDebiteur);
+
+        // test de la méthode
+        $service->isTransfertArgentValide($transfert);
+    }
+
+    /**
      * @uses vérifie si la méthode lève une exception dans le cas ou aucun compte
      * créditeur n'est trouvé dans l'objet transfert d'argent
      * @depends testVideService
@@ -256,5 +278,24 @@ class TransfertArgentServiceTest extends AbstractMasterService
         // test de la méthode avec paramètre d'exception désactivé ou activé (égale à faux)
         $this->assertTrue($service->isTransfertArgentValide($transfert));
         $this->assertTrue($service->isTransfertArgentValide($transfert, false));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne faux si le compte débiteur est égale
+     * au compte créditeur, dans le cas ou le paramètre de levée d'exception est égale
+     * à faux
+     * @param TransfertArgentService $service
+     * @depends testVideService
+     * @covers TransfertArgentService::isTransfertArgentValide
+     */
+    public function testIsTransfertArgentValide3(TransfertArgentService $service)
+    {
+        $transfert = $this->testVideTransfertArgent();
+        // affecation du compte créditeur égale compte débiteur
+        $compteDebiteur = $transfert->getCompte();
+        $transfert->setCompteCrediteur($compteDebiteur);
+
+        // test de la méthode
+        $this->assertFalse($service->isTransfertArgentValide($transfert, false));
     }
 }

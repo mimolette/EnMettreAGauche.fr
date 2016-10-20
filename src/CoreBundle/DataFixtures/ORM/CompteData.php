@@ -13,6 +13,8 @@ use CoreBundle\Entity\TypeCompte;
 use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\SoldeUpdater;
 use CoreBundle\Service\Compte\TicketRenouvellement;
+use CoreBundle\Service\Master\PersistentService;
+use CoreBundle\Service\MiseAJourSolde;
 use Doctrine\Common\Persistence\ObjectManager;
 use EmagUserBundle\DataFixtures\ORM\EmagUserData;
 use EmagUserBundle\Entity\EmagUser;
@@ -81,12 +83,8 @@ class CompteData extends AbstractMasterFixtures
     public function loadWithData(ObjectManager $manager, $users)
     {
         // acces au service de mise a jour des solde de compte
-        /** @var SoldeUpdater $serviceSolde */
-        $serviceSolde = $this->get('emag.core.compte.solde_updater');
-
-        // acces au service de renouvellement des ticket de compte
-        /** @var TicketRenouvellement $renouvellementService */
-        $renouvellementService = $this->get('emag.core.compte.ticket_renouvellement');
+        /** @var MiseAJourSolde $serviceSolde */
+        $serviceSolde = $this->get('emag.core.mise_a_jour_solde');
 
         // parcourt les différents utilisateurs
         foreach ($users as $userId => $comptes) {
@@ -110,6 +108,9 @@ class CompteData extends AbstractMasterFixtures
                 $compteObj->setNumero($compteData["numero"]);
                 $compteObj->setActive($compteData["active"]);
                 $compteObj->setType($typeCompteObj);
+                // date de mise à jour égale la date du jour actuel
+                $now = new \DateTime();
+                $compteObj->setLastMiseJour($now);
 
                 // recherche de la référence de la couleur
                 /** @var Couleur $couleurObj */
@@ -118,6 +119,9 @@ class CompteData extends AbstractMasterFixtures
                     $compteData["couleur"]
                 );
                 $compteObj->setCouleur($couleurObj);
+
+                // initialisation du tableau d'éléments à persister
+                $elementsAPersiter = [];
 
                 // si le compte possèdent un solde
                 if (isset($compteData["solde"])) {
@@ -130,7 +134,7 @@ class CompteData extends AbstractMasterFixtures
                     $ajustement->setCompte($compteObj);
 
                     // mise à jour du solde grâce au service
-                    $serviceSolde->updateSoldeWithAjustement($ajustement);
+                    $elementsAPersiter = $serviceSolde->parAjustement($ajustement);
                 }
 
                 // si le compte possede des chequiers
@@ -164,10 +168,7 @@ class CompteData extends AbstractMasterFixtures
                     $renouvellement->setCompte($compteObj);
 
                     // ajustement du compte
-                    $renouvellementService->renouvellerCompte($renouvellement);
-
-                    // ajout du renouvellement au compte
-                    $compteObj->addRenouvellement($renouvellement);
+                    $elementsAPersiter = $serviceSolde->parRenouvellement($renouvellement);
                 }
 
                 // ajout du compte à l'utilisateur
@@ -176,9 +177,11 @@ class CompteData extends AbstractMasterFixtures
                 // référence par le numéro unique
                 $this->makeReferenceWithId($compteData["id"], $compteObj);
 
-                // persistance du compte
-                $manager->persist($compteObj);
-                $manager->flush();
+                // persistance du compte et autres
+                // utilisation du service de persistance
+                /** @var PersistentService $persistService */
+                $persistService = $this->get('emag.core.master.persistent');
+                $persistService->persistMultipleObject($elementsAPersiter);
             }
 
             // persistance de l'utilisateur
