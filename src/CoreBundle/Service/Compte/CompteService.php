@@ -2,9 +2,9 @@
 
 namespace CoreBundle\Service\Compte;
 
+use CoreBundle\Entity\AbstractOperation;
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteTicket;
-use CoreBundle\Entity\TypeCompte;
+use CoreBundle\Entity\TransfertArgent;
 use MasterBundle\Enum\ExceptionCodeEnum;
 use MasterBundle\Exception\EmagException;
 
@@ -22,118 +22,135 @@ use MasterBundle\Exception\EmagException;
  * @category Service
  * @author   Guillaume ORAIN <guillaume.orain27@laposte.net>
  */
-class CompteService
+class CompteService extends AbstractCompteService
 {
     /**
-     * @param Compte $compte
-     * @param bool   $throwException
-     * @return bool
-     * @throws EmagException
+     * @uses tente de mettre à jour le solde d'un ou plusieurs comptes suite à une
+     * opération (valide)
+     * @param AbstractOperation $operation
+     * @return array des comptes à persiter
      */
-    public function isCompteActif(Compte $compte, $throwException = true)
+    public function miseAjourSoldeParOperation(AbstractOperation $operation)
     {
-        $actif = $compte->isActive();
-        if (!$actif && $throwException) {
-            // lève une exception si le compte n'est pas actif
-            throw new EmagException(
-                "Impossible d'effectuer l'opération sur le compte ::$compte car celui-ci est inactif",
-                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
-                __METHOD__
-            );
+        // utilisation d'une méthode de mise à jour en fonction du type d'opération
+        if ($operation instanceof TransfertArgent) {
+            // utilisation de la méthode spécifique aux transfert d'argent
+            $elementsAPersister = $this->majSoldeParTransfertArgent($operation);
+        } else {
+            // utilisation de la méthode classique
+            $elementsAPersister = $this->majSoldeClassique($operation);
         }
 
-        return $actif;
+        // retourne les éléments à persiter dans un tableau
+        return $elementsAPersister;
     }
 
     /**
+     * @uses vérifie que la mise à jour du solde est possible sans l'effectuer
      * @param float  $nouveauSolde
      * @param Compte $compte
-     * @throws EmagException
+     * @return bool
      */
-    public function setNouveauSolde($nouveauSolde, Compte $compte)
+    public function isMajSoldePossible($nouveauSolde, Compte $compte)
     {
+        // validité de la mise à jour
+        $valide = true;
         // vérification du type de nouveauSolde
         $nouveauSolde = (float) $nouveauSolde;
 
-        // tentative d'affecter le nouveau solde au compte
+        // si le nouveau solde est négatif
         if ($nouveauSolde < 0) {
             // test si le type de compte autorise cette valeur de solde
             $typeCompte = $this->getTypeCompte($compte);
             $etreNegatif = $typeCompte->getEtreNegatif();
             if (!$etreNegatif) {
-                throw new EmagException(
-                    "Impossible d'effectuer l'opération du compte ::$compte, le solde ne peut pas être négatif.",
-                    ExceptionCodeEnum::VALEURS_INCOHERENTES,
-                    __METHOD__
-                );
+                $valide = false;
             }
         }
 
-        // mise à jour du solde du compte
-        $compte->setSolde($nouveauSolde);
+        return $valide;
     }
 
     /**
-     * @param int          $nbTicket
-     * @param CompteTicket $compte
+     * @uses tente de mettre à jour le solde du compte débiteur d'une opération
+     * @param AbstractOperation $operation
      * @throws EmagException
+     * @return array contenant le compte débiteur
      */
-    public function addNbTicket($nbTicket, CompteTicket $compte)
+    private function majSoldeClassique(AbstractOperation $operation)
     {
-        // vérification que le nombre de ticket est au moins égale à 1
-        $nbTicket = (int) $nbTicket;
-        if ($nbTicket < 1) {
+        // récupération du compte débiteur et de son solde
+        $compte = $operation->getCompte();
+        $soldeAvant = $compte->getSolde();
+
+        // récupération du montant de l'opération
+        $montant = $operation->getMontant();
+
+        // calcul du nouveau solde théorique
+        $soldeTheorique = $soldeAvant + $montant;
+
+        // test si la mise à jour su solde du compte est possible
+        $possible = $this->isMajSoldePossible($soldeTheorique, $compte);
+
+        // lève une exception si la mise à jour est impossible
+        if (!$possible) {
             throw new EmagException(
-                "Impossible d'effectuer l'opération de renouvellement de ticket du compte ::$compte.",
-                ExceptionCodeEnum::VALEURS_INCOHERENTES,
-                __METHOD__
-            );
-        }
-
-        // mise à jour du nombre de tickets du compte
-        $nbTicketAvant = $compte->getNbTickets();
-        $compte->setNbTickets($nbTicketAvant+$nbTicket);
-
-        // mise à jour du solde du compte
-        $solde = $compte->getNbTickets()*$compte->getMontantTicket();
-        $this->setNouveauSolde($solde, $compte);
-    }
-    
-    public function isAutoriseAuxAjustements(Compte $compte, $throwException = true)
-    {
-        // vérification si le type du compte autorise bien les ajustements
-        $typeCompte = $this->getTypeCompte($compte);
-        $autorise = $typeCompte->isAutoriseAjustements();
-
-        // si le compte n'est pas autorisé
-        if (!$autorise && $throwException) {
-            // lève une exception si le compte n'est pas autorisé aux ajustements
-            throw new EmagException(
-                "Le compte ::$compte n'autorise pas les ajustements.",
+                "Impossible de mettre à jour le solde du compte ::$compte.",
                 ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
                 __METHOD__
             );
         }
 
-        return $autorise;
+        // mise à jour du solde
+        $this->setNouveauSolde($soldeTheorique, $compte);
+
+        // retour le tableau du compte plus opération
+        return [$operation, $compte];
     }
 
     /**
-     * @param Compte $compte
-     * @return TypeCompte
+     * @uses tente de mettre à jour le solde du compte créditeur et débiteur
+     * suite à un transfert d'argent
+     * @param TransfertArgent $operation
      * @throws EmagException
+     * @return array contenant le compte débiteur et créditeur plus opération
      */
-    public function getTypeCompte(Compte $compte)
+    private function majSoldeParTransfertArgent(TransfertArgent $operation)
     {
-        $typeComtpe = $compte->getType();
-        if (null === $typeComtpe) {
+        // récupération du compte débiteur et de son solde
+        $compteDebiteur = $operation->getCompte();
+        $soldeAvantDebiteur = $compteDebiteur->getSolde();
+        // récupération du compte créditeur et de son solde
+        $compteCrediteur = $operation->getCompteCrediteur();
+        $soldeAvantCrediteur = $compteCrediteur->getSolde();
+
+        // récupération du montant de l'opération
+        $montant = $operation->getMontant();
+
+        // calcul du nouveau solde théorique du compte débiteur
+        $soldeTheoriqueDebiteur = $soldeAvantDebiteur - $montant;
+        // calcul du nouveau solde théorique du compte créditeur
+        $soldeTheoriqueCrediteur = $soldeAvantCrediteur + $montant;
+
+        // test si la mise à jour su solde du compte débiteur est possible
+        $possibleDebiteur = $this->isMajSoldePossible($soldeTheoriqueDebiteur, $compteDebiteur);
+        // test si la mise à jour su solde du compte créditeur est possible
+        $possibleCrediteur = $this->isMajSoldePossible($soldeTheoriqueCrediteur, $compteCrediteur);
+
+        // lève une exception si l'une des deux mise à jour mise à jour est impossible
+        if (!$possibleDebiteur || !$possibleCrediteur) {
             throw new EmagException(
-                "Impossible d'accéder au type du compte ::$compte.",
-                ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE,
+                "Impossible de mettre à jour les soldes des comptes ::$compteDebiteur et ::$compteCrediteur.",
+                ExceptionCodeEnum::OPERATION_IMPOSSIBLE,
                 __METHOD__
             );
         }
 
-        return $typeComtpe;
+        // mise à jour des soldes
+        $this->setNouveauSolde($soldeTheoriqueDebiteur, $compteDebiteur);
+        $this->setNouveauSolde($soldeTheoriqueCrediteur, $compteCrediteur);
+
+        // retour le tableau de comptes plus opération
+        return [$operation, $compteDebiteur, $compteCrediteur];
     }
 }

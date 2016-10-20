@@ -1,4 +1,11 @@
 services:
+    emag.core.master.persistent:
+        class:  CoreBundle\Service\Master\PersistentService
+        lazy:   true
+        shared: true
+        abstract: true
+        arguments: ["@doctrine.orm.default_entity_manager"]
+
     emag.core.type_compte:
         class:  CoreBundle\Service\Compte\TypeCompteService
         lazy:   true
@@ -19,9 +26,15 @@ services:
         lazy:   true
         shared: true
 
+    emag.core.abstract.compte:
+        class:  CoreBundle\Service\Compte\AbstractCompteService
+        lazy:   true
+        shared: true
+        abstract: true
+
     emag.core.compte:
         class:  CoreBundle\Service\Compte\CompteService
-        lazy:   true
+        parent: emag.core.abstract.compte
         shared: true
 
     emag.core.compte.ticket:
@@ -74,7 +87,6 @@ services:
 
     emag.core.mise_a_jour_solde:
         class:  CoreBundle\Service\MiseAJourSolde
-        lazy:   true
         shared: true
         arguments:
             - "@emag.core.compte"

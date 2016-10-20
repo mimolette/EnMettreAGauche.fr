@@ -3,9 +3,9 @@
 namespace CoreBundle\Tests\Service\Compte;
 
 use CoreBundle\Entity\Compte;
-use CoreBundle\Entity\CompteTicket;
+use CoreBundle\Entity\OperationCourante;
+use CoreBundle\Entity\TransfertArgent;
 use CoreBundle\Entity\TypeCompte;
-use CoreBundle\Enum\TypeCompteEnum;
 use CoreBundle\Service\Compte\CompteService;
 use CoreBundle\Tests\Service\AbstractMasterService;
 use MasterBundle\Enum\ExceptionCodeEnum;
@@ -39,257 +39,415 @@ class CompteServiceTest extends AbstractMasterService
     }
 
     /**
-     * @uses vérifie si la méthode lève une exception dans le cas ou aucun type
-     * de compte n'est trouvé dans l'objet compte
-     * @depends testVideService
-     * @param CompteService $service
-     * @covers CompteService::getTypeCompte
+     * @return Compte
      */
-    public function testFailGetTypeCompte(CompteService $service)
+    public function testVideCompte()
     {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE);
-
-        // création d'un nouveau compte sans type de compte
+        // création d'un compte
         $compte = new Compte();
-
-        // test d'utilisation de la méthode
-        $service->getTypeCompte($compte);
-    }
-
-    /**
-     * @uses vérifie que la méthode lève une exception si le nombre de ticket n'est pas
-     * supérieur à 0
-     * @param CompteService $service
-     * @covers CompteService::addNbTicket
-     * @depends testVideService
-     */
-    public function testFailAddNbTicket(CompteService $service)
-    {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
-
-        // création d'un compte ticket
-        $compte = new CompteTicket();
-
-        // test d'utilisation de la méthode
-        $service->addNbTicket(-5, $compte);
-    }
-
-    /**
-     * @uses vérifie si la méthode lève une exception dans le cas ou le compte est
-     * inactif et que le paramètre pour spécifie la levée d'exception est vrai
-     * @depends testVideService
-     * @param CompteService $service
-     * @covers CompteService::isCompteActif
-     */
-    public function testFailIsCompteActif(CompteService $service)
-    {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
-
-        // création d'un nouveau compte inactif
-        $compte = new Compte();
-        $compte->setActive(false);
-
-        // test d'utilisation de la méthode pour vérifier l'état d'un compte
-        $service->isCompteActif($compte);
-    }
-
-    /**
-     * @uses vérifie si la méthode lève une exception dans le cas ou aucun type de compte
-     * n'est affecté au compte
-     * @depends testVideService
-     * @param CompteService $service
-     * @covers CompteService::isAutoriseAuxAjustements
-     */
-    public function testFailIsAutoriseAuxAjustements1(CompteService $service)
-    {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::MAUVAIS_TYPE_VARIABLE);
-
-        // création d'un nouveau compte
-        $compte = new Compte();
-
-        // test d'utilisation de la méthode sans affecté de type de compte
-        $service->isAutoriseAuxAjustements($compte);
-    }
-
-    /**
-     * @uses vérifie si la méthode lève une exception dans le cas ou le type de
-     * compte n'autorise pas les ajustements et que le paramètre de levée d'exception
-     * n'est pas spécifié donc vrai (true par défaut)
-     * @depends testVideService
-     * @param CompteService $service
-     * @covers CompteService::isAutoriseAuxAjustements
-     */
-    public function testFailIsAutoriseAuxAjustements2(CompteService $service)
-    {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
-
-        // création d'un nouveau compte
-        $compte = new Compte();
-
-        // création d'un type de compte qui n'autorise pas les ajustements
-        $typeCompte = new TypeCompte();
-        $typeCompte->setAutoriseAjustements(false);
-        $compte->setType($typeCompte);
-
-        // test d'utilisation de la méthode sans affecté de type de compte
-        $service->isAutoriseAuxAjustements($compte);
-    }
-
-    /**
-     * @uses vérifie si la méthode lève une exception dans le cas on tente de mettre à jour
-     * le solde d'un compte, alors que son type ne l'autorise pas
-     * @param CompteService $service
-     * @depends testVideService
-     * @covers CompteService::setNouveauSolde
-     */
-    public function testFailSetNouveauSolde(CompteService $service)
-    {
-        $this->expectException(EmagException::class);
-        $this->expectExceptionCode(ExceptionCodeEnum::VALEURS_INCOHERENTES);
-
-        // création d'un nouveau compte
-        $compte = new Compte();
-
-        // création d'un type de compte qui n'autorise pas les soldes négatifs
-        $typeCompte = new TypeCompte();
-        $typeCompte->setEtreNegatif(false);
-        $compte->setType($typeCompte);
-
-        // test d'utilisation de la méthode permettant d'affecter un nouveau solde
-        $service->setNouveauSolde(-14.25, $compte);
-    }
-
-    /**
-     * @uses vérifie que la méthode renvoi un booléen dans le cas ou le compte est
-     * actif, mais aussi dans le cas ou celui-ci n'est pas actif si le paramètre
-     * de levée d'exception est désactivé (false)
-     * @param CompteService $service
-     * @depends testVideService
-     * @covers CompteService::isCompteActif
-     */
-    public function testIsComtpeActif(CompteService $service)
-    {
-        // création d'un nouveau compte actif
-        $compte = new Compte();
-        $compte->setActive(true);
-
-        // test d'utilisation de la méthode pour vérifier l'état d'un compte
-        // avec ou sans le paramètre de levée d'exception
-        $this->assertTrue($service->isCompteActif($compte));
-        $this->assertTrue($service->isCompteActif($compte, false));
-
-        // modification de l'état du compte à inactif
-        $compte->setActive(false);
-
-        // test d'utilisation de la méthode pour vérifier l'état d'un compte
-        $this->assertFalse($service->isCompteActif($compte, false));
-    }
-
-    /**
-     * @uses vérifie si la méthode met à jour le solde du compte
-     * @param CompteService $service
-     * @depends testVideService
-     * @covers CompteService::setNouveauSolde
-     */
-    public function testSetNouveauSolde(CompteService $service)
-    {
-        // création d'un nouveau compte avec un solde
-        $compte = new Compte();
-        $compte->setSolde(15.56);
-
-        // création d'un type de compte qui n'autorise pas les soldes négatifs
-        $typeCompte = new TypeCompte();
-        $typeCompte->setEtreNegatif(false);
-        $compte->setType($typeCompte);
-
-        // test d'utilisation de la méthode permettant d'affecter un nouveau solde
-        $service->setNouveauSolde(5.45, $compte);
-
-        $this->assertEquals(5.45, $compte->getSolde());
-
-        // changement du type de compte qui autorise désormais les solde négatif
-        $typeCompte->setEtreNegatif(true);
-
-        // test d'utilisation de la méthode permettant d'affecter un nouveau solde
-        $service->setNouveauSolde(-5.45, $compte);
-
-        $this->assertEquals(-5.45, $compte->getSolde());
-    }
-
-    /**
-     * @uses vérifie qu'il est possible de mettre à jour le solde d'un compte inactif
-     * @param CompteService $service
-     * @depends testVideService
-     * @covers CompteService::setNouveauSolde
-     */
-    public function testSetNouveauSoldeCompteInactif(CompteService $service)
-    {
-        // création d'un nouveau compte avec un solde
-        $compte = new Compte();
-        $compte->setSolde(45.56);
-        $compte->setActive(false);
-
-        // création d'un type de compte qui autorise les soldes négatifs
-        $typeCompte = new TypeCompte();
-        $typeCompte->setEtreNegatif(true);
-        $compte->setType($typeCompte);
-
-        // test d'utilisation de la méthode permettant d'affecter un nouveau solde
-        $service->setNouveauSolde(14.20, $compte);
-
-        $this->assertEquals(14.20, $compte->getSolde());
-    }
-
-    /**
-     * @uses vérifie que la méthode retourne bien un booléen dans le cas ou le compte
-     * est autorisé aux ajustement ou bien si le paramètre de levée d'exception est
-     * spécifié à faux (false)
-     * @depends testVideService
-     * @param CompteService $service
-     * @covers CompteService::isAutoriseAuxAjustements
-     */
-    public function testIsAutoriseAuxAjustements(CompteService $service)
-    {
-        // création d'un nouveau compte
-        $compte = new Compte();
-
-        // création d'un type de compte qui autorise les ajustements
-        $typeCompte = new TypeCompte();
-        $typeCompte->setAutoriseAjustements(true);
-        $compte->setType($typeCompte);
-
-        // vérification que la méthode retourne bien un booléen
-        $this->assertTrue($service->isAutoriseAuxAjustements($compte));
-        $this->assertTrue($service->isAutoriseAuxAjustements($compte, false));
-
-        // changement pour un type de comtpe qui n'autorise pas les ajustements
-        $typeCompte->setNumeroUnique(TypeCompteEnum::COMPTE_CHEQUE);
-
-        // vérification que la méthode retourne bien un booléen
-        $this->assertTrue($service->isAutoriseAuxAjustements($compte, false));
-    }
-
-    /**
-     * @uses vérifie que la méthode retourne bien l'objet TypeCompte
-     * @depends testVideService
-     * @param CompteService $service
-     * @covers CompteService::getTypeCompte
-     */
-    public function testGetTypeCompte(CompteService $service)
-    {
-        // création d'un nouveau compte
-        $compte = new Compte();
-
         // création d'un type de compte
         $typeCompte = new TypeCompte();
+
+        // affectation du type au compte
         $compte->setType($typeCompte);
 
-        // test d'utilisation de la méthode
-        $this->assertEquals($typeCompte, $service->getTypeCompte($compte));
+        return $compte;
+    }
+
+    /**
+     * @uses vérifie que la méthode lève une exception dans le cas ou la mise à jour
+     * du solde du compte débiteur de l'opération courante n'est pas possible car
+     * celui-ci n'autorise pas les soldes négatif
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testFailMiseAjourSoldeParOperation1(CompteService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // création d'un opération courante
+        $operation = new OperationCourante();
+
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        // affectation du compte à l'opération
+        $operation->setCompte($compte);
+
+        // le type de compte n'autorise pas les soldes négatif
+        $typeCompte->setEtreNegatif(false);
+        // solde du compte
+        $compte->setSolde(45.23);
+        // montant de l'opération
+        $operation->setMontant(-89.65);
+
+        // test de la méthode
+        $service->miseAjourSoldeParOperation($operation);
+    }
+
+    /**
+     * @uses vérifie que la méthode lève une exception dans le cas ou la mise à jour
+     * du solde du compte débiteur de l'opération transfert d'argent n'est pas possible
+     * car celui-ci n'autorise pas les soldes négatif
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testFailMiseAjourSoldeParOperation2(CompteService $service)
+    {
+        $this->expectException(EmagException::class);
+        $this->expectExceptionCode(ExceptionCodeEnum::OPERATION_IMPOSSIBLE);
+
+        // création d'un opération transfert d'argent
+        $operation = new TransfertArgent();
+
+        // récupération d'un compte débiteur vide et de son type de compte
+        $compteDebiteur = $this->testVideCompte();
+        $typeCompte = $compteDebiteur->getType();
+
+        // récupération d'un compte créditeur vide
+        $compteCrediteur = $this->testVideCompte();
+
+        // affectation des comptes à l'opération
+        $operation->setCompte($compteDebiteur);
+        $operation->setCompteCrediteur($compteCrediteur);
+
+        // le type de compte débiteur n'autorise pas les soldes négatif
+        $typeCompte->setEtreNegatif(false);
+        // solde du compte
+        $compteDebiteur->setSolde(25.2);
+        // montant de l'opération (devrais toujours être positif)
+        $operation->setMontant(25.3);
+
+        // test de la méthode
+        $service->miseAjourSoldeParOperation($operation);
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne l'opération de type transfert d'argent,
+     * le compte débiteur et le compte créditeur dans un tableau, dans le cas ou
+     * la mise à jour du solde des comptes est possible
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testMiseAjourSoldeParOperation1(CompteService $service)
+    {
+        // création d'un opération transfert d'argent
+        $operation = new TransfertArgent();
+
+        // récupération d'un compte débiteur vide et de son type de compte
+        $compteDebiteur = $this->testVideCompte();
+        $typeCompte = $compteDebiteur->getType();
+
+        // récupération d'un compte créditeur vide
+        $compteCrediteur = $this->testVideCompte();
+
+        // affectation des comptes à l'opération
+        $operation->setCompte($compteDebiteur);
+        $operation->setCompteCrediteur($compteCrediteur);
+
+        // le type de compte débiteur n'autorise pas les soldes négatifs
+        $typeCompte->setEtreNegatif(false);
+        // solde du compte
+        $compteDebiteur->setSolde(45.89);
+        // montant de l'opération
+        $operation->setMontant(20.0);
+
+        // test de la méthode
+        $elements = $service->miseAjourSoldeParOperation($operation);
+
+        // vérifie que l'opération est présente dans le tableau
+        $this->assertTrue(in_array($operation, $elements));
+        // vérifie que le compte débiteur est présent dans le tableau
+        $this->assertTrue(in_array($compteDebiteur, $elements));
+        // vérifie que le compte créditeur est présent dans le tableau
+        $this->assertTrue(in_array($compteCrediteur, $elements));
+        // vérifie que le tableau ne comporte que 3 valeurs
+        $this->assertEquals(3, count($elements));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne l'opération et le compte débiteur,
+     * dans un tableau, dans le cas ou la mise à jour du solde du compte est possible
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testMiseAjourSoldeParOperation2(CompteService $service)
+    {
+        // création d'un opération transfert d'argent
+        $operation = new OperationCourante();
+
+        // récupération d'un compte vide et de son type de compte
+        $compteDebiteur = $this->testVideCompte();
+        $typeCompte = $compteDebiteur->getType();
+
+        // affectation du comptes à l'opération
+        $operation->setCompte($compteDebiteur);
+
+        // le type de compte débiteur autorise les soldes négatifs
+        $typeCompte->setEtreNegatif(true);
+        // solde du compte
+        $compteDebiteur->setSolde(789.65);
+        // montant de l'opération
+        $operation->setMontant(-255.5);
+
+        // test de la méthode
+        $elements = $service->miseAjourSoldeParOperation($operation);
+
+        // vérifie que l'opération est présente dans le tableau
+        $this->assertTrue(in_array($operation, $elements));
+        // vérifie que le compte débiteur est présent dans le tableau
+        $this->assertTrue(in_array($compteDebiteur, $elements));
+        // vérifie que le tableau ne comporte que 2 valeurs
+        $this->assertEquals(2, count($elements));
+    }
+
+    /**
+     * @uses vérifie que la méthode met à jour les bonnes valeurs de soldes des comptes
+     * débiteur et créditeur dans le cas ou la mise à jour est valide
+     * Solde compte débiteur avant  = 582.36
+     * Solde compte Créditeur avant = 120.0
+     * Montant de l'opération       = 50.0
+     * Solde compte débiteur après  = 532.36
+     * Solde compte Créditeur après = 170.0
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testMiseAjourSoldeParOperation3(CompteService $service)
+    {
+        // création d'un opération transfert d'argent
+        $operation = new TransfertArgent();
+
+        // récupération d'un compte débiteur vide et de son type de compte
+        $compteDebiteur = $this->testVideCompte();
+        $typeCompte = $compteDebiteur->getType();
+
+        // récupération d'un compte créditeur vide
+        $compteCrediteur = $this->testVideCompte();
+
+        // affectation des comptes à l'opération
+        $operation->setCompte($compteDebiteur);
+        $operation->setCompteCrediteur($compteCrediteur);
+
+        // le type de compte débiteur n'autorise pas les soldes négatifs
+        $typeCompte->setEtreNegatif(false);
+        // solde du compte débiteur
+        $compteDebiteur->setSolde(582.36);
+        // solde du compte créditeur
+        $compteCrediteur->setSolde(120.0);
+        // montant de l'opération
+        $operation->setMontant(50.0);
+
+        // test de la méthode
+        $service->miseAjourSoldeParOperation($operation);
+
+        // vérifie que le solde du compte débiteur est correct
+        $this->assertEquals(532.36, $compteDebiteur->getSolde());
+        // vérifie que le solde du compte créditeur est correct
+        $this->assertEquals(170.0, $compteCrediteur->getSolde());
+    }
+
+    /**
+     * @uses vérifie que la méthode met à jour les bonnes valeurs de soldes des comptes
+     * débiteur et créditeur dans le cas ou la mise à jour est valide
+     * Solde compte débiteur avant  = 125.5
+     * Solde compte Créditeur avant = 855.69
+     * Montant de l'opération       = 222.22
+     * Solde compte débiteur après  = -96.72
+     * Solde compte Créditeur après = 1077.91
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testMiseAjourSoldeParOperation4(CompteService $service)
+    {
+        // création d'un opération transfert d'argent
+        $operation = new TransfertArgent();
+
+        // récupération d'un compte débiteur vide et de son type de compte
+        $compteDebiteur = $this->testVideCompte();
+        $typeCompte = $compteDebiteur->getType();
+
+        // récupération d'un compte créditeur vide
+        $compteCrediteur = $this->testVideCompte();
+
+        // affectation des comptes à l'opération
+        $operation->setCompte($compteDebiteur);
+        $operation->setCompteCrediteur($compteCrediteur);
+
+        // le type de compte débiteur autorise les soldes négatifs
+        $typeCompte->setEtreNegatif(true);
+        // solde du compte débiteur
+        $compteDebiteur->setSolde(125.5);
+        // solde du compte créditeur
+        $compteCrediteur->setSolde(855.69);
+        // montant de l'opération
+        $operation->setMontant(222.22);
+
+        // test de la méthode
+        $service->miseAjourSoldeParOperation($operation);
+
+        // vérifie que le solde du compte débiteur est correct
+        $this->assertEquals(-96.72, $compteDebiteur->getSolde());
+        // vérifie que le solde du compte créditeur est correct
+        $this->assertEquals(1077.91, $compteCrediteur->getSolde());
+    }
+
+    /**
+     * @uses vérifie que la méthode met à jour la bonne valeur de soldes du compte
+     * débiteur dans le cas ou la mise à jour est valide
+     * Solde compte débiteur avant  = 258.9
+     * Montant de l'opération       = -158.9
+     * Solde compte débiteur après  = 100.0
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testMiseAjourSoldeParOperation5(CompteService $service)
+    {
+        // création d'un opération courante
+        $operation = new OperationCourante();
+
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        // affectation du compte à l'opération
+        $operation->setCompte($compte);
+
+        // le type de compte autorise les soldes négatifs
+        $typeCompte->setEtreNegatif(true);
+        // solde du compte
+        $compte->setSolde(258.9);
+        // montant de l'opération
+        $operation->setMontant(-158.9);
+
+        // test de la méthode
+        $service->miseAjourSoldeParOperation($operation);
+
+        // vérifie que le solde du compte est correct
+        $this->assertEquals(100.0, $compte->getSolde());
+    }
+
+    /**
+     * @uses vérifie que la méthode met à jour la bonne valeur de soldes du compte
+     * débiteur dans le cas ou la mise à jour est valide
+     * Solde compte débiteur avant  = 58.96
+     * Montant de l'opération       = -58.96
+     * Solde compte débiteur après  = 0.0
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::miseAjourSoldeParOperation
+     */
+    public function testMiseAjourSoldeParOperation6(CompteService $service)
+    {
+        // création d'un opération courante
+        $operation = new OperationCourante();
+
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        // affectation du compte à l'opération
+        $operation->setCompte($compte);
+
+        // le type de compte n'autorise pas les soldes négatifs
+        $typeCompte->setEtreNegatif(false);
+        // solde du compte
+        $compte->setSolde(58.96);
+        // montant de l'opération
+        $operation->setMontant(-58.96);
+
+        // test de la méthode
+        $service->miseAjourSoldeParOperation($operation);
+
+        // vérifie que le solde du compte est correct
+        $this->assertEquals(.0, $compte->getSolde());
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne vrai dans le cas ou le montant du nouveau
+     * solde est positif et si le type de compte n'autorise pas les soldes négatifs
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::isMajSoldePossible
+     */
+    public function testIsMajSoldePossible1(CompteService $service)
+    {
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        // n'autorise pas les soldes négatif
+        $typeCompte->setEtreNegatif(false);
+
+        // test de la méthode
+        $this->assertTrue($service->isMajSoldePossible(14.52, $compte));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne vrai dans le cas ou le montant du nouveau
+     * solde est positif et si le type de compte autorise les soldes négatifs
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::isMajSoldePossible
+     */
+    public function testIsMajSoldePossible2(CompteService $service)
+    {
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        //aautorise les soldes négatif
+        $typeCompte->setEtreNegatif(true);
+
+        // test de la méthode
+        $this->assertTrue($service->isMajSoldePossible(1458.63, $compte));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne vrai dans le cas ou le montant du nouveau
+     * solde est négatif et si le type de compte autorise les soldes négatifs
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::isMajSoldePossible
+     */
+    public function testIsMajSoldePossible3(CompteService $service)
+    {
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        //aautorise les soldes négatif
+        $typeCompte->setEtreNegatif(true);
+
+        // test de la méthode
+        $this->assertTrue($service->isMajSoldePossible(-123.5, $compte));
+    }
+
+    /**
+     * @uses vérifie que la méthode retourne faux dans le cas ou le montant du nouveau
+     * solde est négatif et si le type de compte n'autorise pas les soldes négatifs
+     * @param CompteService $service
+     * @depends testVideService
+     * @covers CompteService::isMajSoldePossible
+     */
+    public function testIsMajSoldePossible4(CompteService $service)
+    {
+        // récupération d'un compte vide et de son type de compte
+        $compte = $this->testVideCompte();
+        $typeCompte = $compte->getType();
+
+        // n'autorise pas les soldes négatif
+        $typeCompte->setEtreNegatif(false);
+
+        // test de la méthode
+        $this->assertFalse($service->isMajSoldePossible(-99.65, $compte));
     }
 }

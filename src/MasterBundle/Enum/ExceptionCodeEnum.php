@@ -24,6 +24,7 @@ final class ExceptionCodeEnum
 
     /** base de données */
     const NO_RESULT_FOUND = 2001;
+    const SAVE_FAILED = 2002;
 
     /** erreurs métiers */
     const PAS_VALEUR_ATTENDUE = 3001;
